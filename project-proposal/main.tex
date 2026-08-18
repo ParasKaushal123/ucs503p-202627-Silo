@@ -4,17 +4,18 @@
 \usepackage{enumitem}
 \usepackage{graphicx}
 \usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{array}
 
 % -----------------------------------------------------
-% bvraghav-tiet-ucs503p-article.sty
+% pkaushal-tiet-ucs503p-article.sty
 % -----------------------------------------------------
 
 % Variable: Lab Instructor
 \makeatletter \newcommand{\BvrSetLabInstructor}[1]{%
-  \gdef\Bvr@LabInstructor{#1}}
+\gdef\Bvr@LabInstructor{#1}}
 % default
-\newcommand{\Bvr@LabInstructor}{Dr. Raghav %
-  B. Venkataramaiyer}
+\newcommand{\Bvr@LabInstructor}{Nisha Thakur}
 % public accessor
 \newcommand{\BvrLabInstructorValue}{\Bvr@LabInstructor}
 \makeatother
@@ -25,218 +26,556 @@
 \pretitle{\begin{center}\bfseries\fontsize{18bp}{18bp}\selectfont}
 \makeatletter
 \newcommand{\BvrSubtitle}[1]{%
-  \posttitle{%
-    \par\end{center}
-    \begin{center}\large#1\end{center}
-    \vskip 0.5em}%
+\posttitle{%
+\par\end{center}
+\begin{center}\large#1\end{center}
+\vskip 0.5em}%
 }
 \makeatother
 
 % Hints in the section title(s)
 \newcommand{\BvrHint}[1]{%
-  {\normalfont\normalsize\itshape\hfill #1}}
+{\normalfont\normalsize\itshape\hfill #1}}
 
 % -----------------------------------------------------
 
-\title{Grievance-Resolution System for a Tier-2/3 City}
+\title{Silo --- Collaborative Platform for Small Software}
 
-\BvrSetLabInstructor{Dr. Raghav B. Venkataramaiyer}
+\BvrSetLabInstructor{Nisha Thakur}
 
 \BvrSubtitle{%
-  Project Proposal for UCS503P  \\
-  Submitted to: \BvrLabInstructorValue \\ \bfseries
-  Thapar Institute of Engineering and Technology% 
+Project Proposal for UCS503P \\
+Submitted to: \BvrLabInstructorValue \\ \bfseries
+Thapar Institute of Engineering and Technology%
 }
-
 \author{
-  Vidya Vaidyanathan, CSED%
-  \thanks{Roll No: \texttt{1024030xxx}, %
-    Email: \texttt{vvaidhanathan\_be24\@thapar.edu}}
-  \and 
-  Bhanurekha Ganesan, CSED%
-  \thanks{Roll No: \texttt{1024030xxx}, %
-    Email: \texttt{bganesan\_be24\@thapar.edu}}
+Paras Kaushal, CSED%
+\thanks{Roll No: \texttt{1024030984},
+Email: \texttt{pkaushal\_be24@thapar.edu}}
+\and
+Dev Kapla, CSED%
+\thanks{Roll No: \texttt{1024030888},
+Email: \texttt{dkapla\_be24@thapar.edu}}
+\and
+Devanshu, CSED%
+\thanks{Roll No: \texttt{1024030876},
+Email: \texttt{ddevanshu\_be24@thapar.edu}}
 }
 
-\date{\today}
+\date{August 18, 2026}
 
 \begin{document}
 \maketitle
 
-\section{Higher-order goal%
-  \BvrHint{\ldots secondary framing}}
-This project aims to improve sustainable urban
-governance by reducing the time and effort required to
-resolve citizen issues. While the topic is broader than
-any single municipality, the immediate engineering
-objective is to translate \emph{efficient public
-  service delivery} into a measurable, deployable
-software solution.
 
+% -------------------------------------------------------
+\section{Higher-order goal%
+\BvrHint{\ldots making small software a collaborative artifact}}
+
+AI-assisted development has made it possible to create useful software for tasks that
+previously would not justify a dedicated engineering project. A person can now describe a
+dashboard, calculator, reporting tool, or internal workflow utility and obtain functioning
+application code in minutes.
+
+The problem is that producing the code is only the beginning. The resulting application
+still needs to be configured, built, deployed, hosted, shared, updated, and maintained.
+These steps typically require knowledge of programming environments, dependency management,
+servers, deployment platforms, authentication, and version control.
+
+This project proposes \textbf{Silo}, a collaborative platform that treats small software
+more like a document than a traditional software project. A user should be able to create
+or upload a small application without preparing deployment configuration; publish it as a
+live application without understanding its underlying code; share it with others using
+simple permissions; let others use, remix, or improve it; see what changed between versions
+without reading source-code diffs; propose improvements without immediately changing the
+version that others are using; and roll back when necessary.
+
+The higher-order goal is therefore not simply to automate deployment. It is to make
+\textbf{small, bespoke software a collaborative artifact}---something that can be created,
+shared, improved, and governed with the same ease that people currently associate with
+documents.
+
+% -------------------------------------------------------
 \section{Time-to-value %
 \BvrHint{\ldots primary heuristic}}
 \begin{itemize}[leftmargin=0.7cm]
-    \item We will deliver meaningful increments quickly by prototyping the core user workflow and validating it with users within a short iteration window.
-    \item We will prioritize fast feedback over perfection by using weekly iterations (and targeting CI-backed automation early) to reduce release friction.
-    \item Success is defined by what can be delivered and measured in the first iteration, then improved based on user feedback.
+  \item We will prioritise the shortest path from application code to a useful shared
+    application: \textbf{Upload $\to$ Build $\to$ Publish $\to$ Share $\to$ Use
+    $\to$ Remix $\to$ Review $\to$ Promote.}
+  \item We will deliver meaningful increments quickly. The first iteration establishes
+    the core loop; subsequent iterations add the collaborative governance layer on top
+    of a working deployment.
+  \item We will prioritise fast feedback over perfection by using weekly iterations
+    with CI-backed automation from week~1 to reduce release friction.
+  \item Success is defined by what can be delivered and measured in the first iteration,
+    then improved based on user feedback. Specifically: a non-technical user uploads
+    AI-generated code, receives a live URL, and shares it with a colleague---without
+    either person writing a line of configuration.
 \end{itemize}
 
+% -------------------------------------------------------
 \section{Problem Statement}
-Citizens in a tier-2/3 Indian city face delays and uncertainty when reporting local issues (e.g., streetlight outages, water leakage, garbage accumulation, road potholes). Common pain points include:
+
+AI-assisted coding has reduced the cost of producing software. A person who needs a small
+application can often generate one without formal software-development expertise. However,
+the surrounding workflow remains designed for conventional software projects. A generated
+application may contain several files but no deployment configuration, no reliable
+dependency specification, no declared runtime, no known entry point, and no versioning
+workflow suitable for non-developers. Consequently, many useful applications remain local
+artefacts on a developer's laptop. The problem is not only deployment. There is also a
+\emph{collaboration gap}:
+
 \begin{itemize}[leftmargin=0.7cm]
-    \item \textbf{Fragmentation:} complaints are often made via multiple channels (calls, social media, paper forms), causing lost context.
-    \item \textbf{Low transparency:} citizens cannot easily see the status of their complaint (e.g., ``received'', ``assigned'', ``in progress'', ``resolved'').
-    \item \textbf{Slow coordination:} departments/field teams lack a unified, trackable workflow with clear ownership.
-    \item \textbf{Poor data quality:} duplicate or incomplete reports force rework and extend resolution time.
+  \item \textbf{No deployment path:} A user who can prompt an AI cannot write a
+    Dockerfile or configure a reverse proxy. The app dies on the laptop it was born on.
+  \item \textbf{No sharing model:} Sharing an application means sending source files,
+    configuring a repository, and explaining how to run it---none of which are realistic
+    for the people who benefit most from the tool.
+  \item \textbf{No comprehensible change review:} When a colleague proposes an
+    improvement, the owner is shown a source-code diff.
+    A change such as \texttt{+~requests.post(\ldots)} does not communicate its practical
+    significance. A more useful review would say:
+    \emph{Added: sends data to \texttt{api.example.com}.
+    Change type: capability-expanding.}
+  \item \textbf{No safe update model:} There is no structured way to submit an
+    improvement, review what changed in terms of what the application can now do, and
+    publish the new version without unexpectedly breaking the version colleagues are
+    already using.
+  \item \textbf{No governance:} There is no audit trail, no revocation mechanism, and
+    no administrator view of what internal tools exist or what they can access.
 \end{itemize}
 
-\textbf{Why this matters now (contextual relevance):} In an urban setting with limited staff bandwidth, even small process improvements can noticeably reduce resolution delays and repeated submissions.
+\textbf{Why this matters now:} AI-generated internal tooling is already proliferating
+informally inside organisations. The platform to make it collaborative and governable does
+not exist. Silo sits between AI-assisted software creation and everyday software use.
 
+% -------------------------------------------------------
 \section{Proposed Solution %
 \BvrHint{\ldots Software Proposition}}
+
 \subsection{Overview}
-Build a \textbf{web-based} ``Grievance-to-Resolution'' system with the following components:
+
+Build \textbf{Silo}---a web platform for publishing, sharing, and collaboratively evolving
+small applications. The central product metaphor is \textbf{Google Docs for small
+software.} The system combines four major capabilities:
+
 \begin{itemize}[leftmargin=0.7cm]
-    \item \textbf{Citizen submission portal:} users submit an issue with photo (optional), category, and locality/ward.
-    \item \textbf{Automated triage:} basic duplicate detection and completeness checks.
-    \item \textbf{Department workflow:} assign issues to relevant department/team and update statuses.
-    \item \textbf{Status transparency:} citizens track status and receive notifications when resolved.
-    \item \textbf{Admin/ops dashboard:} performance summaries (resolution time, backlog).
+  \item \textbf{Application publishing:} convert an application bundle into a working,
+    hosted application with zero manual configuration.
+  \item \textbf{Application understanding:} analyse the application and present a
+    human-readable capability summary of what it requires and what it can access.
+  \item \textbf{Software collaboration:} share applications using simple roles
+    (Viewer\,/\,User\,/\,Forker\,/\,Editor\, /\,Owner); share via link exactly as one
+    would share a document.
+  \item \textbf{Capability-aware versioning:} allow applications to be remixed and
+    updated while showing owners the meaningful capability changes between versions
+    before a new version becomes the shared one.
 \end{itemize}
+
+The product has three surfaces: (1)~\textbf{Owner view}---upload code, receive a live
+URL and a plain-English capability label, share via a dialog identical in feel to sharing
+a Google Doc; (2)~\textbf{Recipient view}---open the link, see the capability summary,
+use the application, optionally remix or propose an edit;
+(3)~\textbf{Admin/org view}---all live applications, current permissions, pending reviews,
+and one-click revoke.
 
 \subsection{Core workflow}
 \begin{enumerate}[leftmargin=0.7cm]
-    \item Citizen creates a complaint and receives a complaint ID immediately.
-    \item System validates completeness and suggests possible duplicates (lightweight similarity on text/category and approximate location).
-    \item Department staff update status (Received $\rightarrow$ Assigned $\rightarrow$ In Progress $\rightarrow$ Resolved).
-    \item Citizen views status updates and resolution notes.
+  \item User uploads AI-generated code (file or zip). Silo infers the runtime, resolves
+    dependencies, locates the entry point, and deploys to a live subdomain URL
+    automatically.
+  \item Static analysis runs. A capability manifest is produced and a plain-English
+    nutrition label is generated from it.
+  \item Owner reviews the label, approves, and shares a link with a role.
+  \item Recipient opens the link, sees the capability summary, and uses the running
+    application.
+  \item A forker or editor uploads an improved version. Silo produces the
+    \emph{capability diff}---what this version can do that the current approved version
+    cannot. The owner approves or rejects the diff, not the code.
+  \item If approved, the stable application URL is atomically promoted to the new
+    version. The previous version remains available for rollback.
 \end{enumerate}
 
-\subsection{Operational constraints for an educational, tier-2/3 setting}
+\subsection{Operational constraints for an educational setting}
 \begin{itemize}[leftmargin=0.7cm]
-    \item Keep the solution usable on low-to-mid range devices via responsive web design.
-    \item Avoid dependence on advanced research algorithms; focus on workflow, automation, and system correctness.
-    \item Design for deployability using common web hosting and managed databases.
+  \item Single-VM deployment (Hetzner\,/\,Oracle free tier)---cost-free throughout.
+  \item No proprietary cloud dependencies; all components self-hostable.
+  \item Evaluation against a hand-built set of 10 representative applications generated
+    using AI coding tools, covering diverse use cases.
 \end{itemize}
 
+% -------------------------------------------------------
 \section{Solution Approach %
 \BvrHint{\ldots Engineering focus}}
-This is an engineering course project, so we focus on scalable administrative and workflow aspects rather than novel algorithm research.
 
-\subsection{Duplicate/quality assistance %
+This is an engineering course project. The contribution is a novel composition of mature
+components into a deployment-and-collaboration layer that does not currently exist,
+evaluated against a representative set of AI-generated applications.
+
+\subsection{Build inference engine %
 \BvrHint{\ldots non-research}}
-Duplicate detection will be heuristic-based:
+
+The build inference engine accepts an application bundle with no deployment configuration
+and determines everything required to run it:
+
 \begin{itemize}[leftmargin=0.7cm]
-    \item Normalize text (category + short description keywords).
-    \item Use a simple similarity measure (e.g., token overlap / TF-IDF cosine with threshold) without claiming state-of-the-art.
-    \item Show top candidate duplicates to staff for decision; never fully auto-delete or auto-reject.
+  \item Detect language and runtime version from syntax
+    (e.g.\ \texttt{match}/\texttt{case} $\Rightarrow$ Python~$\geq$~3.10).
+  \item Resolve import names to installable package names
+    (\texttt{cv2}~$\to$~\texttt{opencv-python},
+     \texttt{PIL}~$\to$~\texttt{Pillow},
+     \texttt{sklearn}~$\to$~\texttt{scikit-learn}).
+  \item Locate the entry point and bound port, including auto-repair of the common
+    \texttt{127.0.0.1} binding that makes AI-generated apps unreachable inside a
+    container.
+  \item On build failure, apply bounded deterministic repair (max 3~attempts) and
+    surface structured diagnostics.
 \end{itemize}
+
+The same tree-sitter parse that identifies the entry point provides the import list for
+the capability analyser, so the two components share a single parse pass.
+
+\subsection{Capability analysis and nutrition label %
+\BvrHint{\ldots non-research}}
+
+Capability detection is entirely deterministic---the LLM never decides safety:
+
+\begin{itemize}[leftmargin=0.7cm]
+  \item Semgrep rules target known sink patterns: socket calls, \texttt{open()},
+    \texttt{subprocess}, \texttt{os.environ}, \texttt{requests}, \texttt{fetch}.
+  \item Findings are normalised to canonical capability tuples. The \texttt{sha256}
+    of the sorted tuple set is the manifest digest---a signed fingerprint of what this
+    version can do.
+  \item An LLM call converts the manifest to a plain-English nutrition label. Its only
+    role is explanation; it cannot alter the findings.
+\end{itemize}
+
+\subsection{Capability diff and version approval %
+\BvrHint{\ldots non-research}}
+
+When a new version is submitted, its manifest is diffed against the currently approved
+manifest. Each changed capability is classified as \textbf{neutral}, \textbf{reducing}
+(fewer permissions), or \textbf{expanding} (new permissions). The owner reviews only
+the diff---what this version is asking for that the current version does not have---and
+approves or rejects it. The unit of review is the permission change, not the code.
 
 \subsection{Web architecture %
 \BvrHint{\ldots web-based solution}}
-A typical 3-tier web architecture:
+
+A standard 3-tier architecture:
+
 \begin{itemize}[leftmargin=0.7cm]
-    \item \textbf{Frontend:} responsive UI for citizens and staff (status pages, submission form, dashboard).
-    \item \textbf{Backend API:} authentication, complaint submission, status transitions, assignment logic.
-    \item \textbf{Database:} store users, complaints, status history, attachments metadata.
+  \item \textbf{Frontend:} Next.js + TypeScript + Tailwind---application workspace,
+    nutrition-label/approval view, share dialog, version history, review interface,
+    org dashboard.
+  \item \textbf{Backend API:} FastAPI (Python) + Pydantic---build orchestration,
+    analysis pipeline, version management, ACL enforcement, audit logging.
+  \item \textbf{Database:} PostgreSQL---applications, versions, manifests,
+    capabilities, approvals, access grants, audit log.
+  \item \textbf{Container runtime:} Docker + gVisor (\texttt{runsc}) for syscall
+    isolation and resource limits.
+  \item \textbf{Reverse proxy:} Caddy---automatic TLS, dynamic per-app subdomain
+    routing.
+  \item \textbf{Object storage:} MinIO (S3-compatible, self-hosted) for application
+    bundles and build artefacts.
+  \item \textbf{Authentication:} Google OAuth.
 \end{itemize}
+
+\begin{figure}[h]
+\centering
+\begin{verbatim}
++--------------------------------------------------+
+|           Silo Web App  (Next.js)                |
+|  Workspace . Share . Review . Admin Dashboard    |
++----------------------+---------------------------+
+                       | REST / JSON
+           +-----------+---------------------------+
+           |      FastAPI Control Plane             |
+           |  Auth . Apps . Versions . ACLs        |
+           |  Capability Diff . Audit Log          |
+           +-----------+-----------+---------------+
+                       |           |
+               +-------+----+ +----+--------+
+               | PostgreSQL | | Object Store|
+               | system of  | | app bundles |
+               | record     | | (MinIO)     |
+               +-------+----+ +-------------+
+                       |
+               +-------+--------+
+               | Build & Analysis|
+               | Pipeline        |
+               | infer -> build  |
+               | analyse -> diff |
+               +-------+--------+
+                       |
+               +-------+--------+
+               | App Runtime    |
+               | Docker+gVisor  |
+               | Caddy routing  |
+               +----------------+
+\end{verbatim}
+\caption{Silo system architecture}
+\end{figure}
 
 \subsection{CI/CD and fast delivery enabler}
-CI/CD will be used to:
+
+GitHub Actions will:
 \begin{itemize}[leftmargin=0.7cm]
-    \item Automatically build and run tests on every change.
-    \item Produce repeatable deployment artifacts to staging.
-    \item Enable safe and frequent releases of incremental features.
+  \item Automatically build and run tests on every change (unit tests, Semgrep rule
+    tests, golden-file tests for the normaliser).
+  \item Produce repeatable deployment artefacts to staging.
+  \item Enable safe and frequent releases of incremental features throughout the
+    15-week project.
 \end{itemize}
 
+% -------------------------------------------------------
 \section{Evaluation Criterion %
 \BvrHint{\ldots measurable and attributable}}
+
 We define success using measurable metrics tied to the core workflow.
 
 \subsection{Primary evaluation metric}
-\textbf{Time-to-acknowledgement (TTA):} time between complaint submission and ``Received/Assigned'' status creation in the system.
+
+\textbf{Build success rate on the evaluation set:} percentage of the 10 hand-built
+evaluation applications that deploy with zero user configuration on the first attempt.
+
 \begin{itemize}[leftmargin=0.7cm]
-    \item Target: median TTA $\le$ 2 hours during pilot window.
-    \item Attribution: measured from database timestamps (submission vs. first status update by staff).
+  \item \textbf{Target:} $\geq$~8 of 10 applications deploy first-attempt;
+    all 10 deploy after at most one auto-repair pass.
+  \item \textbf{Attribution:} measured from build logs; each failure is categorised
+    (port binding, import resolution, missing entry point, etc.) and a fix is
+    documented.
+  \item \textbf{Evaluation set:} 10 applications built using AI coding tools
+    (Lovable, Claude, Cursor), covering diverse use cases---dashboard, data-upload
+    tool, calculator, CRUD form, CSV analyser, reporting tool, internal tracker,
+    API client, multi-step workflow, and simple game---so the set exercises the full
+    range of build inference cases.
 \end{itemize}
 
 \subsection{Secondary evaluation metrics}
 \begin{itemize}[leftmargin=0.7cm]
-    \item \textbf{Resolution time reduction:} reduce time-to-resolved compared to baseline process (even if baseline is collected via survey).
-    \item \textbf{Duplicate rate:} percentage of complaints flagged as duplicates and resolved without rework.
-    \item \textbf{User clarity:} citizen-reported clarity of status using a simple 1--5 feedback question.
-    \item \textbf{Reliability:} availability of staging/production for login and submission during business hours (e.g., $\ge$ 99\% uptime in pilot).
+  \item \textbf{Capability-diff accuracy:} for each of the 10 evaluation apps, a
+    second version with a known added capability (e.g.\ an outbound network call) is
+    produced; Silo's classifier must identify it as capability-expanding.
+    Target: 10 of 10 correctly classified.
+  \item \textbf{Review comprehension:} 5 non-expert participants are shown two
+    capability labels---one neutral diff, one expanding diff---and asked which version
+    requests new access. Target: $\geq$~4 of 5 correct.
+  \item \textbf{Time-to-publish (TTP):} median elapsed time from application upload
+    to live, shareable URL. Target: $\leq$~2 minutes.
+  \item \textbf{Cold-start latency:} p50 and p95 from idle container to first HTTP
+    response.
+  \item \textbf{Collaboration completion rate:} percentage of participants who
+    successfully complete the full loop---open a shared app, remix it, make a change,
+    submit it, read the capability diff, and propose it upstream.
 \end{itemize}
 
 \subsection{Pilot validation plan %
 \BvrHint{\ldots high-level}}
 \begin{itemize}[leftmargin=0.7cm]
-    \item Recruit 10--20 pilot users (citizens) and 3--5 staff roles (department simulation if real staff unavailable).
-    \item Compare metrics before/after within the iteration window by logging baseline estimates via short interviews or existing process observations.
+  \item 10 evaluation applications are built using AI coding tools in week~12,
+    covering the use cases listed above. Applications are fixed at that point---no
+    changes after evaluation begins.
+  \item Capability diff test pairs are produced independently: for each app, a second
+    version with one known added capability is created and labelled before Silo's
+    classifier runs.
+  \item Recruit 5 non-expert participants (from non-CS departments) for the review
+    comprehension study in week~14.
+  \item Metrics are recorded from system logs and study responses; no post-hoc
+    adjustments.
 \end{itemize}
 
+% -------------------------------------------------------
 \section{Scalability %
 \BvrHint{\ldots with foresight}}
+
 The proposition should scale in both theoretical and practical senses.
 
 \begin{enumerate}[leftmargin=0.7cm]
-    \item \textbf{Scalable (theoretically):} The system should support growth in number of complaints and concurrent dashboard usage by:
+  \item \textbf{Scalable (theoretically):} The system supports growth in deployed
+    applications and concurrent users by:
     \begin{itemize}[leftmargin=0.7cm]
-        \item decoupling components (frontend/backend),
-        \item enabling pagination and indexing for common queries,
-        \item using stateless API design.
+      \item decoupling build/analysis workers from the API server,
+      \item using immutable versioned artefacts content-addressed by \texttt{sha256},
+      \item stateless API design with PostgreSQL as the single source of truth.
     \end{itemize}
-    
-    \item \textbf{Operationally deployable (practically):} The system should run on common web hosting:
+
+  \item \textbf{Operationally deployable (practically):} The system runs on a single
+    VM:
     \begin{itemize}[leftmargin=0.7cm]
-        \item managed database,
-        \item containerized or platform-hosted deployment,
-        \item CI/CD pipeline for staging/production.
+      \item PostgreSQL for persistent state,
+      \item Docker + gVisor for container isolation,
+      \item Caddy for automatic TLS and subdomain routing,
+      \item GitHub Actions for CI/CD to staging and production.
     \end{itemize}
+    Scale-to-zero for idle containers prevents resource exhaustion as application
+    count grows.
 \end{enumerate}
 
+% -------------------------------------------------------
 \section{Engine availability heuristic}
-A mature set of ``engines'' (tooling/services) is available to implement this as a web-based project:
-\begin{itemize}[leftmargin=0.7cm]
-    \item Web framework for REST APIs and templated/reactive pages.
-    \item Managed relational or document database.
-    \item Authentication approach (token-based or session-based).
-    \item Object storage for optional attachments (or local storage for pilot).
-    \item Test framework for unit/integration tests.
-    \item CI runner and staging deployment target.
-\end{itemize}
-We will use these mature components to focus on workflow design, correctness, and measurement rather than inventing new infrastructure.
 
+A mature set of ``engines'' (tooling/services) is available to implement this as a
+web-based project:
+
+\begin{itemize}[leftmargin=0.7cm]
+  \item \textbf{Container runtime and isolation:} Docker + gVisor (\texttt{runsc}).
+  \item \textbf{Reverse proxy / TLS:} Caddy (automatic certificate provisioning,
+    dynamic subdomain routing).
+  \item \textbf{Static analyser:} Semgrep (rule-based, deterministic, actively
+    maintained).
+  \item \textbf{AST parser:} tree-sitter (language-agnostic; shared parse pass for
+    build inference and capability analysis).
+  \item \textbf{Backend framework:} FastAPI + Pydantic.
+  \item \textbf{Frontend framework:} Next.js + TypeScript + Tailwind.
+  \item \textbf{Database:} PostgreSQL.
+  \item \textbf{Object storage:} MinIO (S3-compatible, self-hosted).
+  \item \textbf{Authentication:} Google OAuth.
+  \item \textbf{CI runner and staging:} GitHub Actions.
+\end{itemize}
+
+We will use these mature components to focus on workflow design, collaboration model
+correctness, and measurement---rather than inventing new infrastructure.
+
+% -------------------------------------------------------
 \section{Project scope and deliverables %
 \BvrHint{\ldots iteration-friendly}}
+
 \subsection{Initial deliverable %
-\BvrHint{\ldots first iteration}}
+\BvrHint{\ldots first iteration (Weeks 1--7)}}
+
 \begin{itemize}[leftmargin=0.7cm]
-    \item Citizen submission form + complaint ID generation
-    \item Staff workflow: update status and assignment
-    \item Citizen status page: view timeline/history
-    \item Basic logging and timestamps for TTA measurement
-    \item CI: build + backend unit tests + linting
-    \item CD to staging with a single command or pipeline job
+  \item Build inference for Python applications: language detection, import resolution,
+    entry-point detection, port auto-repair, bounded repair loop.
+  \item End-to-end deployment: code upload $\to$ container $\to$ live subdomain URL.
+  \item Application workspace: name, description, owner, current version, capability
+    summary.
+  \item Capability analysis pipeline: Semgrep rules $\to$ normalised manifest $\to$
+    nutrition label.
+  \item Basic sharing: viewer\,/\,user\,/\,forker\,/\,editor roles, link-based
+    access.
+  \item User authentication: Google OAuth.
+  \item CI: build pipeline + golden-file tests for normaliser + Semgrep rule tests.
+  \item CD to staging with a single pipeline job.
 \end{itemize}
 
-\subsection{Subsequent deliverables}
+\begin{table}[h]
+\centering
+\begin{tabular}{@{}p{1.8cm}p{5.8cm}p{5.6cm}@{}}
+\toprule
+\textbf{Weeks} & \textbf{Milestone} & \textbf{Exit criterion} \\
+\midrule
+1
+  & Project setup, auth, DB schema, CI/CD
+  & Login works; staging deploys on push \\
+2--3
+  & Build inference (Python): detect, install, run
+  & 5 test apps deploy without config \\
+4--5
+  & Capability analysis + nutrition label
+  & Manifest produced; label shown to owner \\
+6--7
+  & Share dialog + recipient view
+  & End-to-end loop demo on staging \\
+\bottomrule
+\end{tabular}
+\caption{Initial deliverable schedule}
+\end{table}
+
+\subsection{Subsequent deliverables (Weeks 8--15)}
+
 \begin{itemize}[leftmargin=0.7cm]
-    \item Lightweight duplicate suggestions with staff review
-    \item Notification layer (email/SMS optional in later iteration; can start with in-app notifications)
-    \item Admin dashboard for metrics and backlog
-    \item Improved search/filtering and indexed queries for scale readiness
+  \item Immutable versions + mutable alias routing: stable URL always points to
+    approved version.
+  \item Capability diff + classification + owner approval flow before any version
+    goes live.
+  \item Remix/fork workflow: independent copy with its own URL and permissions.
+  \item Propose-upstream workflow: forker submits a change; owner reviews capability
+    diff; approves or rejects.
+  \item Runtime enforcement: egress allowlist from approved manifest, gVisor syscall
+    policy, CPU/memory caps.
+  \item Audit log: every access, approval, and revoke---timestamped in PostgreSQL.
+  \item Org/admin dashboard: live applications, permissions, pending reviews,
+    one-click revoke.
+  \item Rollback: restore any previous approved version without rebuilding.
+  \item Scale-to-zero for idle containers.
+  \item Evaluation against 10-app set; review comprehension user study.
+  \item Node.js application support (stretch, week~15).
 \end{itemize}
 
+\begin{table}[h]
+\centering
+\begin{tabular}{@{}p{1.8cm}p{5.8cm}p{5.6cm}@{}}
+\toprule
+\textbf{Weeks} & \textbf{Milestone} & \textbf{Exit criterion} \\
+\midrule
+8--9
+  & Immutable versions + alias routing + capability diff + approval
+  & Owner approves diff; URL promotes to new version \\
+10--11
+  & Remix + propose-upstream workflow + rollback
+  & Full fork-and-propose loop demonstrated end-to-end \\
+12--13
+  & Runtime enforcement + org dashboard + audit log
+  & Blocked egress confirmed; admin view shows all apps \\
+14
+  & Scale-to-zero + evaluation (10-app set + user study)
+  & All metrics recorded; study complete \\
+15
+  & Report, documentation, demo video, buffer
+  & Final submission \\
+\bottomrule
+\end{tabular}
+\caption{Subsequent deliverables schedule}
+\end{table}
+
+% -------------------------------------------------------
 \section{Risks and mitigations}
+
 \begin{itemize}[leftmargin=0.7cm]
-    \item \textbf{Data privacy / consent:} minimize collected data; keep attachments optional; store only what is needed.
-    \item \textbf{Staff adoption:} provide an easy UI for status updates; keep workflow steps minimal; include shortcuts.
-    \item \textbf{Evaluation measurement ambiguity:} instrument timestamps and define clear status transitions before development begins.
-    \item \textbf{Operational issues in pilot:} use staging early; ensure CI/CD produces repeatable deployments.
+  \item \textbf{Build inference fails for unusual frameworks:} Limit initial support
+    to Python/Flask and Python/FastAPI; measure build success explicitly; produce
+    structured diagnostics on failure rather than an opaque error.
+  \item \textbf{Capability normalisation granularity:} if \texttt{/tmp/a.csv} and
+    \texttt{/tmp/b.csv} do not collapse to the same canonical capability value, every
+    push classifies as privilege-expanding and the diff feature becomes useless.
+    Mitigation: golden-file tests on the normaliser from week~6, before evaluation
+    apps are built.
+  \item \textbf{Evaluation set too easy:} if all 10 apps use identical patterns, the
+    evaluation does not exercise edge cases. Mitigation: deliberately span diverse use
+    cases (network-heavy, file-heavy, subprocess, no external access) when building
+    the set.
+  \item \textbf{Single-VM resource exhaustion:} each deployed app consumes memory;
+    the VM becomes unusable without scale-to-zero. Mitigation: scale-to-zero is
+    scheduled for week~14, before the evaluation window.
+  \item \textbf{Collaboration scope creep:} advanced social features can expand
+    indefinitely. Mitigation: prioritise the essential loop---remix $\to$ edit
+    $\to$ propose $\to$ review $\to$ promote---and defer everything else.
+  \item \textbf{Review comprehension study recruitment:} 5 non-expert participants
+    needed. Mitigation: recruit from non-CS departments in week~14; study is short
+    and structured.
 \end{itemize}
 
+% -------------------------------------------------------
 \section{Summary}
-This project proposes a deployable web platform to reduce grievance handling delays in a tier-2/3 city context. It meets the course criteria by emphasizing time-to-value through rapid iterations, implementing CI/CD to support frequent safe releases, and using measurable evaluation criteria (especially time-to-acknowledgement). It remains focused on engineering workflow and scalability readiness rather than research-driven novelty.
+
+AI has made the creation of small applications dramatically easier, but the surrounding
+software lifecycle remains unnecessarily technical. Silo addresses this gap by providing
+a platform where applications can be published without manual deployment configuration,
+shared through simple permissions, used directly from a persistent URL, remixed by other
+users, and updated through a capability-aware approval workflow that lets owners make
+informed decisions without reading source code.
+
+The project meets the course criteria by emphasising time-to-value through a working
+end-to-end deployment loop in the first iteration, implementing CI/CD with falsifiable
+evaluation metrics (build success rate and capability-diff accuracy against a hand-built
+10-app evaluation set), and remaining focused on engineering workflow and system
+correctness rather than research-driven novelty. The core claim---that a deterministic
+static analyser can produce a human-readable capability label, and that label can gate
+version promotion---is testable, measurable, and deliverable within 15~weeks.
+
+\bigskip
+\noindent\textbf{The goal is simple: if AI can make software as easily as people make
+documents, there should be a way to share and work on that software with the same ease.}
 
 \end{document}
