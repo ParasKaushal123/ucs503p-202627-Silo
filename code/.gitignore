@@ -4,6 +4,11 @@ __pycache__/
 *.egg-info/
 .venv/
 .uv/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+*.sqlite3
+test.db
 
 # Node
 node_modules/
@@ -15,8 +20,12 @@ node_modules/
 .env.local
 .env.*.local
 
-# Data
-data/
+# Silo runtime data — uploaded bundles, build locks, worker logs.
+# NOTE: this used to be a blanket "data/", which also excluded
+# apps/api/data/import_map.json and stdlib_modules.json. Those are source,
+# not runtime data, and the inference tests need them.
+.silo_data/
+apps/api/data/bundles/
 
 # IDE
 .vscode/

@@ -9,6 +9,7 @@ from sqlalchemy.orm import Session
 from ..config import settings
 from ..db import get_db
 from ..models import App
+from ..services import compose
 
 router = APIRouter(prefix="/apps", tags=["apps"])
 
@@ -54,6 +55,29 @@ def get_current_user_id(request: Request) -> str:
 def slugify(name: str) -> str:
     slug = re.sub(r"[^a-z0-9]+", "-", name.lower()).strip("-")
     return slug[:48] or "app"
+
+
+def _teardown(slug: str) -> None:
+    """Stop whatever this app left running.
+
+    An app may have been deployed either as a single container named
+    `silo-<slug>` or as a Compose project named `silo-<slug>`. Both are
+    attempted; neither existing is fine.
+    """
+    try:
+        compose.down(compose.project_name(slug))
+    except Exception:
+        pass
+
+    try:
+        import docker
+        client = docker.from_env()
+        try:
+            client.containers.get(f"silo-{slug}").remove(force=True)
+        except Exception:
+            pass
+    except Exception:
+        pass
 
 
 # ---------------------------------------------------------------------------
@@ -116,5 +140,20 @@ def delete_app(
     app = db.get(App, app_id)
     if not app or app.owner_id != user_id:
         raise HTTPException(404, "App not found")
+
+    _teardown(app.slug)
     db.delete(app)
+    db.commit()
+
+
+@router.delete("", status_code=204)
+def delete_all_apps(
+    user_id: str = Depends(get_current_user_id),
+    db: Session = Depends(get_db),
+):
+    """Delete every app belonging to the current user, stopping what they run."""
+    apps = list(db.scalars(select(App).where(App.owner_id == user_id)))
+    for app in apps:
+        _teardown(app.slug)
+        db.delete(app)
     db.commit()

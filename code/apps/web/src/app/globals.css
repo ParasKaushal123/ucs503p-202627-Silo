@@ -1,3 +1,27 @@
+@import url('https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+body {
+  font-family: 'Archivo', sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Silo design system overrides */
+* {
+  border-color: #000;
+}
+
+/* Scrollbar styling for drawers/panels */
+.silo-scroll::-webkit-scrollbar {
+  width: 4px;
+}
+.silo-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+.silo-scroll::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 1600px;
+}

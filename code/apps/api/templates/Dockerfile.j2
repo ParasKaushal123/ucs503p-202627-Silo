@@ -1,0 +1,16 @@
+FROM python:{{ python_version }}-slim
+
+WORKDIR /app
+
+{% if has_requirements_txt %}
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+{% elif packages %}
+RUN pip install --no-cache-dir {{ packages | join(' ') }}
+{% endif %}
+
+COPY . .
+
+EXPOSE {{ port }}
+
+CMD ["python", "{{ entrypoint }}"]
