@@ -41,12 +41,38 @@ DEFAULT_PORT = 8000
 
 # Directories that are never the app and must never be scanned or copied.
 IGNORE_DIRS = {
-    "__pycache__", ".git", ".hg", ".svn", ".idea", ".vscode",
-    "node_modules", ".next", "dist", "build", ".turbo",
-    "venv", ".venv", "env", ".env.d", "virtualenv", "site-packages",
-    "__MACOSX", ".pytest_cache", ".mypy_cache", ".ruff_cache",
-    "migrations", "alembic", "tests", "test", "docs", ".github",
-    "htmlcov", ".tox", "data", "static", "media",
+    "__pycache__",
+    ".git",
+    ".hg",
+    ".svn",
+    ".idea",
+    ".vscode",
+    "node_modules",
+    ".next",
+    "dist",
+    "build",
+    ".turbo",
+    "venv",
+    ".venv",
+    "env",
+    ".env.d",
+    "virtualenv",
+    "site-packages",
+    "__MACOSX",
+    ".pytest_cache",
+    ".mypy_cache",
+    ".ruff_cache",
+    "migrations",
+    "alembic",
+    "tests",
+    "test",
+    "docs",
+    ".github",
+    "htmlcov",
+    ".tox",
+    "data",
+    "static",
+    "media",
 }
 
 # Directories excluded from *entry point* search but still installed/copied.
@@ -54,8 +80,13 @@ NON_ENTRY_DIRS = {"tests", "test", "migrations", "alembic", "docs", "scripts", "
 
 # Files that mark a directory as a Python project root.
 PROJECT_MARKERS = (
-    "requirements.txt", "pyproject.toml", "Pipfile",
-    "setup.py", "setup.cfg", "Procfile", "environment.yml",
+    "requirements.txt",
+    "pyproject.toml",
+    "Pipfile",
+    "setup.py",
+    "setup.cfg",
+    "Procfile",
+    "environment.yml",
 )
 
 # Directory names that commonly hold the deployable service in a monorepo.
@@ -65,86 +96,164 @@ ENTRY_NAMES = ("main.py", "app.py", "server.py", "run.py", "wsgi.py", "asgi.py",
 
 # import name -> pip package name (only where they differ or need extras)
 IMPORT_TO_PACKAGE = {
-    "fastapi": "fastapi", "flask": "flask", "django": "django",
-    "starlette": "starlette", "uvicorn": "uvicorn[standard]",
-    "gunicorn": "gunicorn", "hypercorn": "hypercorn",
-    "streamlit": "streamlit", "gradio": "gradio", "dash": "dash",
-    "numpy": "numpy", "pandas": "pandas", "scipy": "scipy",
-    "sklearn": "scikit-learn", "torch": "torch", "tensorflow": "tensorflow",
-    "matplotlib": "matplotlib", "seaborn": "seaborn", "plotly": "plotly",
-    "PIL": "pillow", "cv2": "opencv-python-headless", "skimage": "scikit-image",
-    "requests": "requests", "httpx": "httpx", "aiohttp": "aiohttp",
-    "bs4": "beautifulsoup4", "lxml": "lxml", "selenium": "selenium",
-    "pydantic": "pydantic", "pydantic_settings": "pydantic-settings",
-    "sqlalchemy": "sqlalchemy", "alembic": "alembic",
-    "psycopg2": "psycopg2-binary", "psycopg": "psycopg[binary]",
-    "pymysql": "pymysql", "sqlite3": None, "pymongo": "pymongo",
-    "redis": "redis", "celery": "celery", "kombu": "kombu",
-    "jinja2": "jinja2", "markupsafe": "markupsafe",
-    "dotenv": "python-dotenv", "yaml": "pyyaml", "toml": "toml",
-    "jose": "python-jose[cryptography]", "jwt": "pyjwt",
-    "passlib": "passlib", "bcrypt": "bcrypt", "cryptography": "cryptography",
-    "authlib": "authlib", "multipart": "python-multipart",
-    "boto3": "boto3", "botocore": "botocore", "google": "google-cloud-storage",
-    "openai": "openai", "anthropic": "anthropic", "tiktoken": "tiktoken",
-    "langchain": "langchain", "transformers": "transformers",
-    "docker": "docker", "click": "click", "typer": "typer", "rich": "rich",
-    "pytest": None, "dateutil": "python-dateutil", "pytz": "pytz",
-    "orjson": "orjson", "ujson": "ujson", "websockets": "websockets",
-    "socketio": "python-socketio", "graphene": "graphene", "strawberry": "strawberry-graphql",
-    "tqdm": "tqdm", "joblib": "joblib", "statsmodels": "statsmodels",
-    "openpyxl": "openpyxl", "xlsxwriter": "xlsxwriter", "docx": "python-docx",
-    "fitz": "pymupdf", "pypdf": "pypdf", "reportlab": "reportlab",
-    "magic": "python-magic", "slugify": "python-slugify",
-    "email_validator": "email-validator", "httptools": "httptools",
-    "aiofiles": "aiofiles", "asyncpg": "asyncpg", "motor": "motor",
-    "apscheduler": "apscheduler", "schedule": "schedule",
-    "loguru": "loguru", "structlog": "structlog", "sentry_sdk": "sentry-sdk",
+    "fastapi": "fastapi",
+    "flask": "flask",
+    "django": "django",
+    "starlette": "starlette",
+    "uvicorn": "uvicorn[standard]",
+    "gunicorn": "gunicorn",
+    "hypercorn": "hypercorn",
+    "streamlit": "streamlit",
+    "gradio": "gradio",
+    "dash": "dash",
+    "numpy": "numpy",
+    "pandas": "pandas",
+    "scipy": "scipy",
+    "sklearn": "scikit-learn",
+    "torch": "torch",
+    "tensorflow": "tensorflow",
+    "matplotlib": "matplotlib",
+    "seaborn": "seaborn",
+    "plotly": "plotly",
+    "PIL": "pillow",
+    "cv2": "opencv-python-headless",
+    "skimage": "scikit-image",
+    "requests": "requests",
+    "httpx": "httpx",
+    "aiohttp": "aiohttp",
+    "bs4": "beautifulsoup4",
+    "lxml": "lxml",
+    "selenium": "selenium",
+    "pydantic": "pydantic",
+    "pydantic_settings": "pydantic-settings",
+    "sqlalchemy": "sqlalchemy",
+    "alembic": "alembic",
+    "psycopg2": "psycopg2-binary",
+    "psycopg": "psycopg[binary]",
+    "pymysql": "pymysql",
+    "sqlite3": None,
+    "pymongo": "pymongo",
+    "redis": "redis",
+    "celery": "celery",
+    "kombu": "kombu",
+    "jinja2": "jinja2",
+    "markupsafe": "markupsafe",
+    "dotenv": "python-dotenv",
+    "yaml": "pyyaml",
+    "toml": "toml",
+    "jose": "python-jose[cryptography]",
+    "jwt": "pyjwt",
+    "passlib": "passlib",
+    "bcrypt": "bcrypt",
+    "cryptography": "cryptography",
+    "authlib": "authlib",
+    "multipart": "python-multipart",
+    "boto3": "boto3",
+    "botocore": "botocore",
+    "google": "google-cloud-storage",
+    "openai": "openai",
+    "anthropic": "anthropic",
+    "tiktoken": "tiktoken",
+    "langchain": "langchain",
+    "transformers": "transformers",
+    "docker": "docker",
+    "click": "click",
+    "typer": "typer",
+    "rich": "rich",
+    "pytest": None,
+    "dateutil": "python-dateutil",
+    "pytz": "pytz",
+    "orjson": "orjson",
+    "ujson": "ujson",
+    "websockets": "websockets",
+    "socketio": "python-socketio",
+    "graphene": "graphene",
+    "strawberry": "strawberry-graphql",
+    "tqdm": "tqdm",
+    "joblib": "joblib",
+    "statsmodels": "statsmodels",
+    "openpyxl": "openpyxl",
+    "xlsxwriter": "xlsxwriter",
+    "docx": "python-docx",
+    "fitz": "pymupdf",
+    "pypdf": "pypdf",
+    "reportlab": "reportlab",
+    "magic": "python-magic",
+    "slugify": "python-slugify",
+    "email_validator": "email-validator",
+    "httptools": "httptools",
+    "aiofiles": "aiofiles",
+    "asyncpg": "asyncpg",
+    "motor": "motor",
+    "apscheduler": "apscheduler",
+    "schedule": "schedule",
+    "loguru": "loguru",
+    "structlog": "structlog",
+    "sentry_sdk": "sentry-sdk",
     "prometheus_client": "prometheus-client",
 }
 
-STDLIB = set(getattr(sys, "stdlib_module_names", set())) | {
-    "__future__", "typing_extensions",
-}
+STDLIB = set(getattr(sys, "stdlib_module_names", set())) | {"__future__"}
 
 
 @dataclass
 class BuildPlan:
     """Everything the Dockerfile generator needs."""
-    app_root: Path                      # directory used as the Docker build context
-    mode: str                           # script | uvicorn | gunicorn | streamlit | django | dockerfile
-    entry_file: str | None = None       # e.g. "app/main.py" (relative to app_root)
-    module_path: str | None = None      # e.g. "app.main"
-    app_var: str | None = None          # e.g. "app"
+
+    app_root: Path  # directory used as the Docker build context
+    mode: str  # script | uvicorn | gunicorn | streamlit | django | dockerfile
+    entry_file: str | None = None  # e.g. "app/main.py" (relative to app_root)
+    module_path: str | None = None  # e.g. "app.main"
+    app_var: str | None = None  # e.g. "app"
     port: int = DEFAULT_PORT
     python_version: str = "3.11"
     packages: list[str] = field(default_factory=list)
-    requirements: str | None = None     # relative path to requirements.txt
+    requirements: str | None = None  # relative path to requirements.txt
     notes: list[str] = field(default_factory=list)
 
     @property
     def start_command(self) -> list[str]:
         if self.mode == "uvicorn":
-            return ["uvicorn", f"{self.module_path}:{self.app_var}",
-                    "--host", "0.0.0.0", "--port", str(self.port)]
+            return [
+                "uvicorn",
+                f"{self.module_path}:{self.app_var}",
+                "--host",
+                "0.0.0.0",
+                "--port",
+                str(self.port),
+            ]
         if self.mode == "gunicorn":
-            return ["gunicorn", f"{self.module_path}:{self.app_var}",
-                    "--bind", f"0.0.0.0:{self.port}", "--workers", "2",
-                    "--timeout", "120"]
+            return [
+                "gunicorn",
+                f"{self.module_path}:{self.app_var}",
+                "--bind",
+                f"0.0.0.0:{self.port}",
+                "--workers",
+                "2",
+                "--timeout",
+                "120",
+            ]
         if self.mode == "streamlit":
-            return ["streamlit", "run", self.entry_file or "app.py",
-                    "--server.port", str(self.port),
-                    "--server.address", "0.0.0.0",
-                    "--server.headless", "true"]
+            return [
+                "streamlit",
+                "run",
+                self.entry_file or "app.py",
+                "--server.port",
+                str(self.port),
+                "--server.address",
+                "0.0.0.0",
+                "--server.headless",
+                "true",
+            ]
         if self.mode == "django":
-            return ["python", self.entry_file or "manage.py", "runserver",
-                    f"0.0.0.0:{self.port}"]
+            return ["python", self.entry_file or "manage.py", "runserver", f"0.0.0.0:{self.port}"]
         return ["python", self.entry_file or "app.py"]
 
 
 # ---------------------------------------------------------------------------
 # Step 1 — unwrap the zip
 # ---------------------------------------------------------------------------
+
 
 def find_project_root(bundle_dir: Path) -> Path:
     """Descend through pointless wrapper folders created by zipping a folder.
@@ -158,8 +267,13 @@ def find_project_root(bundle_dir: Path) -> Path:
         entries = [p for p in current.iterdir() if p.name not in {"__MACOSX", ".DS_Store"}]
         dirs = [p for p in entries if p.is_dir()]
         files = [p for p in entries if p.is_file()]
-        meaningful = [f for f in files if f.suffix in {".py", ".txt", ".toml", ".cfg"}
-                      or f.name in PROJECT_MARKERS or f.name == "Dockerfile"]
+        meaningful = [
+            f
+            for f in files
+            if f.suffix in {".py", ".txt", ".toml", ".cfg"}
+            or f.name in PROJECT_MARKERS
+            or f.name == "Dockerfile"
+        ]
         if len(dirs) == 1 and not meaningful:
             current = dirs[0]
         else:
@@ -171,10 +285,11 @@ def find_project_root(bundle_dir: Path) -> Path:
 # Step 2 — find the directory that is actually the Python service
 # ---------------------------------------------------------------------------
 
+
 def _walk(root: Path):
     """Yield files under root, skipping ignored directories."""
     for p in root.rglob("*"):
-        if any(part in IGNORE_DIRS for part in p.parts[len(root.parts):]):
+        if any(part in IGNORE_DIRS for part in p.parts[len(root.parts) :]):
             continue
         yield p
 
@@ -201,8 +316,7 @@ def _score_root(candidate: Path, project_root: Path) -> int:
     depth = len(candidate.relative_to(project_root).parts)
     score -= depth * 6
     # Reward actual Python content
-    py_count = sum(1 for p in candidate.rglob("*.py")
-                   if not any(x in IGNORE_DIRS for x in p.parts))
+    py_count = sum(1 for p in candidate.rglob("*.py") if not any(x in IGNORE_DIRS for x in p.parts))
     score += min(py_count, 20)
     return score
 
@@ -262,9 +376,11 @@ def _analyse_module(path: Path) -> dict:
         # if __name__ == "__main__":
         if isinstance(node, ast.If):
             test = node.test
-            if (isinstance(test, ast.Compare)
-                    and isinstance(test.left, ast.Name)
-                    and test.left.id == "__name__"):
+            if (
+                isinstance(test, ast.Compare)
+                and isinstance(test.left, ast.Name)
+                and test.left.id == "__name__"
+            ):
                 info["has_main_guard"] = True
 
         # app = FastAPI(...) / app = Flask(__name__)
@@ -371,8 +487,11 @@ def detect_entry(app_root: Path) -> tuple[Path | None, dict, str]:
     analysed.sort(key=rank, reverse=True)
     best, info = analysed[0]
     rel = best.relative_to(app_root)
-    reason = f"{rel} (framework instance)" if (info["asgi_var"] or info["wsgi_var"]) \
+    reason = (
+        f"{rel} (framework instance)"
+        if (info["asgi_var"] or info["wsgi_var"])
         else f"{rel} (standard name / __main__ guard)"
+    )
     return best, info, reason
 
 
@@ -392,6 +511,7 @@ def choose_mode(entry: Path, info: dict, app_root: Path) -> str:
 # ---------------------------------------------------------------------------
 # Step 5 — dependencies
 # ---------------------------------------------------------------------------
+
 
 def _local_module_names(app_root: Path) -> set[str]:
     """Top-level names that resolve to files/packages inside the project.
@@ -433,8 +553,9 @@ def find_requirements(app_root: Path) -> str | None:
     direct = app_root / "requirements.txt"
     if direct.exists():
         return "requirements.txt"
-    for p in sorted(app_root.rglob("requirements*.txt"),
-                    key=lambda x: len(x.relative_to(app_root).parts)):
+    for p in sorted(
+        app_root.rglob("requirements*.txt"), key=lambda x: len(x.relative_to(app_root).parts)
+    ):
         rel = p.relative_to(app_root)
         if any(part in IGNORE_DIRS for part in rel.parts):
             continue
@@ -465,9 +586,17 @@ def resolve_packages(app_root: Path, mode: str, has_requirements: bool) -> list[
         pkgs.add("streamlit")
 
     if has_requirements:
-        # requirements.txt is authoritative; only add the server if missing.
-        keep = {p for p in pkgs if p.split("[")[0] in {"uvicorn", "gunicorn", "streamlit"}}
-        return sorted(keep)
+        # Preserve declared pins; fill only genuinely missing import dependencies.
+        requirements = find_requirements(app_root)
+        declared = set()
+        if requirements:
+            for line in (app_root / requirements).read_text(errors="ignore").splitlines():
+                match = re.match(r"\s*([A-Za-z0-9_.-]+)", line)
+                if match:
+                    declared.add(re.sub(r"[-_.]+", "-", match.group(1)).lower())
+        return sorted(
+            p for p in pkgs if re.sub(r"[-_.]+", "-", p.split("[")[0]).lower() not in declared
+        )
 
     return sorted(pkgs)
 
@@ -489,7 +618,9 @@ def detect_python_version(app_root: Path) -> str:
     # honour an explicit declaration
     pyproject = app_root / "pyproject.toml"
     if pyproject.exists():
-        m = re.search(r'requires-python\s*=\s*"[^0-9]*(\d+)\.(\d+)', pyproject.read_text(errors="ignore"))
+        m = re.search(
+            r'requires-python\s*=\s*"[^0-9]*(\d+)\.(\d+)', pyproject.read_text(errors="ignore")
+        )
         if m:
             return f"{m.group(1)}.{m.group(2)}"
     return version
@@ -499,8 +630,11 @@ def detect_port(app_root: Path, entry: Path | None, info: dict) -> int:
     if info.get("port"):
         return int(info["port"])
     search_files = [entry] if entry else []
-    search_files += [p for p in app_root.rglob("*.py")
-                     if not any(x in IGNORE_DIRS for x in p.relative_to(app_root).parts)][:60]
+    search_files += [
+        p
+        for p in app_root.rglob("*.py")
+        if not any(x in IGNORE_DIRS for x in p.relative_to(app_root).parts)
+    ][:60]
     patterns = [
         r"\.run\([^)]*port\s*=\s*(\d{2,5})",
         r"uvicorn\.run\([^)]*port\s*=\s*(\d{2,5})",
@@ -555,6 +689,7 @@ def repair_host_binding(app_root: Path) -> list[str]:
 # ---------------------------------------------------------------------------
 # Put it all together
 # ---------------------------------------------------------------------------
+
 
 def make_plan(bundle_dir: Path) -> BuildPlan:
     project_root = find_project_root(bundle_dir)
@@ -639,9 +774,22 @@ node_modules/
 
 # Packages that commonly have no prebuilt wheel and need a C compiler.
 NEEDS_COMPILER = (
-    "psycopg2", "mysqlclient", "lxml", "pyodbc", "uwsgi", "python-ldap",
-    "pycurl", "cryptography", "pillow-simd", "numpy==", "scipy==",
-    "cffi", "gevent", "confluent-kafka", "python-snappy", "pyarrow==",
+    "psycopg2",
+    "mysqlclient",
+    "lxml",
+    "pyodbc",
+    "uwsgi",
+    "python-ldap",
+    "pycurl",
+    "cryptography",
+    "pillow-simd",
+    "numpy==",
+    "scipy==",
+    "cffi",
+    "gevent",
+    "confluent-kafka",
+    "python-snappy",
+    "pyarrow==",
 )
 
 
@@ -650,10 +798,12 @@ def _needs_compiler(plan: "BuildPlan") -> bool:
     names = [p.lower() for p in plan.packages]
     if plan.requirements:
         try:
-            text = (plan.app_root / plan.requirements).read_text(
-                encoding="utf-8", errors="ignore")
-            names += [ln.strip().lower() for ln in text.splitlines()
-                      if ln.strip() and not ln.startswith("#")]
+            text = (plan.app_root / plan.requirements).read_text(encoding="utf-8", errors="ignore")
+            names += [
+                ln.strip().lower()
+                for ln in text.splitlines()
+                if ln.strip() and not ln.startswith("#")
+            ]
         except Exception:
             pass
     return any(marker in n for n in names for marker in NEEDS_COMPILER)
