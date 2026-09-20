@@ -13,6 +13,7 @@ interface Props {
   failed: boolean;
   buildProgress: string;
   proxyUrl: string;
+  html?: string;
   onReload: () => void;
   onCopyUrl: () => void;
 }
@@ -27,6 +28,7 @@ export default function StagePreview({
   failed,
   buildProgress,
   proxyUrl,
+  html,
   onReload,
   onCopyUrl,
 }: Props) {
@@ -62,8 +64,8 @@ export default function StagePreview({
           <div className="w-64 mx-auto">
             <div className="h-2 border border-black rounded-pill overflow-hidden bg-neutral-200">
               <div
-                className="h-full bg-silo-yellow transition-all duration-500"
-                style={{ width: buildProgress }}
+                className="h-full bg-silo-yellow transition-all duration-500 animate-pulse"
+                style={{ width: buildProgress.endsWith("%") ? buildProgress : "45%" }}
               />
             </div>
             <div className="text-xs text-neutral-500 mt-2">{buildProgress}</div>
@@ -83,10 +85,11 @@ export default function StagePreview({
         <iframe
           ref={iframeRef}
           key={iframeKey}
-          src={proxyUrl}
+          src={html ? undefined : proxyUrl}
+          srcDoc={html || undefined}
           className="absolute inset-0 w-full h-full border-0"
           title={`${appName} preview`}
-          sandbox="allow-scripts allow-forms allow-same-origin allow-popups"
+          sandbox={html ? "allow-scripts" : "allow-scripts allow-forms allow-same-origin allow-popups"}
         />
       ) : (
         /* No live version */

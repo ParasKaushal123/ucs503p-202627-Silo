@@ -8,6 +8,7 @@ interface Props {
   status: string;
   onBack: () => void;
   onWorkbench: () => void;
+  onSecurity: () => void;
   onTogglePanel: () => void;
   panelOpen: boolean;
   deployLabel: string;
@@ -27,6 +28,7 @@ export default function RoomHeader({
   status,
   onBack,
   onWorkbench,
+  onSecurity,
   onTogglePanel,
   panelOpen,
   deployLabel,
@@ -79,6 +81,10 @@ export default function RoomHeader({
       </div>
 
       <div className="flex-1" />
+
+      <PillButton variant="secondary" size="sm" onClick={onSecurity}>
+        Security track
+      </PillButton>
 
       <PillButton variant="secondary" size="sm" onClick={onWorkbench}>
         Workbench

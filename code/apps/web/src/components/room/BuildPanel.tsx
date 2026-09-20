@@ -45,7 +45,7 @@ export default function BuildPanel({
           <div className="h-2 border border-black rounded-pill overflow-hidden bg-neutral-100">
             <div
               className="h-full transition-all duration-700"
-              style={{ width: progress, background: progressColor }}
+              style={{ width: progress.endsWith("%") ? progress : "45%", background: progressColor }}
             />
           </div>
         </div>

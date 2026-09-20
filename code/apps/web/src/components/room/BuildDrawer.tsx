@@ -103,7 +103,7 @@ export default function BuildDrawer({
               onView={onViewVersion}
             />
           ) : (
-            <div className="bg-neutral-900 text-neutral-100 p-4 min-h-full font-mono text-xs leading-relaxed">
+            <div className="bg-neutral-50 text-neutral-900 p-4 min-h-full font-mono text-xs leading-relaxed">
               {logs.length === 0 ? (
                 <div className="text-neutral-500 text-center py-8">
                   No build logs yet. Deploy a version to see logs.

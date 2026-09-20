@@ -1,11 +1,12 @@
 "use client";
 
-import { useEffect, useState, useCallback, useRef } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
-import { api, proxyUrl } from "@/lib/api";
+import { api } from "@/lib/api";
+import { request } from "@/lib/workspace";
 import type { App, Version } from "@/lib/types";
-import { appColor, SCRIPT_OK, SCRIPT_FAIL } from "@/lib/mockData";
+import { appColor } from "@/lib/mockData";
 import RoomHeader from "@/components/room/RoomHeader";
 import StagePreview from "@/components/room/StagePreview";
 import BuildDrawer from "@/components/room/BuildDrawer";
@@ -19,14 +20,6 @@ interface LogEntry {
   timestamp: string;
   level: string;
   message: string;
-}
-
-function clock(i: number): string {
-  const base = 14 * 3600 + 22 * 60 + 5 + i * 7;
-  const h = String(Math.floor(base / 3600)).padStart(2, "0");
-  const m = String(Math.floor(base / 60) % 60).padStart(2, "0");
-  const s = String(base % 60).padStart(2, "0");
-  return `${h}:${m}:${s}`;
 }
 
 export default function AppRoom() {
@@ -48,11 +41,10 @@ export default function AppRoom() {
   const [viewingId, setViewingId] = useState<string | null>(null);
   const [toast, setToast] = useState<string | null>(null);
 
-  // Deploy simulation state
+  // Actual upload and deployment state
   const [deployState, setDeployState] = useState<"idle" | "deploying" | "deployed" | "failed">("idle");
   const [logs, setLogs] = useState<LogEntry[]>([]);
-  const logTimer = useRef<ReturnType<typeof setInterval>>();
-  const doneTimer = useRef<ReturnType<typeof setTimeout>>();
+  const [preview, setPreview] = useState<{ url: string; html?: string } | null>(null);
 
   // Upload modal
   const [showUpload, setShowUpload] = useState(false);
@@ -68,6 +60,15 @@ export default function AppRoom() {
       ]);
       setApp(appData);
       setVersions(versionData);
+      const active = viewingId ? versionData.find(v => v.id === viewingId) : versionData[0];
+      setDeployState(active?.status === "building" || active?.status === "pending" ? "deploying" : active?.status === "failed" ? "failed" : active?.status === "live" ? "deployed" : "idle");
+      if (active) {
+        const records = await request(`/versions/${active.id}/logs`);
+        setLogs(records.map((line: any) => ({ id: line.id, timestamp: new Date(line.created_at).toLocaleTimeString(), level: line.level, message: `[${line.phase}] ${line.message}` })));
+      } else setLogs([]);
+      try {
+        setPreview(await request(`/apps/${id}/preview${viewingId ? `?version_id=${viewingId}` : ""}`));
+      } catch { setPreview(null); }
       setError(null);
     } catch (err) {
       if (err instanceof Error && err.message.includes("404")) {
@@ -78,7 +79,7 @@ export default function AppRoom() {
     } finally {
       setLoading(false);
     }
-  }, [id]);
+  }, [id, viewingId]);
 
   useEffect(() => {
     if (!authLoading && !isAuthenticated) router.replace("/");
@@ -98,79 +99,56 @@ export default function AppRoom() {
     return () => clearInterval(interval);
   }, [versions, fetchData]);
 
-  // Cleanup timers
+  // Collaborators can publish from the shared Workbench; follow the live pointer.
+  const approvedId = app?.approved_version_id;
   useEffect(() => {
-    return () => {
-      clearInterval(logTimer.current);
-      clearTimeout(doneTimer.current);
-    };
-  }, []);
+    if (!id || !isAuthenticated || approvedId === undefined) return;
+    const interval = setInterval(async () => {
+      try {
+        const latest = await api.getApp(id);
+        if (latest.approved_version_id === approvedId) return;
+        await fetchData();
+        if (!viewingId) setToast("A new version was published. Showing it now.");
+      } catch { /* The next poll retries. */ }
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [id, isAuthenticated, approvedId, fetchData, viewingId]);
 
   const latestVersion = versions[0];
-  const currentStatus = latestVersion?.status ?? "draft";
+  const selectedVersion = versions.find(v => v.id === viewingId) || latestVersion;
+  const currentStatus = selectedVersion?.status ?? "draft";
   const liveVersion = versions.find((v) => v.status === "live");
 
-  // Deploy simulation
+  // Keep the original upload flow; display only backend status and actual logs.
   const deploy = async () => {
     if (!app || !uploadFile) return;
     setUploading(true);
     try {
-      await api.uploadVersion(app.id, uploadFile);
-      setShowUpload(false);
-      setUploadFile(null);
-      setUploading(false);
-
-      // Start simulated log output
-      setDeployState("deploying");
-      setLogs([]);
-      setDrawerTab("logs");
-      setDrawerOpen(true);
-
-      const script = SCRIPT_OK; // Real status comes from polling
-      let i = 0;
-      clearInterval(logTimer.current);
-      logTimer.current = setInterval(() => {
-        if (i >= script.length) {
-          clearInterval(logTimer.current);
-          return;
-        }
-        const [level, message] = script[i];
-        setLogs((prev) => [
-          ...prev,
-          { id: `l${prev.length}`, timestamp: clock(prev.length), level, message },
-        ]);
-        i++;
-      }, 620);
-
-      // Actual status will be updated by polling
-      // After a delay, also refresh data
-      doneTimer.current = setTimeout(() => {
-        fetchData();
-        setDeployState("idle");
-      }, 8000);
-    } catch {
-      setUploading(false);
-      setToast("Upload failed — try again");
-    }
+      const version = await api.uploadVersion(app.id, uploadFile);
+      setShowUpload(false); setUploadFile(null); setViewingId(version.id);
+      setDrawerTab("logs"); setDrawerOpen(true); setLogs([]);
+      await fetchData();
+    } catch (error) { setToast(error instanceof Error ? error.message : "Upload failed"); }
+    finally { setUploading(false); }
   };
 
-  // Quick deploy (no file — just re-trigger simulated logs)
   const quickDeploy = () => {
     if (deployState === "deploying") return;
     setShowUpload(true);
   };
 
-  const saveName = () => {
+  const saveName = async () => {
     setEditing(false);
-    // No PATCH endpoint — just local rename display
-    if (app && nameDraft.trim()) {
-      setApp({ ...app, name: nameDraft.trim() });
-    }
+    if (!app || !nameDraft.trim() || nameDraft.trim() === app.name) return;
+    try {
+      const updated = await request<App>(`/apps/${app.id}`, { method: "PATCH", body: JSON.stringify({ name: nameDraft.trim(), description: app.description }) });
+      setApp(updated);
+    } catch (error) { setToast(error instanceof Error ? error.message : "Rename failed"); }
   };
 
   if (authLoading || !isAuthenticated) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div data-theme="dark" className="min-h-screen flex items-center justify-center">
         <div className="h-6 w-6 animate-spin rounded-full border-2 border-neutral-300 border-t-neutral-900" />
       </div>
     );
@@ -178,7 +156,7 @@ export default function AppRoom() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div data-theme="dark" className="min-h-screen flex items-center justify-center">
         <div className="h-6 w-6 animate-spin rounded-full border-2 border-neutral-300 border-t-neutral-900" />
       </div>
     );
@@ -186,7 +164,7 @@ export default function AppRoom() {
 
   if (error || !app) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div data-theme="dark" className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <p className="text-sm text-red-600 mb-4">{error || "App not found"}</p>
           <PillButton onClick={() => router.push("/dashboard")}>Back to Home</PillButton>
@@ -197,7 +175,7 @@ export default function AppRoom() {
 
   const isBuilding = deployState === "deploying" || currentStatus === "building";
   const isFailed = deployState === "failed" || (!isBuilding && currentStatus === "failed");
-  const buildingVersion = (latestVersion?.version_no ?? 0) + (deployState === "deploying" ? 1 : 0);
+  const buildingVersion = selectedVersion?.version_no ?? 1;
 
   const envChip = isBuilding
     ? `BUILDING · v${buildingVersion}`
@@ -211,32 +189,27 @@ export default function AppRoom() {
   const deployBg = { idle: "#000", deploying: "#ffd731", deployed: "#55db9c", failed: "#fb4903" }[deployState];
   const deployFg = deployState === "deploying" || deployState === "deployed" ? "#000" : "#fff";
 
-  const buildProgress = isBuilding
-    ? `${Math.round((logs.length / 9) * 100)}%`
-    : currentStatus === "live"
-    ? "100%"
-    : currentStatus === "failed"
-    ? "70%"
-    : "0%";
+  const buildProgress = isBuilding ? "In progress" : currentStatus === "live" || currentStatus === "ready" ? "100%" : "0%";
 
   const progressColor = isBuilding ? "#D97706" : isFailed ? "#DC2626" : "#16A34A";
 
   const facts = [
-    { label: "Detected runtime", value: "Python 3.11" },
-    { label: "Entry point", value: "app.py" },
-    { label: "Detected port", value: latestVersion?.internal_port ? String(latestVersion.internal_port) : "—" },
+    { label: "Detected runtime", value: preview?.html ? "Static HTML/CSS/JavaScript" : "See build detection logs" },
+    { label: "Entry point", value: preview?.html ? "index.html" : "See build plan in logs" },
+    { label: "Detected port", value: selectedVersion?.internal_port ? String(selectedVersion.internal_port) : "—" },
     { label: "Dependencies", value: "auto-detected" },
-    { label: "Resource limits", value: "256 MB · 0.5 CPU" },
+    { label: "Resource limits", value: preview?.html ? "Browser sandbox" : "512 MB · 1 CPU" },
     { label: "Viewing", value: viewingId ? `Selected version` : currentStatus === "live" ? `v${liveVersion?.version_no} · Live` : "—" },
   ];
 
   return (
-    <div className="h-screen flex flex-col relative overflow-hidden">
+    <div data-theme="dark" className="h-screen flex flex-col relative overflow-hidden">
       <RoomHeader
         appName={app.name}
         status={isBuilding ? "building" : currentStatus}
         onBack={() => router.push("/dashboard")}
         onWorkbench={() => router.push(`/apps/${id}/workbench`)}
+        onSecurity={() => router.push(`/apps/${id}/security`)}
         onTogglePanel={() => setPanelOpen(!panelOpen)}
         panelOpen={panelOpen}
         deployLabel={deployLabel}
@@ -259,15 +232,16 @@ export default function AppRoom() {
           appId={app.id}
           appName={app.name}
           appColor={appColor(app.name)}
-          status={currentStatus}
+          status={preview ? "live" : currentStatus}
           envChip={envChip}
-          building={isBuilding}
-          failed={isFailed}
+          building={isBuilding && !preview}
+          failed={isFailed && !preview}
           buildProgress={buildProgress}
-          proxyUrl={proxyUrl(app.id)}
+          proxyUrl={preview?.url || ""}
+          html={preview?.html}
           onReload={() => setToast("Reloaded the sandbox.")}
           onCopyUrl={() => {
-            navigator.clipboard.writeText(proxyUrl(app.id));
+            navigator.clipboard.writeText(preview?.url || `${window.location.origin}/apps/${id}`);
             setToast(`Copied URL for ${app.name}`);
           }}
         />
@@ -285,7 +259,7 @@ export default function AppRoom() {
           appName={app.name}
           onViewVersion={(v) => setViewingId(v.id)}
           logs={logs}
-          onCopyLogs={() => setToast("Build logs copied to clipboard.")}
+          onCopyLogs={() => { navigator.clipboard.writeText(logs.map(l => `${l.timestamp} ${l.message}`).join("\n")).then(() => setToast("Build logs copied to clipboard.")); }}
           onClearLogs={() => {
             setLogs([]);
             setToast("Cleared view — server logs are kept.");
