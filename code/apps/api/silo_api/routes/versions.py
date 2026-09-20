@@ -1,8 +1,11 @@
+import json
 import shutil
 import subprocess
 import sys
 import tempfile
+import uuid
 import zipfile
+from datetime import datetime
 from pathlib import Path
 
 from fastapi import (
@@ -14,15 +17,17 @@ from fastapi import (
     UploadFile,
 )
 from pydantic import BaseModel
-from sqlalchemy import select
-from sqlalchemy import func
+from sqlalchemy import func, select
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from ..config import settings
 from ..db import get_db
-from ..models import App, BuildLog, Version
+from ..models import App, BuildLog, Draft, Release, Version
 from ..routes.apps import get_current_user_id
 from ..services import builder
+from ..services.access import app_access
+from ..services.workspace import capabilities, import_directory, source_hash
 
 router = APIRouter(tags=["versions"])
 
@@ -38,6 +43,7 @@ class VersionOut(BaseModel):
     status: str
     container_id: str | None
     internal_port: int | None
+    created_at: datetime
 
 
 class BuildLogOut(BaseModel):
@@ -45,11 +51,13 @@ class BuildLogOut(BaseModel):
     phase: str
     level: str
     message: str
+    created_at: datetime
 
 
 # ---------------------------------------------------------------------------
 # Upload
 # ---------------------------------------------------------------------------
+
 
 @router.post("/apps/{app_id}/versions", response_model=VersionOut, status_code=201)
 async def upload_version(
@@ -59,21 +67,19 @@ async def upload_version(
     db: Session = Depends(get_db),
     background_tasks: BackgroundTasks = BackgroundTasks(),
 ):
-    app_obj = db.get(App, app_id)
-    if not app_obj or app_obj.owner_id != user_id:
-        raise HTTPException(404, "App not found")
+    app_obj, _ = app_access(db, app_id, user_id, "owner")
 
     max_ver = db.scalar(select(func.max(Version.version_no)).where(Version.app_id == app_id))
     version_no = (max_ver or 0) + 1
 
     try:
-        bundle_dir = Path(settings.bundle_storage_path).resolve() / app_obj.slug / str(version_no)
-        if bundle_dir.exists():
-            shutil.rmtree(bundle_dir, ignore_errors=True)
-        bundle_dir.mkdir(parents=True, exist_ok=True)
+        bundle_dir = Path(settings.bundle_storage_path).resolve() / app_obj.slug / str(uuid.uuid4())
+        bundle_dir.mkdir(parents=True, exist_ok=False)
 
-        content = await file.read()
-        tmp_fd, tmp_path = tempfile.mkstemp(suffix=file.filename or ".tmp")
+        content = await file.read(8_000_001)
+        if len(content) > 8_000_000:
+            raise HTTPException(413, "Upload exceeds 8 MB")
+        tmp_fd, tmp_path = tempfile.mkstemp(suffix=Path(file.filename or ".tmp").suffix)
         try:
             with open(tmp_fd, "wb") as tmp_file:
                 tmp_file.write(content)
@@ -82,7 +88,7 @@ async def upload_version(
                 with zipfile.ZipFile(tmp_path) as zf:
                     _safe_extract(zf, bundle_dir)
             else:
-                shutil.copy2(tmp_path, bundle_dir / (file.filename or "app.py"))
+                shutil.copy2(tmp_path, bundle_dir / Path(file.filename or "app.py").name)
         finally:
             Path(tmp_path).unlink(missing_ok=True)
     except zipfile.BadZipFile:
@@ -99,11 +105,102 @@ async def upload_version(
         status="building",
     )
     db.add(version)
-    db.commit()
+    db.flush()
+    files, draft = _upload_snapshot(db, app_obj, bundle_dir, version_no)
+    if any(bundle_dir.rglob("index.html")) and not any(bundle_dir.rglob("*.py")):
+        if not files:
+            raise HTTPException(422, "Static app exceeds the 150 file / 3 MB text limit")
+        release = Release(
+            app_id=app_id,
+            draft_id=draft.id,
+            actor_id=user_id,
+            label=f"Uploaded v{version_no}",
+            version_id=version.id,
+            version_no=version_no,
+            source_hash=source_hash(files),
+            files_json=json.dumps(files),
+            capabilities_json=json.dumps(capabilities(files)),
+            status="published",
+        )
+        for previous in db.scalars(
+            select(Release).where(Release.app_id == app_id, Release.status == "published")
+        ):
+            previous.status = "superseded"
+        db.add(release)
+        db.flush()
+        version.status = "live"
+        app_obj.approved_version_id = release.id
+        db.add(
+            BuildLog(
+                version_id=version.id,
+                phase="detect",
+                message="Detected static HTML/CSS/JavaScript application",
+            )
+        )
+        db.add(
+            BuildLog(
+                version_id=version.id,
+                phase="deploy",
+                message="Saved immutable source snapshot and published the static application",
+            )
+        )
+        db.commit()
+        db.refresh(version)
+        return version
+    # An owner's upload replaces the live app once its build is healthy; the
+    # builder promotes this release (see builder._settle_upload_release).
+    db.add(
+        Release(
+            app_id=app_id,
+            draft_id=draft.id,
+            actor_id=user_id,
+            label=f"Uploaded v{version_no}",
+            version_id=version.id,
+            version_no=version_no,
+            source_hash=source_hash(files),
+            files_json=json.dumps(files),
+            capabilities_json=json.dumps(capabilities(files)),
+            status="deploying",
+        )
+    )
+    try:
+        db.commit()
+    except IntegrityError:
+        db.rollback()
+        raise HTTPException(409, "Another version was uploaded. Retry this upload.")
     db.refresh(version)
 
-    _launch_build(version.id, app_obj.slug, str(bundle_dir), background_tasks)
+    _launch_build(version.id, f"{app_obj.slug}-{version.id[:8]}", str(bundle_dir), background_tasks)
     return version
+
+
+def _upload_snapshot(db: Session, app_obj: App, bundle_dir: Path, version_no: int):
+    """Return the upload's source files and the app's shared draft, creating it if needed.
+
+    Python projects may exceed Workbench limits; they still build from the bundle,
+    so their release simply carries no editable source.
+    """
+    try:
+        files = import_directory(bundle_dir)
+    except HTTPException:
+        files = {}
+    draft = db.scalar(select(Draft).where(Draft.app_id == app_obj.id))
+    if not draft:
+        seed = files or {
+            str(uuid.uuid4()): {
+                "path": "README.md",
+                "content": f"# {app_obj.name}\n\nUpload your source files to begin.\n",
+            }
+        }
+        draft = Draft(
+            app_id=app_obj.id,
+            files_json=json.dumps(seed),
+            base_files_json=json.dumps(seed),
+            base_version_no=version_no,
+        )
+        db.add(draft)
+        db.flush()
+    return files, draft
 
 
 def _launch_build(
@@ -138,8 +235,7 @@ def _launch_build(
     try:
         handle = open(log_file, "wb")
         subprocess.Popen(
-            [sys.executable, "-m", "silo_api.build_worker",
-             version_id, app_slug, bundle_path],
+            [sys.executable, "-m", "silo_api.build_worker", version_id, app_slug, bundle_path],
             cwd=str(_API_DIR),
             stdout=handle,
             stderr=subprocess.STDOUT,
@@ -159,12 +255,14 @@ def _safe_extract(zf: zipfile.ZipFile, dest: Path) -> None:
     the check explicit and also skips macOS resource-fork noise.
     """
     dest = dest.resolve()
+    if len(zf.infolist()) > 400 or sum(e.file_size for e in zf.infolist()) > 8_000_000:
+        raise HTTPException(413, "Archive exceeds extraction limits")
     for member in zf.infolist():
         name = member.filename
         if name.startswith("__MACOSX/") or name.endswith(".DS_Store"):
             continue
         target = (dest / name).resolve()
-        if not str(target).startswith(str(dest)):
+        if not target.is_relative_to(dest):
             raise HTTPException(400, f"Unsafe path in archive: {name}")
         zf.extract(member, dest)
 
@@ -173,12 +271,14 @@ def _safe_extract(zf: zipfile.ZipFile, dest: Path) -> None:
 # Read
 # ---------------------------------------------------------------------------
 
+
 @router.get("/apps/{app_id}/versions", response_model=list[VersionOut])
 def list_versions(
     app_id: str,
     user_id: str = Depends(get_current_user_id),
     db: Session = Depends(get_db),
 ):
+    app_access(db, app_id, user_id)
     return list(
         db.scalars(
             select(Version).where(Version.app_id == app_id).order_by(Version.version_no.desc())
@@ -195,6 +295,7 @@ def get_version(
     v = db.get(Version, version_id)
     if not v:
         raise HTTPException(404, "Version not found")
+    app_access(db, v.app_id, user_id)
     return v
 
 
@@ -208,6 +309,7 @@ def get_version_logs(
     v = db.get(Version, version_id)
     if not v:
         raise HTTPException(404, "Version not found")
+    app_access(db, v.app_id, user_id)
     return list(
         db.scalars(
             select(BuildLog)
