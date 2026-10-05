@@ -15,6 +15,10 @@ interface Props {
   onAttach: () => void;
   onMention: () => void;
   sendDisabled: boolean;
+  onAskAi: () => void;
+  askDisabled: boolean;
+  askLabel: string;
+  askTitle: string;
   quickActions: { label: string; onPick: () => void }[];
 }
 
@@ -29,6 +33,10 @@ export default function Composer({
   onAttach,
   onMention,
   sendDisabled,
+  onAskAi,
+  askDisabled,
+  askLabel,
+  askTitle,
   quickActions,
 }: Props) {
   const rows = Math.min(6, Math.max(2, value.split("\n").length + 1));
@@ -72,11 +80,12 @@ export default function Composer({
       <div className="flex gap-2">
         <div className="flex-1 border border-black rounded-[16px] overflow-hidden bg-white">
           <textarea
+            aria-label="Change request or team message"
             value={value}
             onChange={(e) => onChange(e.target.value)}
             onKeyDown={onKeyDown}
             rows={rows}
-            placeholder="Describe what to change…"
+            placeholder="Message the team, or describe a change for AI…"
             className="w-full px-3 py-2.5 text-[13px] outline-none resize-none font-body"
           />
           <div className="flex items-center gap-1 px-2 pb-2">
@@ -103,14 +112,25 @@ export default function Composer({
             </button>
           </div>
         </div>
-        <button
-          onClick={onSend}
-          disabled={sendDisabled}
-          className="self-end shrink-0 w-10 h-10 rounded-pill border border-black flex items-center justify-center cursor-pointer transition-colors disabled:opacity-40"
-          style={{ background: sendDisabled ? "#9ca3af" : "#000", color: "#fff" }}
-        >
-          ↑
-        </button>
+        <div className="self-end shrink-0 flex flex-col gap-1.5">
+          <button
+            onClick={onAskAi}
+            disabled={askDisabled}
+            title={askTitle}
+            className="rounded-pill border-[1.5px] border-black bg-silo-green px-3 h-9 text-[11px] font-bold cursor-pointer hover:brightness-95 disabled:opacity-40 disabled:cursor-not-allowed"
+          >
+            ✦ {askLabel}
+          </button>
+          <button
+            aria-label="Send message"
+            title="Send to the team"
+            onClick={onSend}
+            disabled={sendDisabled}
+            className="rounded-pill border-[1.5px] border-black bg-black text-white px-3 h-9 text-[11px] font-bold cursor-pointer transition-colors hover:bg-neutral-800 disabled:opacity-40 disabled:cursor-not-allowed"
+          >
+            Send ↑
+          </button>
+        </div>
       </div>
     </div>
   );

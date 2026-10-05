@@ -26,7 +26,7 @@ export { TOOLS };
 
 export default function ToolRail({ tools, activeKey, onPick }: Props) {
   return (
-    <div className="shrink-0 w-14 border-r border-black bg-white flex flex-col items-center py-2 gap-1">
+    <div className="shrink-0 w-14 border-r border-black bg-canvas flex flex-col items-center py-3 gap-1.5">
       {tools.map((t) => {
         const active = t.key === "preview" ? !activeKey || activeKey === "preview" : activeKey === t.key;
         return (
@@ -34,8 +34,8 @@ export default function ToolRail({ tools, activeKey, onPick }: Props) {
             key={t.key}
             onClick={() => onPick(t.key)}
             title={t.label}
-            className={`relative w-10 h-10 rounded-[12px] border border-black flex items-center justify-center cursor-pointer transition-colors text-sm ${
-              active ? "bg-silo-lilac" : "bg-white hover:bg-neutral-50"
+            className={`relative w-10 h-10 rounded-[12px] border-[1.5px] flex items-center justify-center cursor-pointer transition-colors text-sm ${
+              active ? "bg-silo-green border-silo-green" : "bg-white border-transparent hover:border-black"
             }`}
           >
             {t.glyph}

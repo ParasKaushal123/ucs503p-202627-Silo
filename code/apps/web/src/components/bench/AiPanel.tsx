@@ -3,6 +3,7 @@
 import type { BenchMessage } from "@/lib/types";
 import ProposalCard from "./ProposalCard";
 import Composer from "./Composer";
+import { API } from "@/lib/workspace";
 
 interface Action {
   label: string;
@@ -30,8 +31,13 @@ interface Props {
   onAttach: () => void;
   onMention: () => void;
   sendDisabled: boolean;
+  onAskAi: () => void;
+  askDisabled: boolean;
+  askLabel: string;
+  askTitle: string;
   quickActions: { label: string; onPick: () => void }[];
   onClose: () => void;
+  notice?: string;
 }
 
 export default function AiPanel({
@@ -52,8 +58,13 @@ export default function AiPanel({
   onAttach,
   onMention,
   sendDisabled,
+  onAskAi,
+  askDisabled,
+  askLabel,
+  askTitle,
   quickActions,
   onClose,
+  notice,
 }: Props) {
   if (!visible) return null;
 
@@ -80,6 +91,7 @@ export default function AiPanel({
         </button>
       </div>
 
+      {notice && <div className="border-b border-black bg-silo-cream px-4 py-2 text-[11px] text-neutral-600">{notice}</div>}
       {/* Messages */}
       <div className="flex-1 overflow-y-auto silo-scroll p-3 space-y-3">
         {messages.map((msg) => (
@@ -102,7 +114,7 @@ export default function AiPanel({
                   </span>
                 </div>
                 <p className="text-[12.5px] leading-relaxed">{msg.content}</p>
-                {msg.attachment && (
+                {msg.attachments?.length ? <div className="flex flex-wrap gap-2 mt-2">{msg.attachments.map(a => <a key={a.id} className="underline text-[11px] text-silo-purple" href={`${API}/attachments/${a.id}`} target="_blank" rel="noreferrer">📎 {a.name}</a>)}</div> : msg.attachment && (
                   <div className="mt-2 text-[11px] text-silo-blue font-mono">
                     📎 {msg.attachment}
                   </div>
@@ -134,6 +146,10 @@ export default function AiPanel({
         onAttach={onAttach}
         onMention={onMention}
         sendDisabled={sendDisabled}
+        onAskAi={onAskAi}
+        askDisabled={askDisabled}
+        askLabel={askLabel}
+        askTitle={askTitle}
         quickActions={quickActions}
       />
     </div>
