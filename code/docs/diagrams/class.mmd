@@ -1,0 +1,108 @@
+---
+config:
+  theme: base
+  themeVariables:
+    primaryColor: '#e8eefc'
+    primaryBorderColor: '#4c6ef5'
+    primaryTextColor: '#10203f'
+    lineColor: '#5b6b85'
+---
+classDiagram
+direction LR
+
+%% ---------- Domain ----------
+class User {
+  +str id
+  +str email
+  +str google_sub
+}
+
+class App {
+  +str id
+  +str slug
+  +str name
+  +str owner_id
+}
+
+class Version {
+  +str id
+  +int version_no
+  +str status
+  +int internal_port
+}
+
+class BuildLog {
+  +str phase
+  +str level
+  +str message
+}
+
+%% ---------- API ----------
+class AuthRouter {
+  <<router>>
+  +login()
+  +callback()
+  +me()
+}
+
+class AppsRouter {
+  <<router>>
+  +create_app()
+  +list_apps()
+  +delete_app()
+}
+
+class VersionsRouter {
+  <<router>>
+  +upload_version()
+  +list_versions()
+  +get_version_logs()
+}
+
+class ProxyRouter {
+  <<router>>
+  +proxy()
+}
+
+%% ---------- Build ----------
+class Builder {
+  <<service>>
+  +run_build()
+  +wait_for_port()
+}
+
+class Packaging {
+  <<service>>
+  +make_plan()
+  +render_dockerfile()
+}
+
+class BuildPlan {
+  +str mode
+  +str entry_file
+  +int port
+  +list packages
+  +start_command()
+}
+
+class Compose {
+  <<service>>
+  +find_compose_file()
+  +up()
+}
+
+%% ---------- Relationships ----------
+User "1" *-- "0..*" App : owns
+App "1" *-- "0..*" Version : has
+Version "1" *-- "0..*" BuildLog : emits
+
+AuthRouter ..> User
+AppsRouter ..> App
+VersionsRouter ..> Version
+ProxyRouter ..> Version : routes to
+
+VersionsRouter ..> Builder : spawns worker
+Builder ..> Packaging : plans
+Builder ..> Compose : multi-container
+Builder ..> BuildLog : writes
+Packaging ..> BuildPlan : creates

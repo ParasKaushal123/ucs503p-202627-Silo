@@ -1,0 +1,89 @@
+---
+config:
+  theme: base
+  themeVariables:
+    primaryColor: '#94a3b8'
+    primaryBorderColor: '#334155'
+    primaryTextColor: '#1e293b'
+    clusterBkg: '#f8fafc'
+    clusterBorder: '#475569'
+    lineColor: '#334155'
+---
+usecase-beta
+  direction LR
+
+  actor Developer
+  actor Collaborator
+  actor Approver
+  actor Owner(Owner / Admin)
+  actor External(External Data Source)
+
+  systemBoundary "Silo Platform"
+    Submit(Submit App for Deployment)
+    Status(View Deployment Status)
+
+    Capability(Run Capability Analysis)
+    Label(Generate Nutrition Label)
+    Deploy(Deploy to Sandbox)
+
+    ViewLabel(View Nutrition Label)
+    Approve(Approve or Reject Deployment)
+
+    Workbench(Open Shared Workbench)
+    AskAI(Request Change via AI)
+    Comment(Review and Comment on Draft)
+    ApplyChange(Apply Change to Draft)
+    Publish(Publish Draft as New Version)
+
+    ShareLink(Share App via Link)
+    Roles(Set Access Roles)
+    Audit(View Audit Log)
+    Revoke(Revoke Access)
+
+    Egress(Enforce Runtime Egress Allowlist)
+    Broker(Access External Data via Capability Broker)
+  end
+
+  Developer -- Submit
+  Developer -- Status
+  Developer -- Workbench
+
+  Collaborator -- Workbench
+  Collaborator -- AskAI
+  Collaborator -- Comment
+
+  Approver -- ViewLabel
+  Approver -- Approve
+  Approver -- Comment
+
+  Owner -- ShareLink
+  Owner -- Roles
+  Owner -- Audit
+  Owner -- Revoke
+
+  Broker -- External
+
+  Submit ..>: include Capability
+  Capability ..>: include Label
+  Approve ..>: extend Deploy
+  Deploy ..>: include Egress
+  Deploy ..>: include Broker
+
+  AskAI ..>: include ApplyChange
+  ApplyChange ..>: include Deploy
+  Publish ..>: extend Approve
+  Workbench ..>: extend Publish
+
+  classDef devUC fill:#dbeafe, stroke:#60a5fa, color:#0f172a
+  classDef aprUC fill:#d1fae5, stroke:#34d399, color:#0f172a
+  classDef ownUC fill:#fdebc8, stroke:#eab308, color:#0f172a
+  classDef coreUC fill:#e5e7eb, stroke:#9ca3af, color:#0f172a
+  classDef rtUC fill:#ddd6fe, stroke:#a78bfa, color:#0f172a
+  classDef collabUC fill:#fbcfe8, stroke:#f472b6, color:#0f172a
+
+  class Submit,Status devUC
+  class Capability,Label,Deploy coreUC
+  class ViewLabel,Approve aprUC
+  class Workbench,AskAI,Comment,ApplyChange,Publish collabUC
+  class ShareLink,Roles,Audit,Revoke ownUC
+  class Egress,Broker rtUC

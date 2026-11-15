@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="880" height="415" viewBox="0 0 880 415">
+  <rect width="100%" height="100%" fill="#ffffff"/>
+  <foreignObject x="10" y="10" width="860" height="395">
+    <div xmlns="http://www.w3.org/1999/xhtml" style="background:#ffffff; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif; color:#212529; font-size:13.5px; line-height:1.45;">
+      <table style="width:100%; border-collapse:collapse; border:1.5px solid #333333; background:#ffffff;">
+        <thead>
+          <tr>
+            <th colspan="2" style="background:#f1f3f5; border-bottom:1.5px solid #333333; padding:10px 14px; font-size:15px; font-weight:700; color:#111827; text-align:left;">USE CASE SPECIFICATION: UC-02</th>
+          </tr>
+        </thead>
+        <tbody>
+          
+        <tr>
+            <td style="width:220px; background:#f8f9fa; font-weight:600; color:#1f2937; padding:9px 12px; border-right:1px solid #dee2e6; border-bottom:1px solid #dee2e6; vertical-align:top;">Use Case ID & Name</td>
+            <td style="padding:9px 14px; border-bottom:1px solid #dee2e6; vertical-align:top; color:#212529;"><b>UC-02: Run Capability Analysis and Generate Nutrition Label</b></td>
+        </tr>
+        
+        <tr>
+            <td style="width:220px; background:#f8f9fa; font-weight:600; color:#1f2937; padding:9px 12px; border-right:1px solid #dee2e6; border-bottom:1px solid #dee2e6; vertical-align:top;">Primary Actor</td>
+            <td style="padding:9px 14px; border-bottom:1px solid #dee2e6; vertical-align:top; color:#212529;">Analysis Engine <i>(System-Initiated) (Secondary: Approver, Developer)</i></td>
+        </tr>
+        
+        <tr>
+            <td style="width:220px; background:#f8f9fa; font-weight:600; color:#1f2937; padding:9px 12px; border-right:1px solid #dee2e6; border-bottom:1px solid #dee2e6; vertical-align:top;">Preconditions</td>
+            <td style="padding:9px 14px; border-bottom:1px solid #dee2e6; vertical-align:top; color:#212529;">1. Extracted source bundle exists in version storage with status <code>analysing</code>.</td>
+        </tr>
+        
+        <tr>
+            <td style="width:220px; background:#f8f9fa; font-weight:600; color:#1f2937; padding:9px 12px; border-right:1px solid #dee2e6; border-bottom:1px solid #dee2e6; vertical-align:top;">Main Success Flow</td>
+            <td style="padding:9px 14px; border-bottom:1px solid #dee2e6; vertical-align:top; color:#212529;">1. System parses Python source files into an Abstract Syntax Tree (AST).<br/>2. Static Semgrep rules scan for filesystem writes, network calls, subprocesses, and secrets.<br/>3. Engine infers entry point, runtime dependencies, framework, and target listening port.<br/>4. System aggregates findings and synthesizes a human-readable Capability Nutrition Label.<br/>5. Nutrition label is attached to version record and status advances to <code>awaiting approval</code>.</td>
+        </tr>
+        
+        <tr>
+            <td style="width:220px; background:#f8f9fa; font-weight:600; color:#1f2937; padding:9px 12px; border-right:1px solid #dee2e6; border-bottom:1px solid #dee2e6; vertical-align:top;">Postconditions</td>
+            <td style="padding:9px 14px; border-bottom:1px solid #dee2e6; vertical-align:top; color:#212529;"><b>Success:</b> Capability manifest and build plan generated; version queued for approval.<br/><b>Failure:</b> Version marked <code>failed</code> with structured error logs; deployment aborted.</td>
+        </tr>
+        
+        <tr>
+            <td style="width:220px; background:#f8f9fa; font-weight:600; color:#1f2937; padding:9px 12px; border-right:1px solid #dee2e6; border-bottom:1px solid #dee2e6; vertical-align:top;">Alternative / Exceptions</td>
+            <td style="padding:9px 14px; border-bottom:1px solid #dee2e6; vertical-align:top; color:#212529;"><b>1a. Syntax parse error:</b> File flagged unanalysable; label marked incomplete with warning.<br/><b>3a. Ambiguous entry point:</b> Diagnostics listing candidate files generated; status set to failed.</td>
+        </tr>
+        
+        </tbody>
+      </table>
+    </div>
+  </foreignObject>
+</svg>

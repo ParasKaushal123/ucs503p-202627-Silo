@@ -1,0 +1,12 @@
+{
+  "name": "silo",
+  "private": true,
+  "scripts": {
+    "start": "python scripts/start.py",
+    "start:local": "python scripts/start.py --local",
+    "dev": "python scripts/start.py --dev",
+    "test:api": "uv run --directory apps/api pytest -q",
+    "test:collab": "pnpm --dir apps/collab test",
+    "test:e2e": "pnpm --dir apps/web exec playwright test"
+  }
+}
