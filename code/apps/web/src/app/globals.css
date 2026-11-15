@@ -1,17 +1,109 @@
-@import url('https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-body {
-  font-family: 'Archivo', sans-serif;
-  -webkit-font-smoothing: antialiased;
+/*
+ * Theme tokens (values from the landing and workspace mockups), as RGB channels
+ * so Tailwind opacity modifiers work. Light is the default; a page opts into
+ * dark with data-theme="dark" on its root.
+ */
+:root,
+[data-theme="light"] {
+  --canvas: 248 249 235;        /* #f8f9eb */
+  --surface: 255 255 255;
+  --ink: 32 32 32;              /* #202020 */
+  --line-strong: 32 32 32;
+  --on-accent: 32 32 32;
+  --neutral-50: 244 245 230;
+  --neutral-100: 237 238 225;   /* #edeee1 */
+  --neutral-200: 220 222 203;
+  --neutral-300: 192 194 169;   /* #c0c2a9 */
+  --neutral-400: 124 125 118;   /* #7c7d76 */
+  --neutral-500: 90 90 79;      /* #5a5a4f */
+  --neutral-600: 74 74 65;
+  --neutral-700: 54 54 47;
+  --neutral-800: 38 38 34;
+  --neutral-900: 32 32 32;
+  --forest: 0 61 33;            /* #003d21 */
+  --forest-accent: 0 61 33;
+  --mint: 170 253 192;          /* #aafdc0 */
+  --live: 69 209 106;           /* #45d16a */
+  --peach: 255 154 46;          /* #ff9a2e */
+  --pink: 255 192 230;          /* #ffc0e6 */
+  --lilac: 211 190 255;         /* #d3beff */
+  --sky: 176 244 255;           /* #b0f4ff */
+  --danger: 251 73 3;           /* #fb4903 — the mockups have no red */
 }
 
-/* Silo design system overrides */
-* {
-  border-color: #000;
+[data-theme="dark"] {
+  --canvas: 13 13 12;           /* #0d0d0c */
+  --surface: 29 29 27;          /* #1d1d1b panels */
+  --ink: 248 249 235;           /* #f8f9eb */
+  --line-strong: 102 103 91;    /* rgba(192,194,169,.45) over the panel */
+  --neutral-50: 20 20 19;       /* #141413 */
+  --neutral-100: 46 46 43;      /* #2e2e2b */
+  --neutral-200: 46 46 43;
+  --neutral-300: 90 90 79;
+  --neutral-400: 124 125 118;
+  --neutral-500: 192 194 169;   /* #c0c2a9 */
+  --neutral-600: 214 216 194;
+  --neutral-700: 229 230 214;
+  --neutral-800: 237 238 225;
+  --neutral-900: 248 249 235;
+  --forest-accent: 170 253 192; /* highlights read mint on dark */
+  background: rgb(var(--canvas));
+  color: rgb(var(--ink));
+  color-scheme: dark;
+}
+
+body {
+  font-family: 'Space Grotesk', ui-sans-serif, system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  background: rgb(var(--canvas));
+  color: rgb(var(--ink));
+}
+
+.font-display {
+  letter-spacing: -0.03em;
+}
+
+/* Pastel fills keep dark text in both themes. Inline backgrounds are
+   serialised by the browser as rgb(), and in this app they are all pastels. */
+[data-theme="dark"] :is(.bg-silo-yellow, .bg-silo-green, .bg-silo-lilac, .bg-silo-sky,
+  .bg-silo-blue, .bg-silo-pink),
+[data-theme="dark"] :is(div, span, button, header, a, p)[style*="background: rgb"],
+[data-theme="dark"] :is(div, span, button, header, a, p)[style*="background-color: rgb"] {
+  color: rgb(var(--on-accent));
+}
+[data-theme="dark"] :is(div, span, button, header, a, p)[style*="background: rgb"] :is(.text-black, .text-neutral-400, .text-neutral-500, .text-neutral-600, .text-neutral-700) {
+  color: rgb(var(--on-accent));
+}
+
+/* React Flow on the Security track, in the page theme. */
+.silo-flow {
+  --xy-background-color: transparent;
+  --xy-controls-button-background-color: rgb(var(--surface));
+  --xy-controls-button-background-color-hover: rgb(var(--neutral-100));
+  --xy-controls-button-color: rgb(var(--ink));
+  --xy-controls-button-border-color: rgb(var(--line-strong));
+  --xy-minimap-background-color: rgb(var(--neutral-50));
+  --xy-edge-label-background-color: transparent;
+}
+.silo-flow .react-flow__controls {
+  border: 1.5px solid rgb(var(--line-strong));
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: none;
+}
+.silo-flow .react-flow__minimap {
+  border: 1.5px solid rgb(var(--line-strong));
+  border-radius: 12px;
+  overflow: hidden;
+}
+.silo-flow .react-flow__node {
+  font-family: inherit;
 }
 
 /* Scrollbar styling for drawers/panels */
@@ -22,6 +114,6 @@ body {
   background: transparent;
 }
 .silo-scroll::-webkit-scrollbar-thumb {
-  background: #ccc;
+  background: rgb(var(--neutral-300));
   border-radius: 1600px;
 }

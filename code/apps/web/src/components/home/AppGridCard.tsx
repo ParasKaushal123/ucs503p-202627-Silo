@@ -18,7 +18,7 @@ export default function AppGridCard({ app, latestVersion, onClick }: Props) {
   return (
     <button
       onClick={onClick}
-      className="w-full text-left border border-black rounded-[20px] overflow-hidden bg-white hover:shadow-md transition-shadow cursor-pointer group"
+      className="w-full text-left border-[1.5px] border-black rounded-panel overflow-hidden bg-white hover:-translate-y-0.5 hover:shadow-[0_6px_0_rgb(var(--ink))] transition-transform cursor-pointer group"
     >
       {/* Thumbnail area */}
       <div

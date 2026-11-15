@@ -1,0 +1,364 @@
+<title>Silo Evaluation Guide</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+  /* Layout: one reading column with wide figures; Silo's own mint / peach / lilac badges mark pages and results. */
+  :root {
+    --bg: #f8f9eb; --surface: #ffffff; --ink: #1f201b; --muted: #5d5f52; --line: #c9cbb3;
+    --mint: #aafdc0; --peach: #ffb46b; --lilac: #d9c6ff; --sky: #b8f3ff; --pink: #ffc8ea;
+    --pass: #0b7a3b; --fail: #c0261c; --code-bg: #f0f1e2; --on-badge: #1f201b;
+    --display: 'Space Grotesk', 'Segoe UI', system-ui, sans-serif;
+    --body: 'Inter', 'Segoe UI', system-ui, sans-serif;
+    --mono: 'JetBrains Mono', Consolas, 'Courier New', monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #11120f; --surface: #1c1d19; --ink: #f2f3e4; --muted: #b5b7a3; --line: #3d3f35;
+      --pass: #5fe39a; --fail: #ff7a6b; --code-bg: #24261f; color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #11120f; --surface: #1c1d19; --ink: #f2f3e4; --muted: #b5b7a3; --line: #3d3f35;
+    --pass: #5fe39a; --fail: #ff7a6b; --code-bg: #24261f; color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  body {
+    background: var(--bg); color: var(--ink); font: 16px/1.62 var(--body);
+    padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+    -webkit-font-smoothing: antialiased;
+  }
+  main { max-width: 860px; margin: 0 auto; padding-block: 40px 88px; display: flex; flex-direction: column; gap: 8px; }
+  h1, h2, h3 { font-family: var(--display); text-wrap: balance; letter-spacing: -0.02em; }
+  h1 { font-size: clamp(38px, 7vw, 60px); line-height: 0.98; margin: 14px 0 10px; }
+  h2 { font-size: 28px; line-height: 1.15; margin: 52px 0 6px; }
+  h3 { font-size: 19px; margin: 22px 0 4px; }
+  p { margin: 0 0 12px; max-width: 68ch; }
+  a { color: inherit; text-underline-offset: 3px; }
+  .eyebrow { font: 500 12px var(--mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+  .tag { display: inline-block; font: 500 11.5px var(--mono); letter-spacing: 0.05em; text-transform: uppercase;
+         border: 1.5px solid var(--ink); border-radius: 999px; padding: 3px 10px; }
+  .lead { font-size: 19px; color: var(--muted); max-width: 62ch; }
+  code, .mono { font-family: var(--mono); font-size: 0.86em; }
+  :not(pre) > code { background: var(--code-bg); border: 1px solid var(--line); border-radius: 6px; padding: 0 5px; }
+  pre { background: var(--code-bg); border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px;
+        overflow-x: auto; font: 13.5px/1.55 var(--mono); margin: 10px 0 16px; }
+  pre .hl { background: var(--pink); color: var(--on-badge); border-radius: 3px; }
+  pre .ok { color: var(--pass); }
+  ul, ol { margin: 0 0 12px; padding-left: 22px; max-width: 68ch; }
+  li { margin: 5px 0; }
+  .toc { display: flex; flex-wrap: wrap; gap: 8px; margin: 18px 0 4px; padding: 0; list-style: none; }
+  .toc a { display: block; text-decoration: none; font: 500 13px var(--mono); border: 1px solid var(--line);
+           border-radius: 999px; padding: 5px 12px; background: var(--surface); }
+  .toc a:hover, .toc a:focus-visible { border-color: var(--ink); }
+  a:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+
+  .scoreboard { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; margin: 22px 0 6px; }
+  .score { border: 1.5px solid var(--ink); border-radius: 18px; padding: 14px; color: var(--on-badge); min-width: 0; }
+  .score b { font: 700 22px var(--display); display: block; }
+  .score span { font-size: 13.5px; display: block; line-height: 1.35; }
+  .score .res { font: 500 11.5px var(--mono); text-transform: uppercase; letter-spacing: 0.05em; margin-top: 8px; }
+  .mint { background: var(--mint); } .peach { background: var(--peach); } .lilac { background: var(--lilac); }
+  .sky { background: var(--sky); } .pink { background: var(--pink); }
+
+  .pages { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin: 14px 0; }
+  .pagecard { border: 1.5px solid var(--ink); border-radius: 18px; padding: 16px; color: var(--on-badge); }
+  .pagecard b { font: 700 18px var(--display); display: block; margin-bottom: 4px; }
+  .pagecard p { font-size: 14.5px; margin: 0; }
+
+  .table-wrap { overflow-x: auto; margin: 10px 0 16px; }
+  table { width: 100%; border-collapse: collapse; font-size: 14.5px; }
+  th { text-align: left; font: 500 11.5px var(--mono); letter-spacing: 0.05em; text-transform: uppercase; color: var(--muted);
+       padding: 8px 10px; border-bottom: 1.5px solid var(--ink); }
+  td { padding: 9px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  td.term { font-weight: 600; white-space: nowrap; }
+  .num { font-variant-numeric: tabular-nums; }
+  .pass { color: var(--pass); font-weight: 600; } .fail { color: var(--fail); font-weight: 600; }
+
+  figure { margin: 14px 0 18px; }
+  figure svg { width: 100%; height: auto; display: block; }
+  figure img { display: block; width: 100%; border: 1.5px solid var(--ink); border-radius: 14px; }
+  figcaption { font: 12.5px/1.5 var(--mono); color: var(--muted); margin-top: 8px; }
+  .diagram { overflow-x: auto; }
+  .diagram svg { min-width: 620px; }
+
+  .case { background: var(--surface); border: 1.5px solid var(--line); border-radius: 22px; padding: 20px 22px; margin: 18px 0; }
+  .case header { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-bottom: 6px; }
+  .case h3 { margin: 0; flex: 1 1 260px; min-width: 0; }
+  .badge { font: 600 12px var(--mono); text-transform: uppercase; letter-spacing: 0.05em; border-radius: 999px; padding: 4px 11px;
+           color: var(--on-badge); border: 1.5px solid var(--ink); }
+  .facts { display: grid; grid-template-columns: 150px minmax(0, 1fr); gap: 6px 14px; margin: 10px 0 4px; font-size: 15px; }
+  .facts dt { font: 500 11.5px var(--mono); text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); padding-top: 3px; }
+  .facts dd { margin: 0; min-width: 0; }
+
+  .pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+  .pair figure { margin: 0; min-width: 0; }
+  .steps { counter-reset: s; list-style: none; padding: 0; }
+  .steps li { counter-increment: s; position: relative; padding-left: 40px; margin: 10px 0; }
+  .steps li::before { content: counter(s); position: absolute; left: 0; top: 0; width: 28px; height: 28px; border-radius: 50%;
+                      border: 1.5px solid var(--ink); font: 600 13px/25px var(--mono); text-align: center; }
+  .callout { border-left: 4px solid var(--ink); background: var(--surface); padding: 12px 16px; border-radius: 0 14px 14px 0; margin: 14px 0; }
+  .qa dt { font-weight: 600; margin-top: 16px; }
+  .qa dd { margin: 4px 0 0; color: var(--muted); max-width: 68ch; }
+  footer { margin-top: 56px; font: 12.5px var(--mono); color: var(--muted); border-top: 1px solid var(--line); padding-top: 14px; }
+
+  @media (max-width: 720px) {
+    .scoreboard { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .pages, .pair { grid-template-columns: 1fr; }
+    .facts { grid-template-columns: 1fr; gap: 2px; }
+    .facts dd { margin-bottom: 8px; }
+  }
+  @media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
+</style>
+
+<main>
+  <span class="eyebrow">UCS503P · Software Engineering · Evaluation, 16 Nov 2026</span>
+  <h1>Silo, and how we tested it</h1>
+  <p class="lead">A plain-language guide to our project for the team reviewing it. It covers what Silo does, how it works inside, the four test cases we ran, what failed, and what we changed so it passes.</p>
+
+  <div class="scoreboard" role="list" aria-label="Test results">
+    <div class="score mint" role="listitem"><b>TC-01</b><span>Two users type on the same line</span><div class="res">Pass</div></div>
+    <div class="score mint" role="listitem"><b>TC-02</b><span>Editor removed while connected</span><div class="res">Pass · cut off in 1.3 s</div></div>
+    <div class="score mint" role="listitem"><b>TC-03</b><span>Risky update, then a fix</span><div class="res">Pass</div></div>
+    <div class="score peach" role="listitem"><b>TC-04</b><span>Shell command hidden in code</span><div class="res">Fail → Pass after fix</div></div>
+  </div>
+
+  <ul class="toc" aria-label="Contents">
+    <li><a href="#what">What Silo is</a></li>
+    <li><a href="#words">Words to know</a></li>
+    <li><a href="#inside">How it works</a></li>
+    <li><a href="#method">How we tested</a></li>
+    <li><a href="#cases">The four tests</a></li>
+    <li><a href="#fix">The TC-04 fix</a></li>
+    <li><a href="#files">Files and rerun</a></li>
+    <li><a href="#qa">Viva questions</a></li>
+  </ul>
+
+  <!-- ───────────────────────── What Silo is ───────────────────────── -->
+  <h2 id="what">What Silo is</h2>
+  <p>Silo is a place where a small team keeps its little web apps. You upload an app as a <code>.zip</code>, and Silo runs it, so anyone with the link can open it. Your teammates can edit its code with you live in the browser, like Google Docs for code. Every version is also checked for security risks before anyone trusts it.</p>
+  <p>Think of it as three rooms in one building:</p>
+  <div class="pages">
+    <div class="pagecard sky"><b>App Room</b><p>The app's home. It shows the live app, its version history, who has access, and the button to upload a new version.</p></div>
+    <div class="pagecard lilac"><b>Workbench</b><p>The shared code editor. Several people type at once, see each other's cursors, preview the change and publish it as a new version.</p></div>
+    <div class="pagecard mint"><b>Security track</b><p>A map of every version. It shows what each version can do (files, network, commands) and which risks it adds or fixes compared with the one before.</p></div>
+  </div>
+  <p>The problem it solves: when a team shares code by email or chat, people overwrite each other's work, nobody knows who still has access, and nobody checks whether a new version quietly started doing something dangerous. Silo makes all three visible.</p>
+
+  <!-- ───────────────────────── Words ───────────────────────── -->
+  <h2 id="words">Words to know</h2>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Word</th><th>What it means here</th></tr></thead>
+      <tbody>
+        <tr><td class="term">App</td><td>One project, such as "Expense notes". It has many versions.</td></tr>
+        <tr><td class="term">Version</td><td>A frozen copy of the app's files: v1, v2, v3. A version is never changed after it is made.</td></tr>
+        <tr><td class="term">Draft</td><td>The editable copy open in the Workbench. Publishing a draft makes a new version.</td></tr>
+        <tr><td class="term">Owner / Editor / Viewer</td><td>Roles. The Owner controls access, an Editor can change code, and a Viewer can only look.</td></tr>
+        <tr><td class="term">Invitation link</td><td>A link the Owner shares to let someone join with a role. The Owner can revoke it.</td></tr>
+        <tr><td class="term">Finding</td><td>One security problem on one line, for example "runs a shell command with shell=True". Each has a severity (high, medium or low), a CWE number and a suggested fix.</td></tr>
+        <tr><td class="term">CWE</td><td>Common Weakness Enumeration, the standard catalogue of software weaknesses. CWE-78 is "OS command injection".</td></tr>
+        <tr><td class="term">Capability</td><td>Something an app <em>can do</em>, risky or not: serve a web page, read files, run system commands, contact another server.</td></tr>
+        <tr><td class="term">Nutrition label</td><td>The list of a version's capabilities, styled like the label on a food packet.</td></tr>
+        <tr><td class="term">Expanding / Reducing</td><td>How a version compares with the one before. Expanding means it gained access or risks. Reducing means it lost them, which usually means a fix.</td></tr>
+        <tr><td class="term">Risk score</td><td>0 to 100, lower is better. Each high finding adds 10, each medium 4 and each low 1, plus a little for risky capabilities.</td></tr>
+        <tr><td class="term">Semgrep</td><td>A well-known open-source code scanner. Silo runs it alongside its own rules.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ───────────────────────── Inside ───────────────────────── -->
+  <h2 id="inside">How it works inside</h2>
+  <p>Silo has three programs. The browser talks to two of them.</p>
+  <figure class="diagram">
+    <svg viewBox="0 0 760 300" role="img" aria-label="Browser connects to the API over HTTP and to the collaboration server over WebSocket; the API stores data in PostgreSQL and runs the security analyzer with Semgrep">
+      <defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="var(--ink)"/></marker></defs>
+      <rect x="20" y="110" width="170" height="84" rx="16" fill="var(--sky)" stroke="var(--ink)" stroke-width="1.5"/>
+      <text x="105" y="145" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-weight="700" font-size="17" fill="#1f201b">Web app</text>
+      <text x="105" y="168" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11.5" fill="#1f201b">Next.js · the pages</text>
+      <rect x="300" y="28" width="200" height="96" rx="16" fill="var(--lilac)" stroke="var(--ink)" stroke-width="1.5"/>
+      <text x="400" y="64" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-weight="700" font-size="17" fill="#1f201b">API</text>
+      <text x="400" y="86" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11.5" fill="#1f201b">FastAPI · accounts, apps,</text>
+      <text x="400" y="103" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11.5" fill="#1f201b">versions, access, analysis</text>
+      <rect x="300" y="180" width="200" height="96" rx="16" fill="var(--mint)" stroke="var(--ink)" stroke-width="1.5"/>
+      <text x="400" y="216" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-weight="700" font-size="17" fill="#1f201b">Collab server</text>
+      <text x="400" y="238" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11.5" fill="#1f201b">Node · Yjs over WebSocket</text>
+      <text x="400" y="255" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11.5" fill="#1f201b">live typing, cursors</text>
+      <rect x="590" y="28" width="150" height="96" rx="16" fill="var(--surface)" stroke="var(--ink)" stroke-width="1.5"/>
+      <text x="665" y="66" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-weight="700" font-size="16" fill="var(--ink)">PostgreSQL</text>
+      <text x="665" y="90" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11.5" fill="var(--muted)">all saved data</text>
+      <rect x="590" y="180" width="150" height="96" rx="16" fill="var(--pink)" stroke="var(--ink)" stroke-width="1.5"/>
+      <text x="665" y="216" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-weight="700" font-size="16" fill="#1f201b">Analyzer</text>
+      <text x="665" y="238" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11.5" fill="#1f201b">Silo rules</text>
+      <text x="665" y="255" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11.5" fill="#1f201b">+ Semgrep</text>
+      <path d="M190 135 L298 84" stroke="var(--ink)" stroke-width="1.5" fill="none" marker-end="url(#ar)"/>
+      <text x="214" y="98" font-family="JetBrains Mono, monospace" font-size="11" fill="var(--muted)">HTTP</text>
+      <path d="M190 170 L298 222" stroke="var(--ink)" stroke-width="1.5" fill="none" marker-end="url(#ar)"/>
+      <text x="200" y="222" font-family="JetBrains Mono, monospace" font-size="11" fill="var(--muted)">WebSocket</text>
+      <path d="M500 76 L588 76" stroke="var(--ink)" stroke-width="1.5" fill="none" marker-end="url(#ar)"/>
+      <path d="M470 124 L600 182" stroke="var(--ink)" stroke-width="1.5" fill="none" marker-end="url(#ar)"/>
+      <path d="M400 178 L400 126" stroke="var(--ink)" stroke-width="1.5" fill="none" marker-end="url(#ar)" stroke-dasharray="4 4"/>
+      <text x="408" y="156" font-family="JetBrains Mono, monospace" font-size="11" fill="var(--muted)">saves drafts, checks access</text>
+    </svg>
+    <figcaption>The collab server keeps people in sync and asks the API to save the draft and to confirm each person still has access.</figcaption>
+  </figure>
+
+  <h3>How two people can type at once</h3>
+  <p>The Workbench uses a <strong>CRDT</strong> (library: Yjs). Each typed character gets a permanent ID and remembers which character it was typed after. When two people type at the same spot, every computer applies the same tie-break rule, so everyone ends up with the same text in the same order. Nothing is overwritten and nothing is doubled. Edits are saved to the server, and the "Saved" pill only appears once the server has them. TC-01 tests exactly this.</p>
+
+  <h3>How removing someone works</h3>
+  <p>When you open the Workbench, the collab server checks your access. It then asks the API again for every open connection every 5 seconds. If you were removed, the server closes your connection, your editor turns read-only, your header says "Access changed — reload", and nothing you type afterwards reaches the server. TC-02 tests this.</p>
+
+  <h3>How the Security track decides</h3>
+  <ol class="steps">
+    <li><strong>Read every file</strong> in the version: Python, JavaScript, HTML and the dependency lists.</li>
+    <li><strong>Silo's own rules.</strong> Python is parsed into a syntax tree (Python's <code>ast</code> module), so the rules see real calls, not just text. JavaScript and HTML are checked with patterns. Every file is searched for secret formats such as API keys.</li>
+    <li><strong>Semgrep</strong> runs its rules too. Where both flag the same line for the same weakness, one copy is kept.</li>
+    <li><strong>Capabilities</strong> are collected from the same pass: <code>open(...)</code> means it reads or writes files, <code>subprocess</code> means it runs commands, <code>requests.get</code> means it contacts other servers, and so on.</li>
+    <li><strong>Compare</strong> with the previous version: capabilities gained or lost, findings new or fixed, dependencies changed. Gaining anything makes the version Expanding, and only losing things makes it Reducing.</li>
+    <li><strong>Score</strong> the version from 0 to 100 and draw it on the map.</li>
+  </ol>
+
+  <!-- ───────────────────────── Method ───────────────────────── -->
+  <h2 id="method">How we tested</h2>
+  <p>We wrote the four test cases ourselves, filled in the course template (<code>Silo_Test_Cases.pdf</code>), and ran them as automated browser tests, so every run follows the exact same steps and keeps its own evidence.</p>
+  <ul>
+    <li><strong>Tool:</strong> Playwright drives real Chrome windows. Tests that need two or three people open separate browser profiles, each with its own account.</li>
+    <li><strong>Where:</strong> a separate test copy of Silo (web on port 3100, API on port 8100) with its own SQLite database, so real data is never touched. Each test makes fresh accounts and a fresh app.</li>
+    <li><strong>Evidence:</strong> after every step the test saves a screenshot and writes what it expected, what actually happened and pass or fail to <code>result.json</code>.</li>
+    <li><strong>Two runs:</strong> <code>results/before-fix/</code> is the first run, and <code>results/after-fix/</code> is the run after the TC-04 change.</li>
+  </ul>
+  <div class="callout"><strong>We designed TC-04 to fail.</strong> A test plan that only passes proves little. We picked a case we expected Silo to miss, recorded the failure, improved the analyzer, and showed the same test passing. That before and after is the improvement this evaluation demonstrates.</div>
+
+  <!-- ───────────────────────── Cases ───────────────────────── -->
+  <h2 id="cases">The four test cases</h2>
+
+  <article class="case" id="tc01">
+    <header><span class="tag">TC-01 · Workbench</span><h3>Two users type on the same line at once</h3><span class="badge mint">Pass</span></header>
+    <dl class="facts">
+      <dt>Goal</dt><dd>Two people type on the same line in the same instant. Both edits must survive, exactly once, in the same order on both screens.</dd>
+      <dt>Why it is hard</dt><dd>The two edits arrive milliseconds apart at the same position. A simple editor would overwrite one, duplicate one, or show "Saved" before the server has it.</dd>
+      <dt>What we did</dt><dd>Alex (Owner) and Morgan (Editor, joined by invite) open <code>index.html</code>. Both put the cursor at the end and type at the same moment: <code>&lt;!-- Alex edited --&gt;</code> and <code>&lt;!-- Morgan edited --&gt;</code>. Then Morgan reloads.</dd>
+      <dt>What happened</dt><dd>Both returned to Saved with no errors. Both editors showed identical text with each line once. Both lines survived the reload, and the server's stored draft (revision 3) held each line once.</dd>
+    </dl>
+    <figure><img src="img/tc01-merged.png" alt="Workbench after both users typed, showing both comment lines in index.html" loading="lazy"><figcaption>Step 5: the owner's editor after both people typed at once.</figcaption></figure>
+  </article>
+
+  <article class="case" id="tc02">
+    <header><span class="tag">TC-02 · Access</span><h3>Editor removed while still connected</h3><span class="badge mint">Pass</span></header>
+    <dl class="facts">
+      <dt>Goal</dt><dd>When the Owner removes an Editor, that person loses access within seconds, even on the page they already have open.</dd>
+      <dt>Why it is hard</dt><dd>The Editor's live connection was approved before the removal. If access were only checked at sign-in, they could keep typing.</dd>
+      <dt>What we did</dt><dd>Morgan joins by invite link and opens the editor. Alex removes Morgan from Share. Morgan tries to type, then reloads. Alex revokes the invite links, and a third account, Sam, tries the old link.</dd>
+      <dt>What happened</dt><dd>"Access changed — reload" appeared after <strong class="num">1.3 s</strong> (target 5 s). The editor turned read-only, and the typed text never reached the server. After reloading, Morgan saw "App not found" and the API answered 404. Sam saw "Invitation not found", and the Owner was the only member left.</dd>
+    </dl>
+    <figure><img src="img/tc02-removed.png" alt="Removed editor's Workbench showing the Access changed notice in the header" loading="lazy"><figcaption>Step 2: the removed editor's screen, seconds after removal.</figcaption></figure>
+  </article>
+
+  <article class="case" id="tc03">
+    <header><span class="tag">TC-03 · Security track</span><h3>Risky update, then a fix</h3><span class="badge mint">Pass</span></header>
+    <dl class="facts">
+      <dt>Goal</dt><dd>Silo spots every risk a normal-looking update adds, labels it correctly, then recognises the fix.</dd>
+      <dt>Why it is hard</dt><dd>Ten different risks are spread over Python, an HTML template and JavaScript. Silo also has to get the direction right: Expanding for the update, Reducing for the fix.</dd>
+      <dt>What we did</dt><dd>Uploaded three versions of an "Expense notes" app. v1 is clean. v2 plants ten risks: a hard-coded API key, SQL built from strings, <code>shell=True</code>, <code>pickle</code>, TLS checks off, debug mode, <code>innerHTML</code>, a token in <code>localStorage</code>, a CDN script without an integrity check and a request with no timeout. v3 fixes all ten.</dd>
+      <dt>What happened</dt><dd>v1 is the origin (risk 2, 0 findings). v2 is <strong>Expanding</strong> with risk 76 and exactly 10 findings: 4 high, 5 medium, 1 low. Each has a file, line, CWE and fix, and the key's value is masked. v3 is <strong>Reducing</strong> with risk 13 and 0 findings, and all 10 are listed as fixed.</dd>
+    </dl>
+    <figure><img src="img/tc03-v2.png" alt="Security track with three build nodes and the v2 changes panel open" loading="lazy"><figcaption>Step 4: v2 selected. The arrow from v1 is orange (Expanding).</figcaption></figure>
+  </article>
+
+  <article class="case" id="tc04">
+    <header><span class="tag">TC-04 · Security track</span><h3>Shell command hidden behind dynamic imports</h3><span class="badge peach">Fail → Pass</span></header>
+    <dl class="facts">
+      <dt>Goal</dt><dd>Silo still finds command execution when the code is written to hide it, as an attacker or a careless AI-written app might.</dd>
+      <dt>Why it is hard</dt><dd>Scanners usually look for names such as <code>subprocess.run</code> or <code>os.system</code>. This code reaches the same functions without writing those names.</dd>
+      <dt>What we did</dt><dd>v1 is clean. v2 adds one hidden admin route that runs whatever command is in the URL, four different ways:</dd>
+    </dl>
+<pre><span class="mono">@app.get("/admin/run")
+def admin_run():
+    cmd = request.args["cmd"]
+41  mod = importlib.import_module("sub" + "process")  # module name built from pieces
+42  getattr(mod, "run")(cmd, shell=True)              # function looked up by name
+43  __import__("os").system(cmd)                      # import inside the call
+44  sp.Popen(cmd, shell=True)                         # module renamed on import</span></pre>
+    <dl class="facts">
+      <dt>First run</dt><dd><span class="fail">Fail.</span> Risk 12, 1 finding. Only Semgrep caught line 44. Lines 41, 42 and 43 were missed, and the label did not say "Runs system commands". The app looked almost as safe as v1: a false negative, the most dangerous kind of miss.</dd>
+      <dt>After the fix</dt><dd><span class="pass">Pass.</span> Risk 41, 4 findings. Lines 42, 43 and 44 each have a high CWE-78 finding, line 41 is flagged as a hidden import of <code>subprocess</code>, and the label lists "Runs system commands".</dd>
+    </dl>
+    <div class="pair">
+      <figure><img src="img/tc04-before.png" alt="Before the fix: v2 shows risk 12 and a single finding on line 44" loading="lazy"><figcaption>Before: risk 12, 1 finding (line 44 only).</figcaption></figure>
+      <figure><img src="img/tc04-after.png" alt="After the fix: v2 shows risk 41, four findings and the Runs system commands capability" loading="lazy"><figcaption>After: risk 41, 4 findings, plus "Runs system commands".</figcaption></figure>
+    </div>
+  </article>
+
+  <!-- ───────────────────────── Fix ───────────────────────── -->
+  <h2 id="fix">What we changed so TC-04 passes</h2>
+  <p><strong>Why it failed.</strong> Silo's Python rules matched a call by the name written in the code. If the code said <code>subprocess.run</code>, it was caught. The hidden route reached the same function under other names, so the rules never saw it.</p>
+  <p><strong>The idea of the fix</strong> is like recognising a person by who they are rather than by the nickname they use today. Before the rules run, a small new step called the <strong>name resolver</strong> (<code>_Names</code> in <code>apps/api/silo_api/services/security.py</code>) works out what each name really points to:</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Disguise</th><th>Example</th><th>The resolver reads it as</th></tr></thead>
+      <tbody>
+        <tr><td class="term">Renamed import</td><td><code>import subprocess as sp</code> → <code>sp.Popen</code></td><td><code>subprocess.Popen</code></td></tr>
+        <tr><td class="term">Imported function</td><td><code>from os import system</code> → <code>system(cmd)</code></td><td><code>os.system</code></td></tr>
+        <tr><td class="term">Name built from pieces</td><td><code>importlib.import_module("sub" + "process")</code></td><td>the module <code>subprocess</code> (it also joins f-strings and <code>"".join([...])</code>)</td></tr>
+        <tr><td class="term">Import inside the call</td><td><code>__import__("os").system</code></td><td><code>os.system</code></td></tr>
+        <tr><td class="term">Lookup by name</td><td><code>getattr(mod, "run")</code></td><td><code>subprocess.run</code></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>Once a name is resolved, the existing rules work unchanged: <code>subprocess.run(..., shell=True)</code> is a high CWE-78 finding, and the app gains the "Runs system commands" capability. Three smaller changes go with it:</p>
+  <ul>
+    <li>Building a module name from pieces is itself reported (medium, CWE-470), because it hides what the app loads. A plain <code>import_module("json")</code> is not reported.</li>
+    <li>If the name cannot be worked out at all, for example when it comes from user input, Silo also marks the app as <em>possibly</em> running commands, so it fails safe.</li>
+    <li><code>os.system</code> with a command built at run time is now high instead of medium, because that is where injection happens.</li>
+  </ul>
+  <p>To avoid false alarms, the resolver only rewrites names that land in risky modules (<code>subprocess</code>, <code>os</code>, <code>pty</code>, <code>pickle</code>, <code>marshal</code>, <code>builtins</code>). Ordinary code such as <code>request.args.get</code> after <code>from flask import request</code> is read as before.</p>
+  <h3>How we know nothing else broke</h3>
+  <ul>
+    <li>Two new regression tests in <code>apps/api/tests/test_security.py</code>: one checks all four disguises plus <code>from os import popen</code>, the other checks that ordinary imports are left alone.</li>
+    <li>All <span class="num">112</span> API tests and all <span class="num">9</span> browser tests pass, and the code style check is clean.</li>
+    <li>TC-01, TC-02 and TC-03 were rerun after the change and gave the same results. TC-03's numbers are identical (76 → 13, 10 fixed).</li>
+  </ul>
+
+  <!-- ───────────────────────── Files ───────────────────────── -->
+  <h2 id="files">Where everything is, and how to rerun it</h2>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>File or folder</th><th>What it is</th></tr></thead>
+      <tbody>
+        <tr><td class="term"><code>testing/Silo_Test_Cases.pdf</code></td><td>The course template, filled in: one page per test case (TC-04 twice, before and after), plus a page on the change.</td></tr>
+        <tr><td class="term"><code>testing/results/before-fix/</code></td><td>First run: <code>TC-0X/result.json</code> and a screenshot for every step.</td></tr>
+        <tr><td class="term"><code>testing/results/after-fix/</code></td><td>The run after the fix, same layout.</td></tr>
+        <tr><td class="term"><code>testing/test-apps/</code></td><td>The uploaded test apps: TC-03 v1, v2 and v3, and TC-04 v1 and v2.</td></tr>
+        <tr><td class="term"><code>apps/web/tests/e2e/evaluation.spec.ts</code></td><td>The automated test cases.</td></tr>
+        <tr><td class="term"><code>testing/make_test_apps.py</code> · <code>make_report.py</code></td><td>Rebuild the test apps, and fill the template from the results.</td></tr>
+      </tbody>
+    </table>
+  </div>
+<pre><span class="mono"># 1. start the test copy of Silo (from the Silo folder)
+apps/api/.venv/Scripts/python.exe scripts/dev.py --local --web-port 3100 --api-port 8100 --collab-port 1334
+
+# 2. run the four test cases (from apps/web)
+EVAL_RUN=after-fix pnpm exec playwright test tests/e2e/evaluation.spec.ts
+
+# 3. refill the template (from the Silo folder)
+python testing/make_report.py</span></pre>
+
+  <!-- ───────────────────────── Q&A ───────────────────────── -->
+  <h2 id="qa">Questions you may be asked</h2>
+  <dl class="qa">
+    <dt>Why are these good test cases, not easy ones?</dt>
+    <dd>Each targets a promise that is hard to keep: a race between two people, an already-open connection, ten mixed risks with the right direction, and code built to fool scanners. Each one checks the server's stored data, not only what the screen shows.</dd>
+    <dt>Why did you want a test to fail?</dt>
+    <dd>To find a real weakness and show the improvement. TC-04 failed, the analyzer was improved, a regression test now protects the fix, and the same test passes.</dd>
+    <dt>Is the TC-04 fix complete security?</dt>
+    <dd>No. It catches the common disguises. Code can still hide a call in ways only running the code would reveal, such as decoding the name from base64. For that case Silo fails safe and marks the app as possibly running commands. Static analysis narrows risk; it does not prove safety.</dd>
+    <dt>What are black-box and white-box here?</dt>
+    <dd>TC-01 and TC-02 are black-box: they act only through the browser, like a user. TC-03 and TC-04 also use white-box knowledge (we planted known risks on known lines) to check that each one is found exactly.</dd>
+    <dt>What is a regression test?</dt>
+    <dd>A test that keeps a fixed bug fixed. If someone later breaks the name resolver, <code>test_commands_hidden_behind_aliases_and_dynamic_imports_are_found</code> fails at once.</dd>
+    <dt>Why 1.3 seconds in TC-02 when the check runs every 5 seconds?</dt>
+    <dd>The check runs on a fixed 5-second cycle for every connection, and the removal happened 1.3 s before the next one (1.6 s in the second run). The worst case is about 5 seconds plus one API call, which is why the target is 5 s and the test's hard limit is 15 s.</dd>
+  </dl>
+
+  <footer>Silo · UCS503P course project · Test cases designed by Paras Kaushal · Run on 16 Nov 2026</footer>
+</main>

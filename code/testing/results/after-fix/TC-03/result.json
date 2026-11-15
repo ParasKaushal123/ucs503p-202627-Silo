@@ -1,0 +1,72 @@
+{
+  "id": "TC-03",
+  "name": "Risky update, then a fix",
+  "run": "after-fix",
+  "started": "2026-11-16T12:00:58.747Z",
+  "finished": "2026-11-16T12:01:11.517Z",
+  "result": "PASS",
+  "steps": [
+    {
+      "step": 1,
+      "action": "Upload v1 (clean), v2 (risky) and v3 (fixed) to the same app",
+      "expected": "Three versions are created (v1, v2, v3)",
+      "actual": "v1: HTTP 201; v2: HTTP 201; v3: HTTP 201",
+      "pass": true,
+      "comment": ""
+    },
+    {
+      "step": 2,
+      "action": "Open the Security track",
+      "expected": "Three build nodes; arrows v1→v2 EXPANDING and v2→v3 REDUCING",
+      "actual": "3 nodes; classifications origin → expanding → reducing",
+      "pass": true,
+      "comment": "",
+      "screenshot": "step-02.png"
+    },
+    {
+      "step": 3,
+      "action": "Click the v1 node",
+      "expected": "Nutrition label: serves a web interface (Flask), connects to a database (SQLite), 0 findings",
+      "actual": "Risk 2; findings {\"high\":0,\"medium\":0,\"low\":0,\"info\":0}; capabilities serve:Flask, database:SQLite",
+      "pass": true,
+      "comment": "",
+      "screenshot": "step-03.png"
+    },
+    {
+      "step": 4,
+      "action": "Click the v2 node",
+      "expected": "Changes vs v1: Expanding, risk above 60, 10 findings (4 high, 5 medium, 1 low)",
+      "actual": "expanding; risk 2 → 76; high 4, medium 5, low 1",
+      "pass": true,
+      "comment": "",
+      "screenshot": "step-04.png"
+    },
+    {
+      "step": 5,
+      "action": "Open the Findings tab for v2",
+      "expected": "Every finding has a file, line, CWE and fix; the secret's value is never shown",
+      "actual": "10 findings, all complete: true; secret shown: no",
+      "pass": true,
+      "comment": "high: Secret written into the source; high: Builds an SQL query from strings; high: Runs a shell command with shell=True; high: Loads pickled data; medium: Turns off HTTPS certificate checks; medium: Debug mode left on; medium: Keeps a credential in browser storage; medium: Writes raw HTML into the page; medium: Loads a remote script without an integrity check; low: Network call with no timeout",
+      "screenshot": "step-05.png"
+    },
+    {
+      "step": 6,
+      "action": "Click the v3 node",
+      "expected": "Reducing; 0 findings; v2's 10 findings listed as fixed; risk falls by more than 50",
+      "actual": "reducing; risk 76 → 13; findings {\"high\":0,\"medium\":0,\"low\":0,\"info\":0}; fixed 10",
+      "pass": true,
+      "comment": "",
+      "screenshot": "step-06.png"
+    },
+    {
+      "step": 7,
+      "action": "Check the capability matrix and risk chart",
+      "expected": "The matrix rings access first gained in v2; the chart shows one bar per version",
+      "actual": "9 capability rows; 3 bars",
+      "pass": true,
+      "comment": "",
+      "screenshot": "step-07.png"
+    }
+  ]
+}

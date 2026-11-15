@@ -8,24 +8,44 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      // Every colour reads a theme variable from globals.css, so pages switch
+      // between the light (landing, dashboard) and dark (App Room, Workbench) themes.
       colors: {
+        white: "rgb(var(--surface) / <alpha-value>)",
+        black: "rgb(var(--ink) / <alpha-value>)",
+        neutral: Object.fromEntries(
+          [50, 100, 200, 300, 400, 500, 600, 700, 800, 900].map((n) => [
+            n,
+            `rgb(var(--neutral-${n}) / <alpha-value>)`,
+          ]),
+        ),
+        canvas: "rgb(var(--canvas) / <alpha-value>)",
+        onaccent: "rgb(var(--on-accent) / <alpha-value>)",
         silo: {
-          blue: "#4da2ff",
-          purple: "#5c4ade",
-          yellow: "#ffd731",
-          green: "#55db9c",
-          red: "#fb4903",
-          lilac: "#e9ccff",
-          sky: "#dceeff",
-          cream: "#f7f7f5",
+          blue: "rgb(var(--sky) / <alpha-value>)",
+          purple: "rgb(var(--forest-accent) / <alpha-value>)",
+          yellow: "rgb(var(--peach) / <alpha-value>)",
+          green: "rgb(var(--mint) / <alpha-value>)",
+          red: "rgb(var(--danger) / <alpha-value>)",
+          lilac: "rgb(var(--lilac) / <alpha-value>)",
+          sky: "rgb(var(--sky) / <alpha-value>)",
+          cream: "rgb(var(--canvas) / <alpha-value>)",
+          forest: "rgb(var(--forest) / <alpha-value>)",
+          live: "rgb(var(--live) / <alpha-value>)",
+          pink: "rgb(var(--pink) / <alpha-value>)",
         },
+      },
+      borderColor: {
+        black: "rgb(var(--line-strong) / <alpha-value>)",
+        DEFAULT: "rgb(var(--line-strong) / <alpha-value>)",
       },
       borderRadius: {
         pill: "1600px",
+        panel: "22px",
       },
       fontFamily: {
-        display: ["'Anton'", "sans-serif"],
-        body: ["'Archivo'", "sans-serif"],
+        display: ["'Space Grotesk'", "ui-sans-serif", "system-ui", "sans-serif"],
+        body: ["'Space Grotesk'", "ui-sans-serif", "system-ui", "sans-serif"],
         mono: ["'JetBrains Mono'", "monospace"],
       },
       keyframes: {

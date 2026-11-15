@@ -46,6 +46,7 @@ export default function HeroCard({ app, versions, onOpen, onVersionClick }: Prop
             /* Live app preview iframe */
             <div className="absolute inset-0">
               <iframe
+                key={app.approved_version_id ?? "latest"}
                 src={proxyUrl(app.id)}
                 className="w-full h-full border-0 pointer-events-none"
                 title={`${app.name} preview`}

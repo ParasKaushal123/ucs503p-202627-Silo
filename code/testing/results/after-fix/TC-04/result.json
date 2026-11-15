@@ -1,0 +1,54 @@
+{
+  "id": "TC-04",
+  "name": "Shell command hidden behind dynamic imports",
+  "run": "after-fix",
+  "started": "2026-11-16T12:01:11.643Z",
+  "finished": "2026-11-16T12:01:14.940Z",
+  "result": "PASS",
+  "steps": [
+    {
+      "step": 1,
+      "action": "Upload v1 (clean) and v2 (with the hidden /admin/run route)",
+      "expected": "Two versions are created",
+      "actual": "v1: HTTP 201; v2: HTTP 201",
+      "pass": true,
+      "comment": ""
+    },
+    {
+      "step": 2,
+      "action": "Open the Security track and click the v2 node",
+      "expected": "The arrow into v2 is EXPANDING",
+      "actual": "expanding; risk 41",
+      "pass": true,
+      "comment": "",
+      "screenshot": "step-02.png"
+    },
+    {
+      "step": 3,
+      "action": "Open v2's nutrition label (Label tab)",
+      "expected": "\"Runs system commands\" is listed under What it can do",
+      "actual": "Capabilities: serve:Flask, process, database:SQLite",
+      "pass": true,
+      "comment": "",
+      "screenshot": "step-03.png"
+    },
+    {
+      "step": 4,
+      "action": "Open the Findings tab and look for each hidden call",
+      "expected": "A high CWE-78 finding on each of the three command lines (42, 43, 44)",
+      "actual": "Caught 3 of 3: importlib + getattr(mod, \"run\"), __import__(\"os\").system, sp.Popen (renamed import)",
+      "pass": true,
+      "comment": "",
+      "screenshot": "step-04.png"
+    },
+    {
+      "step": 5,
+      "action": "Look for the dynamic import on line 41",
+      "expected": "importlib.import_module(\"sub\" + \"process\") is flagged as hiding which module it loads",
+      "actual": "medium: Loads a module whose name is built at run time (subprocess) (silo.python.dynamic-import)",
+      "pass": true,
+      "comment": "",
+      "screenshot": "step-05.png"
+    }
+  ]
+}
