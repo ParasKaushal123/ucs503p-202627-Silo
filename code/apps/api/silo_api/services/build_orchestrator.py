@@ -105,9 +105,7 @@ def build_and_deploy(app_slug: str, bundle_dir: Path) -> BuildResult:
     for attempt in range(1, MAX_RETRIES + 1):
         try:
             log("build", f"Building image (attempt {attempt}/{MAX_RETRIES})")
-            _image, _build_logs = client.images.build(
-                path=str(bundle_dir), tag=image_tag, rm=True
-            )
+            _image, _build_logs = client.images.build(path=str(bundle_dir), tag=image_tag, rm=True)
             log("build", "Image built successfully")
 
             # Remove any existing container with the same name
@@ -129,9 +127,7 @@ def build_and_deploy(app_slug: str, bundle_dir: Path) -> BuildResult:
 
             # Get the assigned host port
             container.reload()
-            host_port = container.ports.get(f"{port_result.port}/tcp", [{}])[0].get(
-                "HostPort"
-            )
+            host_port = container.ports.get(f"{port_result.port}/tcp", [{}])[0].get("HostPort")
             log("deploy", f"Accessible on host port: {host_port}")
 
             return BuildResult(
