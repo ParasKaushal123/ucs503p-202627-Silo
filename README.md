@@ -1,45 +1,19 @@
-# UCS503P Project Template
+# Silo
 
-This is a project template for UCS503P Project (2026-27
-ODD). 
+UCS503P Software Engineering Project (2026-27 ODD), Group 3C75.
+Paras Kaushal (1024030984), Dev Kapla (1024030888), Devanshu (1024030876).
+Advisor: Dr. Nisha Thakur.
 
-There are 3 reports in LaTeX format, namely *a*)
-Project Proposal, *b*) Project Report Prototype Stage,
-and *c*) Project Report Final -- each in their
-respective folders.
+Silo is a zero-configuration platform for publishing and collaboratively
+improving AI-generated applications: upload a ZIP, Silo runs it in Docker,
+the team edits it together live, and every version is checked for
+security risks.
 
-Journals are stacked under the folder `journals`, one
-folder for each team member.  A sample entry has been
-made for example.
-
-The source code is contained within the folder `code`.
-
-The documentation is under folder `docs`.
-
-All other aspects of code organisation are left to the
-discretion of the user(s).
-
-
-## Docs
-
-As of now, the `docs` is just an organised collection
-of markdown (`md`) files.  But the build procedure is
-using [`mkdocs`](https://google.com/search?q=mkdocs)
-backend.  As a result, any commit into the `master`
-branch of github repository would result in CI/CD based
-build and deployment of the documentation including the
-journals.
-
-For a local DEV-version of the docs for viewing and
-testing, install the local env and issue the following
-command:
-
-``` shell
-make docs
-```
-
-### Local `env` for `docs`
-
-``` shell
-
-```
+| Folder | Contents |
+|---|---|
+| `code/` | The finished project. Run it with `python scripts/start.py --local` from `code/` (see `code/README.md`). |
+| `journals/` | Weekly journals, one folder per member. |
+| `project-proposal/` | Project proposal (LaTeX and PDF). |
+| `project-report-prototype-stage/` | Mid-semester report (PDF). |
+| `project-report-final/` | Final report (LaTeX and PDF). |
+| `docs/` | Documentation site, built with `mkdocs` on every push to `master` (`make docs` locally). |

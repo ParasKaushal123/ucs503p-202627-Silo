@@ -1,0 +1,164 @@
+# Devanshu’s Journal
+
+Roll No. 1024030876
+Name: Devanshu
+Area: Build System + Security Track
+
++  [W1 : Build-inference engine](#w1--build-inference-engine)
++  [W2 : Docker builds and sample apps](#w2--docker-builds-and-sample-apps)
++  [W3 : Packaging engine for real projects](#w3--packaging-engine-for-real-projects)
++  [W4 : Build strategies and readiness check](#w4--build-strategies-and-readiness-check)
++  [W5 : Security analyser](#w5--security-analyser)
++  [W6 : Version comparison and Semgrep](#w6--version-comparison-and-semgrep)
++  [W7 : Hidden-command detection and evaluation](#w7--hidden-command-detection-and-evaluation)
+
+---
+
+## W1 : Build-inference engine
+
+### What I built
+
++  Detection of language, Python version, entry file and port.
++  Dependency discovery from `requirements.txt` and import scanning.
++  Import-name to package-name map (93 entries) and standard-library
+   filter.
+
+### Key decision
+
+Fixed rules instead of an AI model, so deployment decisions are fast and
+predictable.
+
+### Outcome
+
+Silo works out how to run a Python project in under 2 ms.
+
+---
+
+## W2 : Docker builds and sample apps
+
+### What I built
+
++  Dockerfile template (Jinja2) filled from the inferred plan.
++  Container start with an assigned port and resource limits.
++  Automatic fix of `127.0.0.1` to `0.0.0.0` in the build copy.
++  Five sample apps (Flask, FastAPI, Pandas, Streamlit, localhost app)
+   with tests.
+
+### Key decision
+
+Install dependencies before copying source, so Docker reuses cached
+layers.
+
+### Outcome
+
+All five sample apps build and run.
+
+---
+
+## W3 : Packaging engine for real projects
+
+### What I built
+
++  `packaging.py`: unwraps zip wrapper folders and picks the app folder
+   in a monorepo.
++  Syntax-tree analysis to choose the start mode: uvicorn, gunicorn,
+   Streamlit, Django or script.
++  Skips the project's own modules when resolving packages.
+
+### Key decision
+
+Decide how to *start* the app, not just which file, so framework apps do
+not exit silently.
+
+### Outcome
+
+Real-world project layouts build, not only single-file apps.
+
+---
+
+## W4 : Build strategies and readiness check
+
+### What I built
+
++  Three strategies in order: the project's Docker Compose file, its own
+   Dockerfile, or a generated one.
++  Safe Compose: every path stays inside the project; no host volumes or
+   networks.
++  A version is "live" only after the app answers HTTP.
++  PID lock files for crash recovery; Windows line-ending fix for
+   scripts.
++  Static sites go live instantly without Docker.
+
+### Key decision
+
+A running container is not proof; only a real HTTP response is.
+
+### Outcome
+
+No more fake "live" apps; failed builds show their logs.
+
+---
+
+## W5 : Security analyser
+
+### What I built
+
++  `security.py`: Python rules on the syntax tree (shell commands, eval,
+   pickle, SQL from strings, TLS off, debug mode, secrets).
++  JavaScript and HTML rules (innerHTML, tokens in localStorage,
+   scripts without integrity).
++  Capability "nutrition label": files, network, commands, databases,
+   web serving.
++  Risk score from 0 to 100; secret values masked.
+
+### Key decision
+
+Findings come only from rules, never from AI, so results are
+repeatable.
+
+### Outcome
+
+Every version gets a label and a list of findings with fixes.
+
+---
+
+## W6 : Version comparison and Semgrep
+
+### What I built
+
++  Comparison of two versions: capabilities gained or lost, findings new
+   or fixed, dependency changes.
++  Classification as Expanding or Reducing, with a plain-English
+   summary.
++  Semgrep 1.183 alongside Silo's rules, with a disk cache.
++  Security Track API for the timeline, one version and "Fix with AI".
+
+### Key decision
+
+When both engines flag the same line, keep one finding, so nothing is
+counted twice.
+
+### Outcome
+
+Test case TC-03 passes: 10 problems found in v2, all fixed in v3
+(risk 76 to 13).
+
+---
+
+## W7 : Hidden-command detection and evaluation
+
+### What I built
+
++  Name resolver that traces renamed imports, `importlib`,
+   `__import__` and `getattr` to the real function.
++  Warning for module names built from pieces.
++  Regression tests; test apps for TC-03 and TC-04.
+
+### Key decision
+
+Design TC-04 to fail first, then improve the analyser and show the
+difference.
+
+### Outcome
+
+TC-04 passes: all three hidden commands found (risk 12 to 41).

@@ -3,38 +3,34 @@
 **UCS503: Software Engineering (Project)**  
 **TIET Patiala**
 
-# The Sum Function in C++
+# Silo
 
-**Author(s)**:
+A zero-configuration platform for publishing and collaboratively
+improving AI-generated applications.
 
-`(RGB)` Raghav B. Venkataramaiyer `<bv.raghav -at-
-thapar -dot- edu>`
+**Team (Group 3C75)**: Paras Kaushal (1024030984), Dev Kapla
+(1024030888), Devanshu (1024030876). **Advisor**: Dr. Nisha Thakur.
 
-This project creates a sum function in c++ as a sample
-to illustrate how to compile a shared library and
-distribute it for use along with the binary.
+Upload a small app as a ZIP. Silo builds and runs it in Docker, lets the
+team edit its code together live in the browser, and checks every
+version for security risks before anyone trusts it.
 
-## Installation
-
-``` shell
-make -C code
-```
-
-This will create create a folder `dist` in `code`
-folder, with following contents
-
-```
-dist
- +-lib
- |  \-libbvr_math.so
- +-bin
-    \-run
-```
-
-## Usage
+## Run
 
 ``` shell
 cd code
-export LD_LIBRARY_PATH=dist/lib
-./dist/bin/run
+python scripts/start.py --local
 ```
+
+Then open <http://localhost:3000/auth/local>. On Windows, double-click
+`code/start-silo.bat`. Requirements and options are in `code/README.md`.
+
+## Repository
+
+| Folder | Contents |
+|---|---|
+| `code/` | The finished project: web app, API, collaboration server, local AI, tests |
+| `journals/` | Weekly journals, one folder per member |
+| `project-proposal/` | Project proposal |
+| `project-report-prototype-stage/` | Mid-semester report |
+| `project-report-final/` | Final report (`main.tex`, `main.pdf`) |
