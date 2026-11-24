@@ -30,7 +30,7 @@ export default function Modal({
 
   return (
     <div className="fixed inset-0 z-[70] bg-black/45 flex items-center justify-center p-5">
-      <div className="w-full max-w-[520px] max-h-full overflow-auto border border-black rounded-[30px] bg-white animate-silo-rise">
+      <div role="dialog" aria-modal="true" aria-label={title} className="w-full max-w-[520px] max-h-full overflow-auto border-[1.5px] border-black rounded-panel bg-white animate-silo-rise">
         <div
           className="flex items-center justify-between gap-3 px-5 py-[17px] border-b border-black"
           style={{ background: headBg }}

@@ -1,0 +1,95 @@
+# Silo's Semgrep rules for the Security track. Run offline with:
+#   semgrep scan --config apps/api/data/semgrep/silo-rules.yml --metrics=off <folder>
+rules:
+  - id: python-subprocess-shell-true
+    languages: [python]
+    severity: ERROR
+    message: Runs a shell command with shell=True; user-controlled text in the command can run extra commands on the server.
+    metadata:
+      title: Runs a shell command with shell=True
+      cwe: ["CWE-78: OS Command Injection"]
+      fix: Pass the command as a list and drop shell=True.
+    pattern: subprocess.$FUNC(..., shell=True, ...)
+
+  - id: python-eval-exec
+    languages: [python]
+    severity: ERROR
+    message: eval/exec run whatever text they are given with the app's full permissions.
+    metadata:
+      title: Runs text as Python code
+      cwe: ["CWE-95: Eval Injection"]
+      fix: Parse the input (json.loads, ast.literal_eval) instead of executing it.
+    pattern-either:
+      - pattern: eval(...)
+      - pattern: exec(...)
+
+  - id: python-pickle-load
+    languages: [python]
+    severity: ERROR
+    message: Unpickling untrusted data can run arbitrary code.
+    metadata:
+      title: Loads pickled data
+      cwe: ["CWE-502: Deserialization of Untrusted Data"]
+      fix: Store data as JSON and load it with json.loads.
+    pattern-either:
+      - pattern: pickle.load(...)
+      - pattern: pickle.loads(...)
+
+  - id: python-sql-formatted-query
+    languages: [python]
+    severity: ERROR
+    message: Formatting values into SQL lets crafted input change the query.
+    metadata:
+      title: Builds an SQL query from strings
+      cwe: ["CWE-89: SQL Injection"]
+      fix: "Use placeholders: cursor.execute('... WHERE id = ?', (value,))."
+    pattern-either:
+      - pattern: $CUR.execute(f"...", ...)
+      - pattern: $CUR.execute("..." % $X, ...)
+      - pattern: $CUR.execute("...".format(...), ...)
+      - pattern: $CUR.execute("..." + $X, ...)
+
+  - id: python-requests-verify-false
+    languages: [python]
+    severity: WARNING
+    message: verify=False accepts any certificate, so traffic can be intercepted.
+    metadata:
+      title: Turns off HTTPS certificate checks
+      cwe: ["CWE-295: Improper Certificate Validation"]
+      fix: Remove verify=False.
+    pattern: requests.$FUNC(..., verify=False, ...)
+
+  - id: python-flask-debug
+    languages: [python]
+    severity: WARNING
+    message: Flask's debugger lets anyone who reaches the app run code on the server.
+    metadata:
+      title: Debug mode left on
+      cwe: ["CWE-489: Active Debug Code"]
+      fix: Remove debug=True, or read it from an environment variable.
+    pattern: $APP.run(..., debug=True, ...)
+
+  - id: js-eval
+    languages: [javascript, typescript]
+    severity: ERROR
+    message: eval() or new Function() turns data into running code in the visitor's browser.
+    metadata:
+      title: Runs text as code
+      cwe: ["CWE-95: Eval Injection"]
+      fix: Parse the data instead (JSON.parse) or call a known function directly.
+    pattern-either:
+      - pattern: eval(...)
+      - pattern: new Function(...)
+
+  - id: js-inner-html
+    languages: [javascript, typescript]
+    severity: WARNING
+    message: Text inserted as HTML can carry scripts (cross-site scripting) if any part of it comes from a user, a URL or an API.
+    metadata:
+      title: Writes raw HTML into the page
+      cwe: ["CWE-79: Cross-site Scripting"]
+      fix: Use textContent for text, or build elements with document.createElement.
+    pattern-either:
+      - pattern: $EL.innerHTML = $X
+      - pattern: $EL.outerHTML = $X
+      - pattern: document.write(...)

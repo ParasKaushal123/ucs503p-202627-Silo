@@ -1,0 +1,2039 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Silo Viva Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --paper:#ffffff; --surface:#f5f7fb; --surface-2:#eef1f7;
+  --ink:#141c28; --ink-2:#425068; --ink-3:#6c7a92;
+  --line:#dce2ec; --line-2:#c6cfdd;
+  --accent:#2f43c9; --accent-soft:#eaedfd; --accent-line:#b9c2f4;
+  --amber:#8a5a00; --amber-soft:#fff5e0; --amber-line:#edcf95;
+  --teal:#0a6b62; --teal-soft:#e4f5f2; --teal-line:#9dd4cd;
+  --plum:#7a2d68; --plum-soft:#fbeaf7; --plum-line:#e6b6da;
+  --shadow:0 1px 2px rgba(20,28,40,.05);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#10151d; --surface:#161d27; --surface-2:#1c2430;
+    --ink:#e6ecf5; --ink-2:#aab6c8; --ink-3:#8593a8;
+    --line:#26303d; --line-2:#36424f;
+    --accent:#93a4ff; --accent-soft:#1b2340; --accent-line:#39457a;
+    --amber:#e8b866; --amber-soft:#2a2214; --amber-line:#5b4823;
+    --teal:#6fd3c6; --teal-soft:#112623; --teal-line:#2a4f49;
+    --plum:#e7a6d5; --plum-soft:#2a1626; --plum-line:#55304c;
+    --shadow:0 1px 2px rgba(0,0,0,.3);
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#10151d; --surface:#161d27; --surface-2:#1c2430;
+  --ink:#e6ecf5; --ink-2:#aab6c8; --ink-3:#8593a8;
+  --line:#26303d; --line-2:#36424f;
+  --accent:#93a4ff; --accent-soft:#1b2340; --accent-line:#39457a;
+  --amber:#e8b866; --amber-soft:#2a2214; --amber-line:#5b4823;
+  --teal:#6fd3c6; --teal-soft:#112623; --teal-line:#2a4f49;
+  --plum:#e7a6d5; --plum-soft:#2a1626; --plum-line:#55304c;
+  --shadow:0 1px 2px rgba(0,0,0,.3);
+}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth; scroll-padding-top:20px}
+body{
+  margin:0; background:var(--paper); color:var(--ink);
+  font-family:"IBM Plex Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  font-size:16.5px; line-height:1.68; -webkit-font-smoothing:antialiased;
+}
+
+/* ---------- shell ---------- */
+.shell{display:grid; grid-template-columns:302px minmax(0,1fr); gap:0; max-width:1440px; margin:0 auto}
+
+/* ---------- sidebar ---------- */
+.side{
+  position:sticky; top:0; align-self:start; height:100vh; overflow-y:auto;
+  border-right:1px solid var(--line); background:var(--surface);
+  padding:26px 0 60px;
+}
+.side-head{padding:0 22px 16px; border-bottom:1px solid var(--line); margin-bottom:14px}
+.side-head .mark{
+  font-family:"Newsreader",Georgia,serif; font-size:26px; font-weight:600;
+  letter-spacing:-.01em; line-height:1.1; display:block;
+}
+.side-head .sub{font-size:12.5px; color:var(--ink-3); margin-top:5px; letter-spacing:.02em}
+#q{
+  width:calc(100% - 44px); margin:0 22px 14px; padding:8px 11px;
+  border:1px solid var(--line-2); border-radius:7px; background:var(--paper);
+  color:var(--ink); font:inherit; font-size:13.5px;
+}
+#q:focus{outline:2px solid var(--accent); outline-offset:1px; border-color:transparent}
+nav{display:flex; flex-direction:column}
+nav a{
+  text-decoration:none; color:var(--ink-2); display:block;
+  padding:5px 22px; font-size:13.5px; line-height:1.4; border-left:3px solid transparent;
+}
+nav a.t1{
+  font-family:"Newsreader",Georgia,serif; font-size:15.5px; font-weight:600;
+  color:var(--ink); margin-top:18px; padding-bottom:4px; letter-spacing:.01em;
+}
+nav a.t1:first-child{margin-top:0}
+nav a.t2 b{
+  display:inline-block; min-width:34px; color:var(--ink-3);
+  font-family:"IBM Plex Mono",monospace; font-size:12px; font-weight:500;
+}
+nav a:hover{color:var(--accent); background:var(--surface-2)}
+nav a.on{color:var(--accent); border-left-color:var(--accent); background:var(--accent-soft)}
+nav a.hide{display:none}
+
+/* ---------- content ---------- */
+main{padding:0 0 120px; min-width:0}
+.wrap{max-width:820px; margin:0 auto; padding:0 34px}
+
+.hero{
+  border-bottom:1px solid var(--line); margin-bottom:46px;
+  padding:64px 0 40px; background:
+    linear-gradient(180deg,var(--surface) 0%,var(--paper) 100%);
+}
+.hero .wrap{max-width:820px}
+.kicker{
+  font-family:"IBM Plex Mono",monospace; font-size:11.5px; letter-spacing:.14em;
+  text-transform:uppercase; color:var(--accent); margin:0 0 14px;
+}
+.hero h1{
+  font-family:"Newsreader",Georgia,serif; font-weight:600; font-size:clamp(34px,5vw,50px);
+  line-height:1.08; letter-spacing:-.02em; margin:0 0 14px; text-wrap:balance;
+}
+.hero p.lede{font-size:18px; color:var(--ink-2); margin:0 0 26px; max-width:62ch}
+.meta{display:flex; flex-wrap:wrap; gap:8px 10px}
+.meta span{
+  font-size:12.5px; padding:4px 11px; border:1px solid var(--line-2);
+  border-radius:999px; color:var(--ink-2); background:var(--paper);
+}
+
+h1.part{
+  font-family:"Newsreader",Georgia,serif; font-weight:600;
+  font-size:clamp(27px,3.6vw,36px); line-height:1.15; letter-spacing:-.015em;
+  margin:82px 0 30px; padding-top:30px; border-top:2px solid var(--ink);
+  display:flex; flex-direction:column; gap:9px; text-wrap:balance;
+}
+h1.part .part-num{
+  font-family:"IBM Plex Mono",monospace; font-size:11.5px; letter-spacing:.14em;
+  text-transform:uppercase; color:var(--accent); font-weight:500;
+}
+h2{
+  font-family:"Newsreader",Georgia,serif; font-weight:600; font-size:25px;
+  line-height:1.25; letter-spacing:-.01em; margin:52px 0 16px; text-wrap:balance;
+}
+h2 .sec-num{
+  font-family:"IBM Plex Mono",monospace; font-size:14px; color:var(--accent);
+  margin-right:11px; font-weight:500;
+}
+h3{
+  font-family:"IBM Plex Sans",sans-serif; font-weight:600; font-size:16.5px;
+  margin:32px 0 10px; letter-spacing:.005em;
+}
+h4{font-size:15px; font-weight:600; margin:24px 0 8px}
+p{margin:0 0 15px; max-width:70ch}
+strong{font-weight:600; color:var(--ink)}
+em{color:var(--ink-2)}
+a{color:var(--accent)}
+code{
+  font-family:"IBM Plex Mono",monospace; font-size:.875em;
+  background:var(--surface-2); padding:1.5px 5px; border-radius:4px;
+  border:1px solid var(--line); color:var(--ink);
+}
+pre{
+  background:var(--surface-2); border:1px solid var(--line); border-radius:9px;
+  padding:15px 17px; overflow-x:auto; font-size:13.5px; line-height:1.55; margin:0 0 18px;
+}
+pre code{background:none; border:none; padding:0}
+ul,ol{margin:0 0 17px; padding-left:24px; max-width:70ch}
+li{margin-bottom:7px}
+li::marker{color:var(--ink-3)}
+
+/* ---------- tables ---------- */
+.tbl{overflow-x:auto; margin:0 0 22px; border:1px solid var(--line); border-radius:10px; box-shadow:var(--shadow)}
+table{border-collapse:collapse; width:100%; font-size:14.5px; background:var(--paper)}
+th,td{padding:10px 14px; text-align:left; vertical-align:top; border-bottom:1px solid var(--line)}
+th{
+  background:var(--surface-2); font-weight:600; font-size:12.5px;
+  letter-spacing:.04em; text-transform:uppercase; color:var(--ink-2); white-space:nowrap;
+}
+tbody tr:last-child td{border-bottom:none}
+tbody tr:hover td{background:var(--surface)}
+td:first-child{font-weight:500}
+
+/* ---------- callouts ---------- */
+.call{
+  margin:26px 0; padding:17px 20px 5px; border-radius:10px;
+  border:1px solid var(--line); border-left-width:4px; background:var(--surface);
+}
+.call h3{
+  margin:0 0 12px; font-size:12px; letter-spacing:.12em; text-transform:uppercase;
+  font-family:"IBM Plex Mono",monospace; font-weight:500;
+}
+.call p:last-child,.call ul:last-child,.call ol:last-child,
+.call .tbl:last-child{margin-bottom:16px}
+.call-silo{background:var(--amber-soft); border-color:var(--amber-line)}
+.call-silo h3{color:var(--amber)}
+.call-viva{background:var(--accent-soft); border-color:var(--accent-line)}
+.call-viva h3{color:var(--accent)}
+.call-theory{background:var(--teal-soft); border-color:var(--teal-line)}
+.call-theory h3{color:var(--teal)}
+.call-maps{background:var(--plum-soft); border-color:var(--plum-line)}
+.call-maps h3{color:var(--plum)}
+.call-shows{background:var(--surface-2); border-color:var(--line-2)}
+.call-shows h3{color:var(--ink-2)}
+.call .tbl{box-shadow:none}
+
+/* ---------- mobile ---------- */
+.topbar{display:none}
+@media (max-width:980px){
+  .shell{grid-template-columns:1fr}
+  .side{
+    position:fixed; inset:0 auto 0 0; width:290px; z-index:40;
+    transform:translateX(-100%); transition:transform .22s ease;
+    box-shadow:0 0 40px rgba(0,0,0,.2);
+  }
+  .side.open{transform:none}
+  .topbar{
+    display:flex; align-items:center; gap:12px; position:sticky; top:0; z-index:30;
+    background:var(--paper); border-bottom:1px solid var(--line); padding:10px 16px;
+  }
+  .topbar button{
+    font:inherit; font-size:14px; padding:7px 13px; border-radius:8px;
+    border:1px solid var(--line-2); background:var(--surface); color:var(--ink); cursor:pointer;
+  }
+  .topbar .t{font-family:"Newsreader",Georgia,serif; font-size:17px; font-weight:600}
+  .wrap{padding:0 16px}
+  .hero{padding:34px 0 26px; margin-bottom:28px}
+  body{font-size:16px}
+  .scrim{position:fixed; inset:0; background:rgba(10,14,20,.45); z-index:35; display:none}
+  .scrim.on{display:block}
+}
+
+/* ---------- print ---------- */
+@media print{
+  .side,.topbar,.scrim,#q{display:none !important}
+  .shell{display:block}
+  body{font-size:10.5pt; background:#fff; color:#000}
+  .wrap{max-width:none; padding:0}
+  .hero{background:none; padding:0 0 18px}
+  h1.part{page-break-before:always; margin-top:0}
+  h2,h3{page-break-after:avoid}
+  .tbl,table,.call{page-break-inside:avoid}
+  .call{border:1px solid #bbb !important; background:#fafafa !important}
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <button id="menu">Contents</button>
+  <span class="t">Silo · Viva Guide</span>
+  <button id="theme" style="margin-left:auto">Theme</button>
+</div>
+<div class="scrim"></div>
+<div class="shell">
+  <aside class="side">
+    <div class="side-head">
+      <span class="mark">Viva Guide</span>
+      <span class="sub">Silo · Slide Sets 4–7, DFD &amp; Class Diagrams</span>
+    </div>
+    <input id="q" type="search" placeholder="Filter sections…" aria-label="Filter sections">
+    <nav><a class="t2" href="#how-to-use-this-guide">How to use this guide</a>
+<a class="t1" href="#part-1-requirements-engineering-slide-set-4">PART 1 — REQUIREMENTS ENGINEERING (Slide Set 4)</a>
+<a class="t2" href="#11-what-requirements-engineering-actually-is"><b>1.1</b>What requirements engineering actually is</a>
+<a class="t2" href="#12-the-three-levels-of-requirement-and-who-reads-each"><b>1.2</b>The three levels of requirement, and who reads each</a>
+<a class="t2" href="#13-functional-requirements"><b>1.3</b>Functional requirements</a>
+<a class="t2" href="#14-non-functional-requirements"><b>1.4</b>Non-functional requirements</a>
+<a class="t2" href="#15-goals-versus-verifiable-non-functional-requirements"><b>1.5</b>Goals versus verifiable non-functional requirements</a>
+<a class="t2" href="#16-imprecision-completeness-and-consistency"><b>1.6</b>Imprecision, completeness and consistency</a>
+<a class="t2" href="#17-user-requirements-and-the-problems-with-natural-language"><b>1.7</b>User requirements and the problems with natural language</a>
+<a class="t2" href="#18-domain-requirements"><b>1.8</b>Domain requirements</a>
+<a class="t2" href="#19-requirements-interaction-conflicts-between-non-functional-requireme"><b>1.9</b>Requirements interaction — conflicts between non-functional requirements</a>
+<a class="t2" href="#110-requirements-and-design-are-inseparable"><b>1.10</b>Requirements and design are inseparable</a>
+<a class="t2" href="#111-users-of-a-requirements-document"><b>1.11</b>Users of a requirements document</a>
+<a class="t1" href="#part-2-requirement-gathering-the-7-step-model-slide-set-5">PART 2 — REQUIREMENT GATHERING: THE 7-STEP MODEL (Slide Set 5)</a>
+<a class="t2" href="#21-inception"><b>2.1</b>Inception</a>
+<a class="t2" href="#22-elicitation"><b>2.2</b>Elicitation</a>
+<a class="t2" href="#23-use-cases-as-an-elicitation-technique"><b>2.3</b>Use cases (as an elicitation technique)</a>
+<a class="t2" href="#24-elaboration"><b>2.4</b>Elaboration</a>
+<a class="t2" href="#25-negotiation"><b>2.5</b>Negotiation</a>
+<a class="t2" href="#26-specification"><b>2.6</b>Specification</a>
+<a class="t2" href="#27-validation"><b>2.7</b>Validation</a>
+<a class="t2" href="#28-requirements-management"><b>2.8</b>Requirements management</a>
+<a class="t1" href="#part-3-analysis-modelling-slide-set-6">PART 3 — ANALYSIS MODELLING (Slide Set 6)</a>
+<a class="t2" href="#31-why-analysis-modelling"><b>3.1</b>Why analysis modelling</a>
+<a class="t2" href="#32-purpose-of-requirements-analysis"><b>3.2</b>Purpose of requirements analysis</a>
+<a class="t2" href="#33-who-carries-out-requirements-analysis"><b>3.3</b>Who carries out requirements analysis</a>
+<a class="t2" href="#34-the-four-modelling-approaches"><b>3.4</b>The four modelling approaches</a>
+<a class="t2" href="#35-elements-of-the-analysis-model"><b>3.5</b>Elements of the analysis model</a>
+<a class="t2" href="#36-structured-versus-object-oriented-analysis"><b>3.6</b>Structured versus object-oriented analysis</a>
+<a class="t2" href="#37-flow-oriented-modelling-data-modelling-and-flows"><b>3.7</b>Flow-oriented modelling: data modelling and flows</a>
+<a class="t2" href="#38-scenario-based-modelling-writing-use-cases"><b>3.8</b>Scenario-based modelling: writing use cases</a>
+<a class="t2" href="#39-activity-diagrams-as-an-analysis-model-element"><b>3.9</b>Activity diagrams (as an analysis-model element)</a>
+<a class="t2" href="#310-class-based-modelling"><b>3.10</b>Class-based modelling</a>
+<a class="t2" href="#311-behavioural-modelling"><b>3.11</b>Behavioural modelling</a>
+<a class="t1" href="#part-4-introduction-to-uml-slide-set-7">PART 4 — INTRODUCTION TO UML (Slide Set 7)</a>
+<a class="t2" href="#41-modelling"><b>4.1</b>Modelling</a>
+<a class="t2" href="#42-what-uml-is-and-why-we-use-it"><b>4.2</b>What UML is and why we use it</a>
+<a class="t2" href="#43-the-uml-diagrams"><b>4.3</b>The UML diagrams</a>
+<a class="t2" href="#44-different-ways-of-using-uml"><b>4.4</b>Different ways of using UML</a>
+<a class="t2" href="#45-use-case-diagrams-full-notation"><b>4.5</b>Use case diagrams — full notation</a>
+<a class="t2" href="#46-activity-diagrams-full-notation"><b>4.6</b>Activity diagrams — full notation</a>
+<a class="t1" href="#part-5-process-modelling-and-data-flow-diagrams">PART 5 — PROCESS MODELLING AND DATA FLOW DIAGRAMS</a>
+<a class="t2" href="#51-process-modelling"><b>5.1</b>Process modelling</a>
+<a class="t2" href="#52-the-four-symbols"><b>5.2</b>The four symbols</a>
+<a class="t2" href="#53-context-level-1-and-level-n-diagrams"><b>5.3</b>Context, level-1 and level-N diagrams</a>
+<a class="t2" href="#54-balancing"><b>5.4</b>Balancing</a>
+<a class="t2" href="#55-the-dfd-rules"><b>5.5</b>The DFD rules</a>
+<a class="t1" href="#part-6-uml-class-diagrams-dr-ashima-singhs-set">PART 6 — UML CLASS DIAGRAMS (Dr. Ashima Singh&#x27;s set)</a>
+<a class="t2" href="#61-complexity-and-abstraction"><b>6.1</b>Complexity and abstraction</a>
+<a class="t2" href="#62-class-diagram-contents"><b>6.2</b>Class diagram contents</a>
+<a class="t2" href="#63-class-notation-and-visibility"><b>6.3</b>Class notation and visibility</a>
+<a class="t2" href="#64-the-relationships-in-detail"><b>6.4</b>The relationships in detail</a>
+<a class="t1" href="#part-7-our-project-diagrams-explained">PART 7 — OUR PROJECT DIAGRAMS, EXPLAINED</a>
+<a class="t2" href="#71-use-case-diagram"><b>7.1</b>Use Case Diagram</a>
+<a class="t2" href="#72-use-case-specifications-the-templates"><b>7.2</b>Use Case Specifications (the templates)</a>
+<a class="t2" href="#73-activity-diagram-swimlane"><b>7.3</b>Activity Diagram (swimlane)</a>
+<a class="t2" href="#74-class-diagram"><b>7.4</b>Class Diagram</a>
+<a class="t2" href="#75-sequence-diagram"><b>7.5</b>Sequence Diagram</a>
+<a class="t2" href="#76-collaboration-communication-diagram"><b>7.6</b>Collaboration (Communication) Diagram</a>
+<a class="t2" href="#77-data-flow-diagram"><b>7.7</b>Data Flow Diagram</a>
+<a class="t2" href="#78-project-schedule-gantt-chart"><b>7.8</b>Project Schedule (Gantt chart)</a>
+<a class="t1" href="#part-8-rapid-fire-revision">PART 8 — RAPID-FIRE REVISION</a>
+<a class="t2" href="#81-definitions-you-should-be-able-to-give-instantly"><b>8.1</b>Definitions you should be able to give instantly</a>
+<a class="t2" href="#82-lists-you-may-be-asked-to-reproduce"><b>8.2</b>Lists you may be asked to reproduce</a>
+<a class="t2" href="#83-the-how-did-you-do-it-in-your-project-answers-in-one-place"><b>8.3</b>The &quot;how did you do it in your project&quot; answers, in one place</a>
+<a class="t2" href="#84-three-things-to-volunteer-before-you-are-asked"><b>8.4</b>Three things to volunteer before you are asked</a></nav>
+  </aside>
+  <main>
+    
+<header class="hero"><div class="wrap">
+  <p class="kicker">UCS503P &middot; Software Engineering &middot; Viva Preparation</p>
+  <h1>Silo — Requirements, Analysis &amp; UML</h1>
+  <p class="lede">Every concept from the slide sets, explained properly, and then mapped onto
+  what we actually did in Silo — a zero-configuration deployment platform for AI-generated
+  Python applications. Read the theory, then read how our project used it.</p>
+  <div class="meta">
+    <span>Paras Kaushal · 1024030984</span>
+    <span>Dev Kapla · 1024030888</span>
+    <span>Devanshu · 1024030876</span>
+    <span>Group 3C75</span>
+    <span>Dr. Nisha Thakur</span>
+  </div>
+</div></header>
+
+    <div class="wrap"><h2 id="how-to-use-this-guide">How to use this guide</h2>
+<p>The viva will be asked in the language of the slides. So each section below does three things, in this order:</p>
+<ol>
+<li><strong>The theory</strong> — explained properly, in plain language, the way the slide means it.</li>
+<li><strong>How Silo used it</strong> — the actual decision we made, the artefact we produced, and where it lives.</li>
+<li><strong>Likely viva questions</strong> — with the answer you should give.</li>
+</ol>
+<p>If you are short on time, read the theory paragraph and the "How Silo used it" paragraph of every section. That combination is what the examiner is testing: <em>do you know the concept, and can you point at your own project as proof?</em></p>
+<h1 id="part-1-requirements-engineering-slide-set-4" class="part"><span class="part-num">Part 1</span><span>REQUIREMENTS ENGINEERING (Slide Set 4)</span></h1>
+<h2 id="11-what-requirements-engineering-actually-is"><span class="sec-num">1.1</span>What requirements engineering actually is</h2>
+<p>Requirements engineering is the process of working out <strong>what services the customer wants from a system, and the constraints under which that system must operate and be built</strong>. Notice that the definition has two halves. The first half is about services — the things the system does for somebody. The second half is about constraints — the limits inside which those services must be delivered, such as how fast, how reliably, on what hardware, under what law. A system that does all the right things but takes four minutes to respond has satisfied the first half and failed the second, and it is still a failed system.</p>
+<p>The word <strong>requirement</strong> itself is deliberately loose. The slides say a requirement may range from a high-level abstract statement of a service all the way down to a detailed mathematical functional specification. This range is not sloppiness — it is a real property of software projects. Very early, when you are talking to a customer who does not know what is technically possible, the only honest thing you can write is something abstract like "the system shall let a user deploy an application without configuring anything." Much later, when a developer has to implement it, that same requirement has been sharpened into something like "on receiving a POST to /apps/{id}/versions with a multipart body, the system shall create a version record with status = analysing and return 201 within 2 seconds." Both are requirements. They are the same requirement at different levels of abstraction.</p>
+<p><strong>Requirements</strong> (the noun, plural) are then defined as the descriptions of the system services and constraints that are <em>generated during</em> the requirements engineering process. So requirements are the <strong>output</strong>; requirements engineering is the <strong>process</strong>.</p>
+<h2 id="12-the-three-levels-of-requirement-and-who-reads-each"><span class="sec-num">1.2</span>The three levels of requirement, and who reads each</h2>
+<p>The slides separate requirements into three levels, and this separation exists entirely because <strong>different people need different amounts of detail</strong>. Writing one document for everybody fails, because it will be either too vague for the developer or too technical for the customer.</p>
+<p><strong>User requirements</strong> are statements in natural language, plus diagrams, describing the services the system provides and its operational constraints. They are <strong>written for customers</strong>. The key property is that a user requirement must be understandable by somebody who has no technical knowledge of the system. It talks about what the user gets, not about how the machine achieves it.</p>
+<p><strong>System requirements</strong> are a structured document setting out detailed descriptions of the system's services. The slides make a very important point about their purpose: system requirements are <strong>written as a contract between client and contractor</strong>. This is why they are structured and precise — if there is a dispute later about whether the delivered system is what was ordered, this is the document that settles it. Legal weight is the reason for the formality.</p>
+<p><strong>Software specification</strong> is a detailed software description that can serve as the basis for design or implementation. It is <strong>written for developers</strong>.</p>
+<p>The slides also list the <strong>readers</strong> of each level, and examiners love asking this because it shows whether you understood <em>why</em> the levels exist:</p>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>Level</th>
+<th>Who reads it</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>User requirements</td>
+<td>Client managers, system end-users, client engineers, contractor managers, system architects</td>
+</tr>
+<tr>
+<td>System requirements</td>
+<td>System end-users, client engineers, system architects, software developers</td>
+</tr>
+<tr>
+<td>Software design specification</td>
+<td>Client engineers (perhaps), system architects, software developers</td>
+</tr>
+</tbody>
+</table></div>
+<p>Read the table downwards and you see the pattern: as you go deeper, <strong>managers and customers drop out and engineers come in</strong>. Client managers appear only at the top level; developers appear only at the bottom two. The one group that appears at both the top and the middle is end-users, because they must be able to check that the detailed system requirements still describe the system they asked for.</p>
+<section class="call call-silo"><h3>How Silo used it</h3>
+<p>We wrote our requirements at all three levels, and we can show the examiner the difference:</p>
+<ul>
+<li><strong>User requirement (for our customer, the non-expert developer):</strong> "A user shall be able to upload a Python application and receive a working web address for it, without writing a Dockerfile, a requirements file, or any configuration."</li>
+<li><strong>System requirement (contract level):</strong> "On upload the system shall accept either a single <code>.py</code> file or a <code>.zip</code> archive, extract the archive rejecting any entry whose resolved path lies outside the extraction directory, create a version record with status <code>analysing</code>, and return HTTP 201 without waiting for the build to finish."</li>
+<li><strong>Software specification (for us as developers):</strong> "<code>versions.py</code> shall spawn a detached subprocess <code>python -m silo_api.build_worker &lt;version_id&gt; &lt;app_slug&gt; &lt;bundle_path&gt;</code> with <code>DETACHED_PROCESS | CREATE_NEW_PROCESS_GROUP</code> on Windows, so that the build survives an API reload."</li>
+</ul>
+<p>All three are the same requirement. Being able to state one requirement at three levels on demand is the single most convincing thing you can do in this part of the viva.</p>
+</section>
+<h2 id="13-functional-requirements"><span class="sec-num">1.3</span>Functional requirements</h2>
+<p>Functional requirements are <strong>statements of the services the system should provide, how the system should react to particular inputs, and how the system should behave in particular situations.</strong> All three clauses matter. "Provide a service" covers normal operation; "react to particular inputs" covers what happens when specific data arrives; "behave in particular situations" covers the awkward cases — what happens when the disk is full, when the input is malformed, when two users act at once.</p>
+<p>Functional requirements <strong>depend on the type of software, the expected users, and the type of system</strong> the software runs in. The same words mean different things in different domains — "the system shall notify the user" means an email in one system and a hardware alarm in another.</p>
+<p>The slides give classic examples, and it is worth noticing their shape: <em>"The user shall be able to search either all of the initial set of databases or select a subset from it."</em> — a service. <em>"Every order shall be allocated a unique identifier (ORDER_ID) which the user shall be able to copy to the account's permanent storage area."</em> — a service with a data constraint built in.</p>
+<section class="call call-silo"><h3>How Silo used it</h3>
+<p>Our main functional requirements, stated in slide style:</p>
+<ul>
+<li>The system <strong>shall</strong> authenticate every user through Google OAuth 2.0 before any application may be created.</li>
+<li>The user <strong>shall</strong> be able to create an application and upload a new version as a <code>.py</code> file or a <code>.zip</code> archive.</li>
+<li>The system <strong>shall</strong> determine the entry point, the runtime dependencies, the start command and the listening port of an uploaded application without any configuration file supplied by the user.</li>
+<li>The system <strong>shall</strong> build a container image for each version and run that image in an isolated container.</li>
+<li>The system <strong>shall</strong> record a version as <em>live</em> only after a network connection to its published port has succeeded.</li>
+<li>The user <strong>shall</strong> be able to read the build log of any version of an application they own.</li>
+<li>The system <strong>shall</strong> serve a live application to its owner through a reverse proxy path of the form <code>/proxy/{version_id}</code>.</li>
+</ul>
+<p>Every one of these is testable, which is the point of writing them this way.</p>
+</section>
+<h2 id="14-non-functional-requirements"><span class="sec-num">1.4</span>Non-functional requirements</h2>
+<p>Non-functional requirements are <strong>constraints on the services or functions offered by the system</strong> — timing constraints, constraints on the development process, standards, and so on. The slides define them again slightly differently a few pages later as requirements that <strong>define system properties and constraints</strong>, e.g. reliability, response time and storage. Both definitions describe the same idea: a functional requirement says <em>what the system does</em>, a non-functional requirement says <em>how well, how fast, how safely, or under what rules it does it</em>.</p>
+<p>The slides make a claim that examiners very often ask about: <strong>non-functional requirements may be more critical than functional requirements — if these are not met, the system is useless.</strong> The reasoning is that a failure of one function usually degrades the system, while a failure of a non-functional property usually destroys it. If one report in an accounting package prints wrong, you lose one report. If the whole package takes six minutes to open, nobody uses the package at all. That is the argument to give.</p>
+<p>The slides also note that <strong>process requirements</strong> may be specified, mandating a particular CASE tool, programming language or development method. So a non-functional requirement can constrain how you <em>build</em> the system, not only how the system <em>behaves</em>.</p>
+<h3>The three classifications</h3>
+<p>This classification is asked constantly, so learn it by the <em>source</em> of the requirement, not by memorising lists.</p>
+<p><strong>Product requirements</strong> specify that the delivered product must behave in a particular way — execution speed, reliability, and so on. These come <strong>from the product itself</strong>.</p>
+<p><strong>Organisational requirements</strong> are a consequence of organisational policies and procedures — process standards used, implementation requirements, and so on. These come <strong>from the company building or buying the system</strong>.</p>
+<p><strong>External requirements</strong> arise from factors external to the system and its development process — interoperability requirements, legislative requirements, and so on. These come <strong>from the outside world</strong>.</p>
+<p>The full type tree from the slides:</p>
+<ul>
+<li><strong>Product requirements</strong> → usability, efficiency (which splits into <strong>performance</strong> and <strong>space</strong>), reliability, portability</li>
+<li><strong>Organisational requirements</strong> → delivery, implementation, standards</li>
+<li><strong>External requirements</strong> → interoperability, ethical, legislative (which splits into <strong>privacy</strong> and <strong>safety</strong>)</li>
+</ul>
+<p>Note the two-level structure: efficiency contains performance and space; legislative contains privacy and safety. Drawing that tree correctly on the board is an easy mark.</p>
+<section class="call call-silo"><h3>How Silo used it</h3>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>Classification</th>
+<th>Silo's non-functional requirement</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Product — performance</td>
+<td>The inference stage (entry point, dependency, port detection) shall complete in under 500 ms per application. <em>Measured: under 2 ms.</em></td>
+</tr>
+<tr>
+<td>Product — reliability</td>
+<td>A version shall never be reported as <em>live</em> unless a TCP connection to its published port has actually succeeded.</td>
+</tr>
+<tr>
+<td>Product — usability</td>
+<td>A first-time user shall complete an upload-to-live-URL cycle without reading documentation and without writing any configuration file.</td>
+</tr>
+<tr>
+<td>Product — space</td>
+<td>Each deployed container shall be limited to a fixed memory cap and a fixed CPU share so that one application cannot starve another.</td>
+</tr>
+<tr>
+<td>Organisational — implementation</td>
+<td>The backend shall be written in Python with FastAPI and the frontend in Next.js, because these are the stacks the team is required to demonstrate.</td>
+</tr>
+<tr>
+<td>Organisational — standards</td>
+<td>All source shall live in a single Git repository, and no secret (OAuth client secret, session key) shall ever be committed.</td>
+</tr>
+<tr>
+<td>External — interoperability</td>
+<td>The platform shall run uploaded applications in Docker containers so that they behave identically on any machine with Docker installed.</td>
+</tr>
+<tr>
+<td>External — privacy/legislative</td>
+<td>Uploaded source code is the user's intellectual property and shall be accessible only to the authenticated owner and to users the owner has explicitly granted access.</td>
+</tr>
+</tbody>
+</table></div>
+<p>The organisational ones are worth mentioning in the viva precisely because students usually forget them — quoting "our stack is fixed by the course, which is an organisational requirement, not a product one" shows you understood the classification rather than memorised it.</p>
+</section>
+<h2 id="15-goals-versus-verifiable-non-functional-requirements"><span class="sec-num">1.5</span>Goals versus verifiable non-functional requirements</h2>
+<p>This is one of the highest-yield topics in the whole slide set, because it has a clean definition and a clean example pair.</p>
+<p>The problem the slides raise: <strong>non-functional requirements may be very difficult to state precisely, and imprecise requirements may be difficult to verify.</strong> If you write "the system shall be easy to use," nobody can ever prove or disprove it. Two honest engineers can disagree forever.</p>
+<p>So the slides split the idea into two:</p>
+<p>A <strong>goal</strong> is a <em>general intention of the user</em>, such as ease of use. A goal cannot be tested, but it is still valuable, because <strong>goals convey the intentions of the system users to developers.</strong> A developer who knows the goal is "ease of use" will make a hundred small decisions correctly that no requirement document could have listed.</p>
+<p>A <strong>verifiable non-functional requirement</strong> is <em>a statement using some measure that can be objectively tested</em>. It replaces the adjective with a number.</p>
+<p>The slide example is the pair to memorise:</p>
+<ul>
+<li><strong>System goal:</strong> "The system should be easy to use by experienced controllers and should be organised in such a way that user errors are minimised."</li>
+<li><strong>Verifiable non-functional requirement:</strong> "Experienced controllers shall be able to use all the system functions after a total of two hours training. After this training, the average number of errors made by experienced users shall not exceed two per day."</li>
+</ul>
+<p>Notice the transformation: <em>easy to use</em> became <em>two hours training</em>; <em>errors minimised</em> became <em>not more than two errors per day</em>. That is the whole technique — <strong>find the adjective, replace it with a measure</strong>.</p>
+<h3>The measures table</h3>
+<p>The slides give a table of properties and the measures used for each. Learn at least two measures per property:</p>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Measure</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Speed</td>
+<td>Processed transactions/second; user/event response time; screen refresh time</td>
+</tr>
+<tr>
+<td>Size</td>
+<td>Kbytes; number of RAM chips</td>
+</tr>
+<tr>
+<td>Ease of use</td>
+<td>Training time; number of help frames</td>
+</tr>
+<tr>
+<td>Reliability</td>
+<td>Mean time to failure; probability of unavailability; rate of failure occurrence; availability</td>
+</tr>
+<tr>
+<td>Robustness</td>
+<td>Time to restart after failure; percentage of events causing failure; probability of data corruption on failure</td>
+</tr>
+<tr>
+<td>Portability</td>
+<td>Percentage of target-dependent statements; number of target systems</td>
+</tr>
+</tbody>
+</table></div>
+<section class="call call-silo"><h3>How Silo used it</h3>
+<p>We can demonstrate this transformation on our own project, which is exactly what the examiner wants:</p>
+<ul>
+<li><strong>Our system goal:</strong> "Deploying an AI-generated application should feel effortless — the user should not have to learn anything about containers."</li>
+<li><strong>Our verifiable non-functional requirement:</strong> "A user shall be able to take a Python file from an AI assistant and obtain a running URL in a single upload, with zero configuration files authored by the user, and the static inference stage shall complete in under 500 ms."</li>
+</ul>
+<p>And a second pair on reliability:</p>
+<ul>
+<li><strong>Goal:</strong> "Deployments should be trustworthy."</li>
+<li><strong>Verifiable requirement:</strong> "A version shall be reported <em>live</em> only after a successful TCP connection to its port, within a readiness timeout of 180 seconds; otherwise it shall be reported <em>failed</em> with its container output attached."</li>
+</ul>
+<p>The second pair is worth telling as a story, because it came from a real bug. Docker publishes a host port the moment a container starts, whether or not anything is listening behind it. Our first version treated "container running" as "deployment successful," and a crashed application looked perfectly healthy. Converting the vague goal "deployments should be trustworthy" into the measurable requirement "a TCP connection must succeed" is precisely what fixed it. That is the <em>value</em> of verifiable requirements, told as an anecdote rather than a definition.</p>
+</section>
+<h2 id="16-imprecision-completeness-and-consistency"><span class="sec-num">1.6</span>Imprecision, completeness and consistency</h2>
+<p><strong>Requirements imprecision</strong> is the problem that arises when requirements are not precisely stated. Ambiguous requirements may be <strong>interpreted in different ways by developers and users</strong> — and the deadly property of ambiguity is that both sides believe they agree, so the disagreement is only discovered at delivery.</p>
+<p>In principle, requirements should be both complete and consistent:</p>
+<ul>
+<li><strong>Complete</strong> — they should include descriptions of <strong>all</strong> facilities required.</li>
+<li><strong>Consistent</strong> — there should be <strong>no conflicts or contradictions</strong> in the descriptions of the system facilities.</li>
+</ul>
+<p>And then the slides say the honest thing: <strong>in practice, it is very difficult or impossible to produce a complete and consistent requirements document.</strong> You should quote this, because it is a fact about real projects, not an excuse. Large systems have thousands of requirements written by many people over months, and the domain itself changes while you write.</p>
+<section class="call call-silo"><h3>How Silo used it</h3>
+<p>We hit a genuine incompleteness and a genuine ambiguity, and admitting them is stronger than pretending we didn't.</p>
+<p><strong>Incompleteness.</strong> Our original requirements described "an uploaded Python application" and quietly assumed one file at the top of the archive. They never said what should happen when the archive contains a monorepo — a <code>backend/</code> folder, a <code>frontend/</code> folder, tests, migrations. When we tested with a real vibe-coded project, the build failed with <code>python: can't open file '/app/app.py'</code>, because the code was looking only at the top level and falling back to the literal string <code>app.py</code>. The requirement was not wrong; it was <em>incomplete</em>. We closed the gap by adding an explicit requirement: "the system shall select the application root by scoring candidate directories and shall search recursively for the entry point."</p>
+<p><strong>Ambiguity.</strong> "The system shall run the uploaded application" was ambiguous between <code>python file.py</code> and something else. For a Streamlit application, <code>python app.py</code> runs and exits doing nothing; Streamlit must be launched with <code>streamlit run</code>. For a FastAPI module with no <code>if __name__ == "__main__"</code> block, <code>python main.py</code> exits immediately, leaving a container that reports a successful start while serving nothing. The word "run" meant different things to us and to the framework. We removed the ambiguity by specifying that the system determines a <strong>start command</strong>, not merely an entry file, choosing between <code>python</code>, <code>uvicorn</code>, <code>gunicorn</code>, <code>streamlit run</code> and <code>django</code>.</p>
+<p><strong>Consistency.</strong> We also caught a real inconsistency: our proposal document specified a container limit of 256 MB and 0.5 CPU, while the implemented <code>builder.py</code> used 512 MB and 1.0 CPU. Two parts of our own documentation contradicted each other. This is exactly the kind of conflict the slide warns about, and we flagged it rather than letting it survive to the report.</p>
+</section>
+<h2 id="17-user-requirements-and-the-problems-with-natural-language"><span class="sec-num">1.7</span>User requirements and the problems with natural language</h2>
+<p><strong>User requirements</strong> should describe functional and non-functional requirements so that they are <strong>understandable by system users who don't have detailed technical domain knowledge</strong>, and they are defined using <strong>natural language, tables and diagrams</strong>.</p>
+<p>But natural language brings its own problems, and the slides list them in two places. From the user-requirements angle:</p>
+<ul>
+<li><strong>Lack of clarity</strong> — precision is difficult without making the document difficult to read. There is a genuine trade-off: the more precise you make the prose, the more unreadable it becomes.</li>
+<li><strong>Requirements confusion</strong> — functional and non-functional requirements tend to get mixed up in the same sentence.</li>
+<li><strong>Requirements amalgamation</strong> — several different requirements get expressed together in one paragraph, so they cannot be tracked, tested or negotiated separately.</li>
+</ul>
+<p>And from the specification angle:</p>
+<ul>
+<li><strong>Ambiguity</strong> — readers and writers must interpret the same words the same way, and natural language is naturally ambiguous.</li>
+<li><strong>Over-flexibility</strong> — the same thing may be said in many different ways, so the reader cannot tell whether two paragraphs mean the same requirement or two different ones.</li>
+<li><strong>Lack of modularisation</strong> — natural-language structures (paragraphs, sections) are simply inadequate for structuring system requirements.</li>
+</ul>
+<h3>Guidelines for writing requirements</h3>
+<p>The slides give four rules, and the second one is the one examiners quote:</p>
+<ol>
+<li><strong>Invent a standard format</strong> and use it for all requirements.</li>
+<li><strong>Use language consistently:</strong> use <strong>shall</strong> for mandatory requirements and <strong>should</strong> for desirable requirements.</li>
+<li><strong>Use text highlighting</strong> to identify key parts of the requirement.</li>
+<li><strong>Avoid computer jargon.</strong></li>
+</ol>
+<section class="call call-silo"><h3>How Silo used it</h3>
+<p>We adopted the standard format directly: every requirement in our SRS is one numbered sentence, in the form <em>"The system shall …"</em> or <em>"The user shall be able to …"</em>, with <code>shall</code> reserved strictly for mandatory items and <code>should</code> for desirable ones. For example, "The system <strong>shall</strong> rewrite a local-only host binding to 0.0.0.0 in the build copy" is mandatory; "The build log <strong>should</strong> be streamed to the browser as it is produced" is desirable and is currently implemented by polling instead.</p>
+<p>We also fought requirements amalgamation deliberately. Our first draft had one paragraph saying the system "analyses the app, builds it, runs it and shows the logs." That is four requirements in one sentence, and none of them could be tested on its own. We split it into four numbered requirements, which is also why our test suite could be organised the way it is — one group of tests per requirement.</p>
+<p>On jargon: our user requirements say "the platform works out what your program needs in order to run," while only the software specification says "the packaging module performs AST analysis to resolve third-party imports against a 93-entry import-to-package map."</p>
+</section>
+<h2 id="18-domain-requirements"><span class="sec-num">1.8</span>Domain requirements</h2>
+<p>Domain requirements are <strong>derived from the application domain</strong> and describe system characteristics and features that <strong>reflect that domain</strong>. They may be new functional requirements, constraints on existing requirements, or definitions of specific computations. The critical line is: <strong>if domain requirements are not satisfied, the system may be unworkable.</strong> Not "worse" — unworkable. A railway system that ignores the domain rule about braking distance is not a slightly inferior railway system; it is a crash.</p>
+<p>The slides give two problems with domain requirements:</p>
+<ul>
+<li><strong>Understandability</strong> — the requirements are expressed in the language of the application domain, which the software engineers developing the system often do not understand.</li>
+<li><strong>Implicitness</strong> — domain specialists understand their area so well that they <strong>do not think of making the domain requirements explicit.</strong> The requirement is invisible precisely because it is obvious to the expert. This is the harder of the two problems, because you cannot ask about a requirement you do not know exists.</li>
+</ul>
+<section class="call call-silo"><h3>How Silo used it</h3>
+<p>Our domain is <strong>the Python web application ecosystem</strong>, and it imposed rules on us that no customer ever stated and that we only discovered by building:</p>
+<ul>
+<li>A <strong>WSGI/ASGI application object is not a program</strong>. <code>app = FastAPI()</code> in a module with no <code>__main__</code> guard is a <em>callable</em>, not something <code>python</code> can execute usefully. The domain rule is that ASGI applications must be launched by a server such as <code>uvicorn</code>, addressed as <code>module:variable</code>. This is an implicit domain requirement of exactly the kind the slide warns about — every Python web developer knows it, and nobody writes it down.</li>
+<li>A server bound to <code>127.0.0.1</code> is <strong>unreachable from outside its own container</strong>, because in the domain of container networking <code>localhost</code> means the container itself. A great many AI-generated apps hardcode <code>host="127.0.0.1"</code>, so our system must rewrite it to <code>0.0.0.0</code> in the build copy.</li>
+<li><strong>Import name ≠ package name.</strong> You <code>import cv2</code> but install <code>opencv-python</code>; you <code>import PIL</code> but install <code>Pillow</code>. There is no rule that derives one from the other, so the domain forces us to carry an explicit mapping table (93 entries).</li>
+<li><strong>Standard-library modules must not be installed.</strong> <code>import os</code> must not become <code>pip install os</code>. We must therefore know the standard-library module list (305 entries) as domain data.</li>
+</ul>
+<p>If any of these four domain requirements is violated, Silo does not produce a slightly worse deployment — it produces a container that does not work at all. That is the "unworkable" clause of the slide, demonstrated on our own project.</p>
+</section>
+<h2 id="19-requirements-interaction-conflicts-between-non-functional-requireme"><span class="sec-num">1.9</span>Requirements interaction — conflicts between non-functional requirements</h2>
+<p>The slides state that <strong>conflicts between different non-functional requirements are common in complex systems</strong>, and give the spacecraft example: to minimise weight you minimise the number of separate chips; to minimise power consumption you use lower-power chips; but low-power chips may mean more chips are needed. The two non-functional requirements pull in opposite directions, and the slide ends with the question you must be ready to answer: <strong>which is the most critical requirement?</strong> The engineering answer is that you cannot satisfy both, so somebody must decide the priority — and that decision belongs to negotiation, which is covered in Part 2.</p>
+<section class="call call-silo"><h3>How Silo used it</h3>
+<p>We had a clean, real conflict of exactly this shape.</p>
+<ul>
+<li><strong>Security requirement:</strong> every uploaded application must run inside a container with a full, isolated environment, so untrusted AI-generated code cannot touch the host.</li>
+<li><strong>Performance requirement:</strong> the user should get a live URL quickly.</li>
+</ul>
+<p>At one point we added <code>apt-get install build-essential</code> to every generated Dockerfile, so that any package needing a C compiler would build successfully. That served <strong>reliability</strong> — more applications would build. But it added roughly 200 MB of downloads to <em>every single build</em>, so deployments appeared to hang in "building" for a very long time. Reliability and performance were in direct conflict.</p>
+<p>Our resolution is the honest engineering answer: we refused to pick one globally and instead made the trade-off <strong>conditional</strong>. The compiler toolchain is now installed only when the resolved dependency list contains a package known to need it (<code>psycopg2</code>, <code>mysqlclient</code>, <code>lxml</code>, <code>cryptography</code>, <code>pyodbc</code>, and so on). Applications that need it pay the cost; applications that don't, don't. Being able to say "we had a genuine NFR conflict and here is how we resolved it rather than ignoring it" is worth a lot in a viva.</p>
+</section>
+<h2 id="110-requirements-and-design-are-inseparable"><span class="sec-num">1.10</span>Requirements and design are inseparable</h2>
+<p>In principle, requirements should state <strong>what</strong> the system should do and the design should describe <strong>how</strong> it does this. In practice, the slides say, <strong>requirements and design are inseparable</strong>, for three reasons:</p>
+<ul>
+<li>A system <strong>architecture may be designed to structure the requirements</strong> — you organise the requirements around the components you expect to build.</li>
+<li>The system may <strong>inter-operate with other systems</strong> that generate design requirements — talking to an existing system forces design decisions on you.</li>
+<li><strong>The use of a specific design may itself be a domain requirement</strong> — in some domains, a particular architecture is mandated.</li>
+</ul>
+<section class="call call-silo"><h3>How Silo used it</h3>
+<p>All three appear in our project. Our requirements are organised by subsystem — authentication, application management, inference, build, proxy — which is an architectural structure imposed on the requirement list. Our decision to deploy through <strong>Docker</strong> is not a free design choice: it is forced by the requirement to run untrusted code in isolation, and it then generates further design requirements (we must publish ports, we must probe readiness, we must handle Compose projects). And our choice of <strong>Google OAuth</strong> as the only login method is a requirement that immediately dictates design: it forces a redirect/callback flow, a session cookie, and a <code>google_sub</code> column on the user table.</p>
+</section>
+<h2 id="111-users-of-a-requirements-document"><span class="sec-num">1.11</span>Users of a requirements document</h2>
+<p>The slides list five groups and what each does with the document. This is a small table but a very commonly asked one.</p>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>Reader</th>
+<th>What they use the requirements for</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>System customers</strong></td>
+<td>Specify the requirements and read them to check that they meet their needs; they specify changes to the requirements</td>
+</tr>
+<tr>
+<td><strong>Managers</strong></td>
+<td>Use the document to plan a bid for the system and to plan the system development process</td>
+</tr>
+<tr>
+<td><strong>System engineers</strong></td>
+<td>Use the requirements to understand what system is to be developed</td>
+</tr>
+<tr>
+<td><strong>System test engineers</strong></td>
+<td>Use the requirements to develop validation tests for the system</td>
+</tr>
+<tr>
+<td><strong>System maintenance engineers</strong></td>
+<td>Use the requirements to help understand the system and the relationships between its parts</td>
+</tr>
+</tbody>
+</table></div>
+<p>The insight worth stating aloud: <strong>customers are the only group that writes as well as reads</strong>; everybody else consumes. And maintenance engineers may read the document years later, which is the argument for writing it properly even when the team already knows what it means.</p>
+<section class="call call-silo"><h3>How Silo used it</h3>
+<p>In our three-person team the roles collapsed onto us, which is normal for a student project and worth saying honestly. Dr. Nisha Thakur plays the <strong>customer</strong> role, reading the requirements and requesting changes. We act as <strong>system engineers</strong> when implementing. We acted as <strong>test engineers</strong> when we derived the automated test suite directly from the requirement list — each test group traces back to a requirement, which is exactly the use the slide describes. And we deliberately wrote the requirements for a future <strong>maintenance engineer</strong>: the documentation states not only what the inference engine does but why the strict/non-strict entry-point fallback exists, because the reason is not obvious from the code.</p>
+</section>
+<h1 id="part-2-requirement-gathering-the-7-step-model-slide-set-5" class="part"><span class="part-num">Part 2</span><span>REQUIREMENT GATHERING: THE 7-STEP MODEL (Slide Set 5)</span></h1>
+<p>The seven tasks are <strong>Inception → Elicitation → Elaboration → Negotiation → Specification → Validation → Requirements Management.</strong> Learn them in order; the sequence itself is an exam question. A useful way to remember what they do as a group: the first two <em>discover</em>, the middle two <em>shape</em>, the fifth <em>records</em>, the sixth <em>checks</em>, and the seventh <em>controls change forever afterwards</em>.</p>
+<h2 id="21-inception"><span class="sec-num">2.1</span>Inception</h2>
+<p>During inception the requirements engineer asks a set of questions to establish:</p>
+<ul>
+<li>a basic understanding of the problem,</li>
+<li>the people who want a solution,</li>
+<li>the nature of the solution that is desired,</li>
+<li>the effectiveness of preliminary communication and collaboration between customer and developer.</li>
+</ul>
+<p>Through these questions the engineer needs to <strong>identify the stakeholders, recognise multiple viewpoints, work toward collaboration, and break the ice and initiate communication.</strong> That last one is not filler — inception is as much about establishing a working relationship as about gathering facts.</p>
+<p><strong>The first set of questions</strong> (memorise these four, they are quoted directly):</p>
+<ul>
+<li>Who is behind the request for this work?</li>
+<li>Who will use the solution?</li>
+<li>What will be the economic benefit of a successful solution?</li>
+<li>Is there another source for the solution that you need?</li>
+</ul>
+<p>These questions focus on <strong>the customer, other stakeholders, the overall goals, and the benefits</strong>.</p>
+<section class="call call-silo"><h3>How Silo used it</h3>
+<p>We answered those four questions explicitly for Silo:</p>
+<ul>
+<li><strong>Who is behind the request?</strong> The problem owner is anyone who can now generate working code with an AI assistant but cannot deploy it. In our project the request is framed by the course, with Dr. Nisha Thakur as customer.</li>
+<li><strong>Who will use the solution?</strong> Three distinct viewpoints, which is the "recognise multiple viewpoints" step in action: the <strong>developer</strong> who writes or generates the app, the <strong>collaborator</strong> who wants to change it without touching code, and the <strong>approver</strong>, a non-technical person who must decide whether it is safe to run.</li>
+<li><strong>What is the economic benefit?</strong> The gap between "the AI wrote my app in 30 seconds" and "it took me three days to deploy it" is where all the value sits. Removing that gap is the benefit.</li>
+<li><strong>Is there another source for the solution?</strong> Yes — Heroku, Railway, Render, Streamlit Cloud, Replit. Answering honestly here is what forced us to find our differentiator: those platforms all still require the user to understand configuration, and none of them tells a non-technical reviewer <em>what the code can do</em> before it runs. That gap became the nutrition-label idea.</li>
+</ul>
+<p>Being able to say "we identified three stakeholder viewpoints at inception, not one" is exactly what the slide means by <em>recognise multiple viewpoints</em>.</p>
+</section>
+<h2 id="22-elicitation"><span class="sec-num">2.2</span>Elicitation</h2>
+<p>Elicitation is drawing the requirements out. The slides begin by explaining <strong>why it is difficult</strong>, and the three problems are a classic question:</p>
+<ul>
+<li><strong>Problems of scope</strong> — identifying the boundaries of the system, or specifying too much technical detail rather than overall system objectives.</li>
+<li><strong>Problems of understanding</strong> — of what is wanted, what the problem domain is, and what the computing environment can handle. The slide adds the line that matters most: <strong>information that is believed to be "obvious" is often omitted.</strong></li>
+<li><strong>Problems of volatility</strong> — the requirements change over time.</li>
+</ul>
+<p>Elicitation may be accomplished through two activities: <strong>collaborative requirements gathering</strong> and <strong>quality function deployment</strong>.</p>
+<p>The elicitation workflow on the slides runs: elicit requirements → conduct FAST meetings → make lists of functions and classes, and lists of constraints → then a decision, <strong>formal prioritisation?</strong> → if <strong>yes</strong>, use <strong>QFD</strong> to prioritise requirements; if <strong>no</strong>, prioritise informally → then <strong>create use cases</strong> (define actors, write scenario, complete template, draw use-case diagram).</p>
+<h3>Quality Function Deployment (QFD)</h3>
+<p>QFD is <strong>a quality management technique that translates the needs of the customer into technical requirements for software.</strong> It has four parts:</p>
+<ul>
+<li><strong>Function deployment</strong> determines the "value" (as perceived by the customer) of each function required of the system.</li>
+<li><strong>Information deployment</strong> identifies data objects and events.</li>
+<li><strong>Task deployment</strong> examines the behaviour of the system.</li>
+<li><strong>Value analysis</strong> determines the relative priority of requirements.</li>
+</ul>
+<p>QFD identifies <strong>three types of requirement</strong>, and this three-way split is very frequently asked:</p>
+<ul>
+<li><strong>Normal requirements</strong> — the objectives and goals stated for a product during meetings with the customer. <strong>If present, the customer is satisfied.</strong> Examples: requested types of graphical display, specific system functions, defined levels of performance.</li>
+<li><strong>Expected requirements</strong> — implicit to the product, so fundamental that the customer does not explicitly state them. <strong>Their absence causes significant dissatisfaction.</strong> Examples: ease of human/machine interaction, overall operational correctness and reliability, ease of installation.</li>
+<li><strong>Exciting requirements</strong> — features that go <strong>beyond the customer's expectations</strong> and prove very satisfying when present. The slide's example is a mobile phone shipping with unexpected capabilities such as multitouch and visual voicemail that delight the user.</li>
+</ul>
+<p>The logic of the three is worth stating: normal requirements are what you <em>promised</em>, expected requirements are what you <em>must not get wrong even though nobody asked</em>, and exciting requirements are what makes anyone choose your product over an identical competitor.</p>
+<h3>Elicitation work products</h3>
+<p>The slides list what elicitation should produce:</p>
+<ul>
+<li>a statement of need and feasibility;</li>
+<li>a bounded statement of scope for the system;</li>
+<li>a list of customers, users and other stakeholders who participated;</li>
+<li>a description of the system's technical environment;</li>
+<li>a list of requirements organised by function, and the domain constraints that apply to each;</li>
+<li>a set of preliminary usage scenarios, in the form of use cases;</li>
+<li>any prototypes developed to better define requirements.</li>
+</ul>
+<section class="call call-silo"><h3>How Silo used it</h3>
+<p>We can map QFD's three requirement types straight onto Silo, and this is one of the best answers available for this section:</p>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>QFD type</th>
+<th>Silo requirement</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Normal</strong></td>
+<td>Upload a Python app and get a live URL; see build logs; manage multiple apps and versions. These were stated openly and satisfy the customer when present.</td>
+</tr>
+<tr>
+<td><strong>Expected</strong></td>
+<td>Login must work and keep my code private; the platform must not lose my upload; the site must respond quickly; one user's app must not be able to read another's. Nobody ever asked for these, and their absence would sink the product.</td>
+</tr>
+<tr>
+<td><strong>Exciting</strong></td>
+<td>The <strong>nutrition label</strong> — a plain-English summary of what the uploaded code can actually do (which files it touches, which network hosts it contacts, whether it spawns processes) shown to a non-technical approver <em>before</em> the code runs. No competing platform does this. Also the <strong>shared workbench</strong>, where a non-programmer changes a running app by describing the change in English.</td>
+</tr>
+</tbody>
+</table></div>
+<p>We also produced the elicitation work products: a scope statement (Python web applications only — not Java, not arbitrary binaries), a stakeholder list (developer, collaborator, approver, owner/admin), a technical environment description (Docker, PostgreSQL, Python 3.11), a requirements list organised by function, and <strong>preliminary usage scenarios in the form of six documented use cases</strong> — which is precisely what the slide asks for.</p>
+<p>On the <em>volatility</em> problem: our requirements genuinely changed during the project. "Run the app" became "determine a start command." "Find the entry point" became "find the application root, then the entry point." That is requirements volatility observed in the wild, not in theory.</p>
+</section>
+<h2 id="23-use-cases-as-an-elicitation-technique"><span class="sec-num">2.3</span>Use cases (as an elicitation technique)</h2>
+<p>A use case is <strong>a collection of user scenarios that describe the thread of usage of a system</strong>. Each scenario is described <strong>from the point of view of an "actor"</strong> — a person or device that interacts with the software in some way.</p>
+<p>Each scenario answers the following questions (these are the questions your use-case template must implicitly answer):</p>
+<ul>
+<li>Who is the primary actor, the secondary actor(s)?</li>
+<li>What are the actor's goals?</li>
+<li>What preconditions should exist before the story begins?</li>
+<li>What main tasks or functions are performed by the actor?</li>
+<li>What extensions might be considered as the story is described?</li>
+<li>What variations in the actor's interaction are possible?</li>
+<li>What system information will the actor acquire, produce, or change?</li>
+<li>Will the actor have to inform the system about changes in the external environment?</li>
+<li>What information does the actor desire from the system?</li>
+<li>Does the actor wish to be informed about unexpected changes?</li>
+</ul>
+<section class="call call-silo"><h3>How Silo used it</h3>
+<p>We wrote <strong>six</strong> full use cases: UC-01 Submit App for Deployment, UC-02 Run Capability Analysis and Generate Nutrition Label, UC-03 Approve or Reject Deployment, UC-04 Deploy to Sandbox, UC-05 Request Change via AI in Shared Workbench, UC-06 Share App and Manage Access. Each one names a primary actor and secondary actors, states preconditions and postconditions, gives a numbered main success scenario, and then lists alternate flows and exceptions — which is exactly how the slide's ten questions get answered in practice. These are covered in detail in Part 7.</p>
+</section>
+<h2 id="24-elaboration"><span class="sec-num">2.4</span>Elaboration</h2>
+<p>During elaboration the software engineer <strong>takes the information obtained during inception and elicitation and begins to expand and refine it.</strong> Elaboration focuses on developing a <strong>refined technical model of software functions, features and constraints</strong>.</p>
+<p>The slides are explicit that <strong>it is an analysis modelling task</strong>, and list what happens:</p>
+<ul>
+<li>use cases are developed;</li>
+<li>domain classes are identified along with their attributes and relationships;</li>
+<li>state machine diagrams are used to capture the life of an object.</li>
+</ul>
+<p><strong>The end result is an analysis model that defines the functional, informational and behavioural domains of the problem.</strong> Those three words — functional, informational, behavioural — recur throughout the course and are worth memorising as a set.</p>
+<section class="call call-silo"><h3>How Silo used it</h3>
+<p>Elaboration is where every diagram in Part 7 came from. We expanded the elicited requirements into:</p>
+<ul>
+<li><strong>Use cases</strong> — six full specifications plus a use case diagram.</li>
+<li><strong>Domain classes with attributes and relationships</strong> — <code>User</code>, <code>App</code>, <code>Version</code>, <code>BuildLog</code> as the domain classes, plus the service and router classes, with a composition chain <code>User ⋄— App ⋄— Version ⋄— BuildLog</code>.</li>
+<li><strong>The life of an object</strong> — the <code>Version</code> object has a genuine lifecycle: <code>analysing → building → live</code> or <code>failed</code>. That status field is effectively a state machine, and it is the object whose life we would draw in a state diagram.</li>
+</ul>
+<p>Our activity diagram, class diagram, sequence diagram, collaboration diagram and DFD are all elaboration products. That is the sentence to say if asked "where does elaboration appear in your project?"</p>
+</section>
+<h2 id="25-negotiation"><span class="sec-num">2.5</span>Negotiation</h2>
+<p>During negotiation the software engineer <strong>reconciles the conflicts between what the customer wants and what can be achieved given limited business resources.</strong> The steps are:</p>
+<ul>
+<li>Requirements are <strong>ranked (prioritised)</strong> by customers, users and other stakeholders.</li>
+<li><strong>Risks</strong> associated with each requirement are identified and analysed.</li>
+<li><strong>Rough guesses of development effort</strong> are made and used to assess the impact of each requirement on project cost and delivery time.</li>
+<li>Using an <strong>iterative approach</strong>, requirements are eliminated, combined and/or modified <strong>so that each party achieves some measure of satisfaction.</strong></li>
+</ul>
+<p>That last phrase is the definition of a successful negotiation — not that one side wins, but that both sides get some satisfaction.</p>
+<p><strong>The art of negotiation</strong> (seven points, often asked as a list):</p>
+<ul>
+<li>Recognise that it is <strong>not a competition</strong></li>
+<li><strong>Map out a strategy</strong></li>
+<li><strong>Listen actively</strong></li>
+<li>Focus on <strong>the other party's interests</strong></li>
+<li><strong>Don't let it get personal</strong></li>
+<li><strong>Be creative</strong></li>
+<li><strong>Be ready to commit</strong></li>
+</ul>
+<section class="call call-silo"><h3>How Silo used it</h3>
+<p>Our negotiation was internal — the team against a seven-week schedule and a three-person capacity — and it produced a genuinely reduced scope, which we should present honestly rather than hide.</p>
+<p><strong>Ranking.</strong> We ranked the deployment pipeline (upload → infer → build → run → proxy) as P0, because without it there is no product at all. The capability analysis and nutrition label came second. The approval workflow, gVisor sandboxing, egress allowlist and real-time collaborative workbench came third.</p>
+<p><strong>Risk.</strong> gVisor carries a high risk: it is a different container runtime, it does not run natively on Windows, and a failure there blocks every demo. Semgrep integration carries medium risk. The core pipeline carries low technical risk but high effort.</p>
+<p><strong>Effort.</strong> We estimated the inference engine alone at roughly two weeks of one person's time, which turned out to be accurate.</p>
+<p><strong>The outcome.</strong> We <strong>eliminated</strong> gVisor and the egress allowlist from the mid-semester scope, <strong>modified</strong> the collaborative workbench down to a frontend prototype rather than a real-time system, and <strong>kept</strong> the full deployment pipeline and the test suite. Each party — the technical ambition and the schedule — got some satisfaction. This is why our documentation clearly separates "implemented" from "proposed," and why the activity diagram for the proposal shows Semgrep and gVisor while the implementation does not yet contain them. Saying this out loud, with the reasoning, is far stronger than being caught out on it.</p>
+</section>
+<h2 id="26-specification"><span class="sec-num">2.6</span>Specification</h2>
+<p>A specification is <strong>the final work product produced by the requirements engineer.</strong> It is normally in the form of a <strong>software requirements specification (SRS)</strong>. The slides say it:</p>
+<ul>
+<li>serves as the <strong>foundation for subsequent software engineering activities</strong>;</li>
+<li>describes the <strong>function and performance</strong> of a computer-based system and the <strong>constraints</strong> that will govern its development;</li>
+<li><strong>formalises the informational, functional and behavioural requirements</strong> of the proposed software in <strong>both a graphical and textual format</strong>.</li>
+</ul>
+<p>Note "graphical <strong>and</strong> textual" — the SRS is not only prose; the diagrams are part of the specification.</p>
+<h3>Typical contents of an SRS</h3>
+<ul>
+<li><strong>Requirements</strong></li>
+<li>required states and modes</li>
+<li>software requirements grouped by capabilities (functions, objects)</li>
+<li>software external interface requirements</li>
+<li>software internal interface requirements</li>
+<li>software internal data requirements</li>
+<li>other software requirements (safety, security, privacy, environment, hardware, software, communications, quality, personnel, training, logistics, etc.)</li>
+<li>design and implementation constraints</li>
+<li><strong>Qualification provisions</strong> to ensure each requirement has been met — demonstration, test, analysis, inspection</li>
+<li><strong>Requirements traceability</strong> — trace back to the system or subsystem where each requirement applies</li>
+</ul>
+<section class="call call-silo"><h3>How Silo used it</h3>
+<p>Our SRS maps onto those headings directly:</p>
+<ul>
+<li><strong>Required states and modes</strong> — the version lifecycle: <code>analysing</code>, <code>building</code>, <code>live</code>, <code>failed</code>.</li>
+<li><strong>Requirements grouped by capability</strong> — authentication, application management, version upload, inference, build and deployment, proxying, logging.</li>
+<li><strong>External interface requirements</strong> — the Google OAuth 2.0 endpoints, and the Docker Engine API.</li>
+<li><strong>Internal interface requirements</strong> — the REST contract between the Next.js frontend and the FastAPI backend, and the command-line contract of the build worker (<code>python -m silo_api.build_worker &lt;version_id&gt; &lt;app_slug&gt; &lt;bundle_path&gt;</code>).</li>
+<li><strong>Internal data requirements</strong> — the four tables and their columns, plus the two data files <code>import_map.json</code> (93 entries) and <code>stdlib_modules.json</code> (305 entries).</li>
+<li><strong>Design and implementation constraints</strong> — Python 3.11, FastAPI, Next.js 14, PostgreSQL, Docker; must run on Windows development machines.</li>
+<li><strong>Qualification provisions</strong> — our automated test suite is the "test" form of qualification, and the five evaluation applications are the "demonstration" form.</li>
+<li><strong>Graphical format</strong> — the use case, activity, class, sequence, collaboration and data flow diagrams are formally part of the specification, not decoration.</li>
+</ul>
+</section>
+<h2 id="27-validation"><span class="sec-num">2.7</span>Validation</h2>
+<p>During validation the <strong>work products produced as a result of requirements engineering are assessed for quality.</strong> The specification is examined to ensure that:</p>
+<ul>
+<li>all software requirements have been stated <strong>unambiguously</strong>;</li>
+<li><strong>inconsistencies, omissions and errors</strong> have been detected and corrected;</li>
+<li>the work products <strong>conform to the standards</strong> established for the process, the project and the product.</li>
+</ul>
+<p><strong>The formal technical review serves as the primary requirements validation mechanism.</strong> Members include software engineers, customers, users and other stakeholders. Say "formal technical review" if asked how requirements are validated — that is the expected term.</p>
+<h3>The validation questions</h3>
+<p>These are asked as a list, so learn them as two groups.</p>
+<p><strong>Group 1:</strong></p>
+<ul>
+<li>Is each requirement <strong>consistent with the overall objective</strong> for the system/product?</li>
+<li>Have all requirements been specified at the <strong>proper level of abstraction</strong> — do some provide technical detail inappropriate at this stage?</li>
+<li>Is the requirement <strong>really necessary</strong>, or is it an add-on feature not essential to the objective?</li>
+<li>Is each requirement <strong>bounded and unambiguous</strong>?</li>
+<li>Does each requirement have <strong>attribution</strong> — is a source (a specific individual) noted for it?</li>
+</ul>
+<p><strong>Group 2:</strong></p>
+<ul>
+<li>Do any requirements <strong>conflict</strong> with other requirements?</li>
+<li>Is each requirement <strong>achievable</strong> in the technical environment that will house the system?</li>
+<li>Is each requirement <strong>testable</strong> once implemented? (Approaches: demonstration, actual test, analysis, inspection.)</li>
+<li>Does the requirements model properly reflect the <strong>information, function and behaviour</strong> of the system to be built?</li>
+<li>Has the requirements model been <strong>"partitioned"</strong> in a way that exposes progressively more detailed information about the system?</li>
+</ul>
+<section class="call call-silo"><h3>How Silo used it</h3>
+<p>Our validation was a review inside the team plus review with the instructor — a formal technical review in the slide's sense, with the customer present.</p>
+<p>Applying the questions caught real problems. <strong>"Is each requirement testable?"</strong> exposed that "the app should deploy successfully" was untestable as written, and drove it to "a TCP connection to the published port must succeed within the readiness timeout." <strong>"Do any requirements conflict?"</strong> caught the 256 MB / 512 MB contradiction between the proposal and the code. <strong>"Is the requirement really necessary?"</strong> removed several features from the mid-semester scope. <strong>"Is each requirement achievable in the technical environment?"</strong> is what killed gVisor for now — it is not achievable on our Windows development machines inside the schedule.</p>
+<p>We also used the four qualification approaches: <strong>test</strong> for the automated suite, <strong>demonstration</strong> for the five evaluation applications, <strong>analysis</strong> for the timing measurements, and <strong>inspection</strong> for code review of the security-sensitive parts such as the zip path-traversal guard.</p>
+</section>
+<h2 id="28-requirements-management"><span class="sec-num">2.8</span>Requirements management</h2>
+<p>During requirements management the project team performs activities to <strong>identify, control and track requirements and changes to requirements at any time as the project proceeds.</strong> The mechanics:</p>
+<ul>
+<li>Each requirement is assigned a <strong>unique identifier</strong>.</li>
+<li>The requirements are placed into one or more <strong>traceability tables</strong>.</li>
+<li>These tables may be stored in a <strong>database</strong> relating features, sources, dependencies, subsystems and interfaces to the requirements.</li>
+<li>A <strong>requirements traceability table</strong> is also placed at the end of the SRS.</li>
+</ul>
+<p>The purpose of traceability is to answer the question "if this requirement changes, what else is affected?" — and its mirror, "why does this piece of code exist?"</p>
+<section class="call call-silo"><h3>How Silo used it</h3>
+<p>We assigned identifiers (FR-01…, NFR-01…, UC-01…) and traced them both ways. Forward: each requirement points at the module that implements it and the test that verifies it — for example, the requirement about local-only host bindings points at <code>repair_host_binding()</code> in <code>packaging.py</code> and at the corresponding test. Backward: each use case maps to the routes that realise it, so UC-01 maps to <code>versions.py</code>, UC-04 maps to <code>builder.py</code>, <code>packaging.py</code> and <code>compose.py</code>.</p>
+<p>Git is our change-control mechanism: every change to code or requirements is a commit with a message, so the history of a requirement is recoverable. That is a lightweight version of the database the slide describes, and it is honest to describe it that way.</p>
+</section>
+<h1 id="part-3-analysis-modelling-slide-set-6" class="part"><span class="part-num">Part 3</span><span>ANALYSIS MODELLING (Slide Set 6)</span></h1>
+<h2 id="31-why-analysis-modelling"><span class="sec-num">3.1</span>Why analysis modelling</h2>
+<p>The slides give seven reasons, and they read as a list of <em>benefits</em>, so learn them as benefits:</p>
+<ul>
+<li>Provides the <strong>first technical representation</strong> of a system.</li>
+<li>Is <strong>easy to understand and maintain</strong>.</li>
+<li><strong>Deals with the problem of size by partitioning</strong> the system.</li>
+<li><strong>Uses graphics</strong> whenever possible.</li>
+<li><strong>Differentiates between essential information and implementation information.</strong></li>
+<li>Helps in the <strong>tracking and evaluation of interfaces</strong>.</li>
+<li>Provides <strong>tools other than narrative text</strong> to describe software logic and policy.</li>
+</ul>
+<p>The two most quotable are <em>partitioning to deal with size</em> and <em>separating essential from implementation information</em>. The first is why big systems are drawn as a hierarchy of diagrams rather than one enormous picture; the second is why an analysis model says "the system stores the version" rather than "the system runs an INSERT into a PostgreSQL table."</p>
+<h2 id="32-purpose-of-requirements-analysis"><span class="sec-num">3.2</span>Purpose of requirements analysis</h2>
+<p>Requirements analysis:</p>
+<ul>
+<li>specifies the software's <strong>operational characteristics</strong>;</li>
+<li>indicates the software's <strong>interfaces with other system elements</strong>;</li>
+<li>establishes the <strong>constraints</strong> the software must meet;</li>
+<li>provides the software designer with a <strong>representation of information, function and behaviour</strong> — which is <strong>later translated into architectural, interface, class/data and component-level designs</strong>;</li>
+<li>provides the developer and customer with the means to <strong>assess quality once the software is built</strong>.</li>
+</ul>
+<p>That fourth point is the bridge between analysis and design, and it is worth stating as a chain: <em>information, function and behaviour</em> → <em>architectural, interface, class/data and component-level design</em>.</p>
+<h2 id="33-who-carries-out-requirements-analysis"><span class="sec-num">3.3</span>Who carries out requirements analysis</h2>
+<p>The person who undertakes requirements analysis and specification is known as the <strong>systems analyst</strong>. The analyst:</p>
+<ul>
+<li>collects data pertaining to the product;</li>
+<li>analyses the collected data <strong>to understand what exactly needs to be done</strong>;</li>
+<li>writes the <strong>Software Requirements Specification (SRS)</strong> document.</li>
+</ul>
+<p>In our three-person team all three of us shared the systems-analyst role, with the work split by subsystem.</p>
+<h2 id="34-the-four-modelling-approaches"><span class="sec-num">3.4</span>The four modelling approaches</h2>
+<p>This set of four is asked constantly. Learn one sentence each.</p>
+<ul>
+<li><strong>Flow-oriented modelling</strong> — provides an indication of <strong>how data objects are transformed by a set of processing functions.</strong> (Data moving and being transformed.)</li>
+<li><strong>Scenario-based modelling</strong> — represents the system <strong>from the user's point of view.</strong> (What the user does.)</li>
+<li><strong>Class-based modelling</strong> — defines <strong>objects, attributes and relationships.</strong> (What things exist.)</li>
+<li><strong>Behavioural modelling</strong> — depicts the <strong>states of the classes and the impact of events on these states.</strong> (How things change over time.)</li>
+</ul>
+<p>A quick way to hold them together: <em>scenario</em> = the user's view, <em>class</em> = the structure, <em>flow</em> = the data, <em>behaviour</em> = the time dimension.</p>
+<h2 id="35-elements-of-the-analysis-model"><span class="sec-num">3.5</span>Elements of the analysis model</h2>
+<p>This table appears twice in the slide set, which means it is important.</p>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>Modelling category</th>
+<th>Elements</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Scenario-based modelling</strong></td>
+<td>Use case text, use case diagrams, activity diagrams, swim lane diagrams</td>
+</tr>
+<tr>
+<td><strong>Class-based modelling</strong></td>
+<td>Class diagrams, analysis packages, CRC models, collaboration diagrams</td>
+</tr>
+<tr>
+<td><strong>Flow-oriented modelling</strong></td>
+<td>Data structure diagrams, data flow diagrams, control-flow diagrams, processing narratives</td>
+</tr>
+<tr>
+<td><strong>Behavioural modelling</strong></td>
+<td>State diagrams, sequence diagrams</td>
+</tr>
+</tbody>
+</table></div>
+<p>The diagram in the slides also draws an axis across this table: the left-hand side (flow-oriented) belongs to <strong>structured analysis</strong>, and the right-hand side (scenario- and class-based) belongs to <strong>object-oriented analysis</strong>.</p>
+<section class="call call-silo"><h3>How Silo used it</h3>
+<p>We produced elements from <strong>all four</strong> categories, which is worth stating directly because most student projects only produce two:</p>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>Category</th>
+<th>Our artefact</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Scenario-based</td>
+<td>Six use case texts, a use case diagram, and a <strong>swim lane activity diagram</strong></td>
+</tr>
+<tr>
+<td>Class-based</td>
+<td>A class diagram and a <strong>collaboration (communication) diagram</strong></td>
+</tr>
+<tr>
+<td>Flow-oriented</td>
+<td>A <strong>data flow diagram</strong> with processes, data stores and external entities</td>
+</tr>
+<tr>
+<td>Behavioural</td>
+<td>A <strong>sequence diagram</strong>; and the <code>Version</code> status field (<code>analysing → building → live/failed</code>) is the state model</td>
+</tr>
+</tbody>
+</table></div>
+</section>
+<h2 id="36-structured-versus-object-oriented-analysis"><span class="sec-num">3.6</span>Structured versus object-oriented analysis</h2>
+<p><strong>Structured analysis</strong> considers <strong>data and the processes that transform the data as separate entities.</strong> Data is modelled in terms of <strong>only attributes and relationships — but no operations.</strong> Processes are modelled to show three things: (1) the input data, (2) the transformation that occurs on that data, and (3) the resulting output data.</p>
+<p><strong>Object-oriented analysis</strong> focuses on the <strong>definition of classes and the manner in which they collaborate with one another</strong> to fulfil customer requirements.</p>
+<p>The one-line contrast to give in a viva: <em>structured analysis separates data from the operations on it; object-oriented analysis binds them together inside classes.</em></p>
+<section class="call call-silo"><h3>How Silo used it</h3>
+<p>We used <strong>both</strong>, deliberately, and can justify it. Our <strong>DFD</strong> is a structured-analysis artefact: it shows <code>Apps and Versions</code> and <code>Capability Manifests</code> as passive data stores holding attributes only, with processes such as <em>Analyse Capabilities</em> transforming input into output. Our <strong>class diagram and collaboration diagram</strong> are object-oriented artefacts: <code>Version</code> is not passive data but a class with its own attributes, and <code>Builder</code> is a class with the operations <code>run_build()</code> and <code>wait_for_port()</code>.</p>
+<p>Using both is not confusion — the DFD answers "where does the data go?" and the class diagram answers "what are the objects and who calls whom?", and those are different questions.</p>
+</section>
+<h2 id="37-flow-oriented-modelling-data-modelling-and-flows"><span class="sec-num">3.7</span>Flow-oriented modelling: data modelling and flows</h2>
+<p><strong>Data modelling</strong> requires you to identify four things: <strong>data objects (entities), data attributes, relationships, and cardinality</strong> (number of occurrences).</p>
+<p><strong>Data flow and control flow:</strong></p>
+<ul>
+<li>A <strong>data flow diagram</strong> depicts <strong>how input is transformed into output as data objects move through a system.</strong></li>
+<li>A <strong>process specification</strong> describes data-flow processing <strong>at the lowest level of refinement</strong> in the DFD.</li>
+<li>A <strong>control flow diagram</strong> illustrates <strong>how events affect the behaviour of a system</strong> through the use of state diagrams.</li>
+</ul>
+<p><strong>Diagram layering and process refinement</strong> runs: <strong>context-level diagram → level-1 diagram → process specification.</strong> You start with one bubble for the whole system and refine downwards until a process is simple enough to describe in a paragraph.</p>
+<section class="call call-silo"><h3>How Silo used it</h3>
+<p>Our data model identifies four entities (<code>User</code>, <code>App</code>, <code>Version</code>, <code>BuildLog</code>), their attributes, their relationships, and their cardinality — one user to many apps, one app to many versions, one version to many build logs. Our DFD is a level-1 diagram; the context diagram above it would be a single <em>Silo Platform</em> bubble between the Owner, Collaborator and Admin entities. Full discussion is in Part 7.</p>
+</section>
+<h2 id="38-scenario-based-modelling-writing-use-cases"><span class="sec-num">3.8</span>Scenario-based modelling: writing use cases</h2>
+<p>It is effective to use the <strong>first person "I"</strong> to describe how the actor interacts with the software. The format of the text part of a use case is:</p>
+<pre><code>Use-case title:
+Actor:
+Description: I …
+</code></pre>
+<h2 id="39-activity-diagrams-as-an-analysis-model-element"><span class="sec-num">3.9</span>Activity diagrams (as an analysis-model element)</h2>
+<p>An activity diagram <strong>supplements the use case by providing a graphical representation of the flow of interaction within a specific scenario.</strong> Note the relationship: the use case is the <em>text</em>, the activity diagram is the <em>picture of one scenario from it</em>.</p>
+<p>It uses flowchart-like symbols:</p>
+<ul>
+<li><strong>Rounded rectangle</strong> — represents a specific system function/action</li>
+<li><strong>Arrow</strong> — represents the flow of control from one function/action to another</li>
+<li><strong>Diamond</strong> — represents a branching decision</li>
+<li><strong>Solid bar</strong> — represents the <strong>fork and join of parallel activities</strong></li>
+</ul>
+<p>The solid bar is the one symbol that distinguishes an activity diagram from an ordinary flowchart, because flowcharts cannot express parallelism. Our own activity diagram uses it, which is covered in Part 7.</p>
+<h2 id="310-class-based-modelling"><span class="sec-num">3.10</span>Class-based modelling</h2>
+<h3>Identifying analysis classes</h3>
+<p>The technique is grammatical: <strong>classes are determined by underlining each noun or noun clause</strong> in the requirements text. And the rule that follows: <strong>a class should NOT have an imperative procedural name</strong> — that is, a class should not be named with a verb. If your candidate class is called "Validate" or "Process," it is an operation, not a class.</p>
+<p><strong>General classifications for a class</strong> (seven categories, frequently asked):</p>
+<ul>
+<li><strong>External entity</strong> — another system, a device, a person</li>
+<li><strong>Thing</strong> — a report, a screen display</li>
+<li><strong>Occurrence or event</strong> — a movement, a completion</li>
+<li><strong>Role</strong> — manager, engineer, salesperson</li>
+<li><strong>Organizational unit</strong> — division, group, team</li>
+<li><strong>Place</strong> — manufacturing floor, loading dock</li>
+<li><strong>Structure</strong> — sensor, vehicle, computer</li>
+</ul>
+<h3>Attributes</h3>
+<p><strong>Attributes of a class are those nouns from the grammatical parse that reasonably belong to a class.</strong> Attributes <strong>hold the values that describe the current properties or state of a class.</strong></p>
+<h3>Operations</h3>
+<p><strong>Operations define the behaviour of an object.</strong> There are <strong>four categories of operation</strong>, and this list is a favourite exam item:</p>
+<ol>
+<li>Operations that <strong>manipulate data in some way to change the state of an object</strong> — add, delete, modify.</li>
+<li>Operations that <strong>perform a computation</strong>.</li>
+<li>Operations that <strong>inquire about the state of an object</strong>.</li>
+<li>Operations that <strong>monitor an object for the occurrence of a controlling event</strong>.</li>
+</ol>
+<section class="call call-silo"><h3>How Silo used it</h3>
+<p>We applied the noun-underlining technique to our own requirements text. Underlining the nouns in <em>"A </em><em>user</em><em> uploads an </em><em>application</em><em> as a new </em><em>version</em><em>; the </em><em>system</em><em> analyses it, builds an </em><em>image</em><em>, runs a </em><em>container</em><em>, and records </em><em>build logs</em><em>"</em> yields the candidate classes <code>User</code>, <code>App</code>, <code>Version</code>, <code>BuildLog</code> — which are exactly the four domain classes in our class diagram.</p>
+<p>Classifying them by the seven categories: <code>User</code> is a <strong>role</strong>; <code>App</code> and <code>Version</code> are <strong>things</strong>; <code>BuildLog</code> is an <strong>occurrence or event</strong>; <code>Docker Engine</code> is an <strong>external entity</strong>.</p>
+<p>Our operations cover all four categories: <code>create_app()</code> and <code>upload_version()</code> <strong>manipulate data to change state</strong>; <code>make_plan()</code> and <code>render_dockerfile()</code> <strong>perform a computation</strong>; <code>list_versions()</code> and <code>get_version_logs()</code> <strong>inquire about state</strong>; and <code>wait_for_port()</code> <strong>monitors for the occurrence of a controlling event</strong> — it watches for the event "the port started responding." Being able to name a category-4 operation in your own code is a strong answer, because most projects do not have one.</p>
+</section>
+<h3>Association, generalization and dependency (Fowler)</h3>
+<ul>
+<li><strong>Association</strong> — represented by a <strong>solid line</strong> between two classes, directed from the source class to the target class. Used for representing (pointing to) object types for attributes. May also be a <strong>part-of relationship (aggregation)</strong>, represented by a <strong>diamond-arrow</strong>.</li>
+<li><strong>Generalization</strong> — portrays <strong>inheritance between a superclass and a subclass</strong>; represented by a <strong>line with a triangle at the target end</strong>.</li>
+<li><strong>Dependency</strong> — exists between two elements if <strong>changes to the definition of one element (the source or supplier) may cause changes to the other element (the client)</strong>. Examples: one class calls a method of another class; one class uses another class as a parameter of a method.</li>
+</ul>
+<h2 id="311-behavioural-modelling"><span class="sec-num">3.11</span>Behavioural modelling</h2>
+<p><strong>Creating a behavioural model</strong> has two steps:</p>
+<ol>
+<li><strong>Identify events</strong> found within the use cases and implied by the attributes in the class diagrams.</li>
+<li><strong>Build a state diagram</strong> for each class, and if useful, for the whole software system.</li>
+</ol>
+<p><strong>Identifying events in use cases:</strong> an event occurs <strong>whenever an actor and the system exchange information.</strong> Some events have an explicit impact on the flow of control, while others do not.</p>
+<p><strong>Building a state diagram:</strong></p>
+<ul>
+<li>A <strong>state</strong> is represented by a <strong>rounded rectangle</strong>.</li>
+<li>A <strong>transition (event)</strong> is represented by a <strong>labelled arrow</strong> leading from one state to another.</li>
+<li>The syntax of a transition is <strong><code>trigger-signature [guard] / activity</code></strong>.</li>
+</ul>
+<p>The slide's example is a stack with states <em>Empty Stack</em>, <em>Partially Filled Stack</em> and <em>Full Stack</em>, with transitions such as <code>push [n = 0]</code> and <code>pop / set n to 0; return error</code>.</p>
+<section class="call call-silo"><h3>How Silo used it</h3>
+<p>Applying step 1 to our use cases, the events where an actor and the system exchange information are: <em>upload submitted</em>, <em>analysis completed</em>, <em>approval granted</em>, <em>approval rejected</em>, <em>port responded</em>, <em>readiness timeout expired</em>, <em>logs requested</em>.</p>
+<p>Applying step 2, the <code>Version</code> class has the clearest lifecycle in our system, and it maps onto a state diagram directly:</p>
+<ul>
+<li><strong>Analysing</strong> — set on upload</li>
+<li><strong>Building</strong> — entered when the build worker starts, guarded by <code>[analysis succeeded]</code></li>
+<li><strong>Live</strong> — entered on the event <em>port responded</em>, i.e. <code>probe_success [connection established] / record internal_port</code></li>
+<li><strong>Failed</strong> — entered from either state on the events <em>analysis failed</em>, <em>build failed</em>, or <em>readiness timeout</em>, with the activity <em>attach build output</em></li>
+</ul>
+<p>Being able to write one transition in the exact <code>trigger [guard] / activity</code> syntax — for example <code>probe_success [tcp connect ok] / set status = live; record port</code> — is a precise, high-value answer.</p>
+</section>
+<h1 id="part-4-introduction-to-uml-slide-set-7" class="part"><span class="part-num">Part 4</span><span>INTRODUCTION TO UML (Slide Set 7)</span></h1>
+<h2 id="41-modelling"><span class="sec-num">4.1</span>Modelling</h2>
+<p><strong>Models are abstractions that portray the essentials of a complex problem or structure by filtering out non-essential details.</strong> A model describes a system at a <strong>high level of abstraction</strong> and is used for requirements and specifications. <strong>Models help us organize, visualize, understand and create complex things.</strong></p>
+<p>The word doing the work is <strong>filtering</strong>. A model is defined by what it leaves out. A map that showed every blade of grass would be useless as a map.</p>
+<p>The slides also give the definition worth quoting verbatim: <strong>"A model is an abstraction of a system, specifying the modeled system from a certain viewpoint and at a certain level of abstraction."</strong> Two qualifiers — <em>viewpoint</em> and <em>level of abstraction</em> — and both are needed. The plumbing diagram and the electrical diagram of the same building are different viewpoints; the exterior sketch and the detailed electrical plan are different levels of abstraction.</p>
+<p><strong>Why model software systems:</strong> models help us <strong>visualize and understand</strong> the system we're building; models are used to <strong>document the design and communicate it to others</strong>; models <strong>serve as a guide during system construction</strong>.</p>
+<h2 id="42-what-uml-is-and-why-we-use-it"><span class="sec-num">4.2</span>What UML is and why we use it</h2>
+<p><strong>UML stands for Unified Modeling Language.</strong> It is an <strong>industry-standard graphical language for specifying, visualizing, constructing and documenting the artifacts of an object-oriented system under development.</strong> It uses <strong>mostly graphical notations</strong> to express the OO analysis and design of software projects, and it <strong>simplifies the complex process of software design.</strong></p>
+<p><strong>Why UML for modelling:</strong></p>
+<ul>
+<li>Uses <strong>graphical notation to communicate more clearly than natural language (imprecise) and code (too detailed).</strong></li>
+<li>Helps <strong>acquire an overall view of a system.</strong></li>
+<li>Is <strong>not dependent on any one language or technology.</strong></li>
+<li><strong>Moves us from fragmentation to standardization.</strong></li>
+</ul>
+<p>The first point is the strongest argument and worth repeating in your own words: natural language is too vague to build from and code is too detailed to reason about; UML sits in the useful middle.</p>
+<p><strong>History:</strong> in the 1990s many different methodologies with their own notations were introduced — <strong>Object Modeling Technique (OMT) by James Rumbaugh</strong>, the <strong>Booch method by Grady Booch</strong>, and <strong>Object-Oriented Software Engineering (OOSE) by Ivar Jacobson.</strong> UML unified these three, which is where "Unified" comes from. The three are sometimes called the "three amigos."</p>
+<h2 id="43-the-uml-diagrams"><span class="sec-num">4.3</span>The UML diagrams</h2>
+<p>The slide set lists, split around the MST:</p>
+<p><strong>Before MST:</strong> use case diagram, activity diagram, class diagram, sequence diagram, collaboration diagram, state diagram.
+<strong>After MST:</strong> object diagram, component diagram, deployment diagram.</p>
+<p>The class-diagram slide set gives a cleaner three-way grouping:</p>
+<ul>
+<li><strong>Structural diagrams</strong> — <strong>Class</strong> (static class structure), <strong>Object</strong> (runtime object structure)</li>
+<li><strong>Behavioral diagrams</strong> — <strong>Use Case</strong> (interaction between system and its environment), <strong>Communication</strong> (dynamic message passing between objects), <strong>Sequence</strong> (dynamic message passing between objects), <strong>State</strong> (object states and transitions), <strong>Activity</strong> (algorithmic processes)</li>
+<li><strong>Physical diagrams</strong> — <strong>Component</strong> (physical packaging of the system as source and deployment files), <strong>Deployment</strong> (physical deployment of the system on nodes)</li>
+</ul>
+<p>Note that <strong>Communication and Sequence have the same definition</strong> — both are "dynamic message passing between objects." They show the same information with different emphasis: sequence emphasises <em>time</em>, communication emphasises <em>structure</em>. This is a very common exam question and is discussed properly in Part 7.</p>
+<h2 id="44-different-ways-of-using-uml"><span class="sec-num">4.4</span>Different ways of using UML</h2>
+<ul>
+<li><strong>Conceptual modelling</strong> (a.k.a. domain modelling)</li>
+<li><strong>Software modelling</strong></li>
+<li><strong>Sketching</strong> — whiteboard discussion, document figures</li>
+<li><strong>Blueprints</strong> — designers create UML models to guide construction; <strong>more complete than sketches</strong></li>
+<li><strong>Programming language</strong> — execute UML models directly</li>
+<li><strong>Forward engineering</strong> — model first, then generate code</li>
+<li><strong>Reverse engineering</strong> — code first, then recover the model</li>
+</ul>
+<section class="call call-silo"><h3>How Silo used it</h3>
+<p>Honest answer: we used UML in <strong>two</strong> of these modes. During design discussions we used it as <strong>sketching</strong>. For the report, most of our diagrams are <strong>blueprints</strong> — complete enough to guide construction, with real class names, real method names and real relationships. And two of our diagrams are partly <strong>reverse engineering</strong>, because we drew the class diagram from code that already existed, recovering the model from the implementation. Saying which mode each diagram belongs to is a sophisticated answer.</p>
+</section>
+<h2 id="45-use-case-diagrams-full-notation"><span class="sec-num">4.5</span>Use case diagrams — full notation</h2>
+<p><strong>A use case diagram establishes the capability of the system as a whole.</strong> Its components are: <strong>actor, use case, system boundary, relationship, actor relationship.</strong></p>
+<h3>Actor</h3>
+<p><strong>An actor is someone or something that must interact with the system under development.</strong> The UML notation for an actor is a <strong>stickman</strong>.</p>
+<p>More about actors:</p>
+<ul>
+<li>It is a <strong>role a user plays with respect to the system</strong> — not a specific person. The same person may be two actors; two people may be the same actor.</li>
+<li><strong>Actors are not part of the system</strong>; they represent anyone or anything that must interact with it.</li>
+<li><strong>Actors carry out use cases, and a single actor may perform more than one use case.</strong></li>
+<li>Actors are determined by <strong>observing the direct uses of the system</strong>, and include those responsible for its use and maintenance as well as other systems that interact with the developed system.</li>
+</ul>
+<p><strong>An actor may:</strong> input information to the system; receive information from the system; input to and output from the system.</p>
+<p><strong>How to find actors</strong> — ask:</p>
+<ul>
+<li>Who uses the system?</li>
+<li>Who installs the system?</li>
+<li>Who starts up the system?</li>
+<li>What other systems use this system?</li>
+<li>Who gets information from the system?</li>
+<li>Who provides information to the system?</li>
+</ul>
+<p>And the rule: <strong>an actor is always external to the system. They are never part of the system to be developed.</strong></p>
+<p><strong>Four categories of actor:</strong></p>
+<ol>
+<li><strong>Primary actor</strong> — who uses the main system functions.</li>
+<li><strong>Secondary actor</strong> — who takes care of administration and maintenance.</li>
+<li><strong>External hardware</strong> — the hardware devices which are part of the application domain and must be used.</li>
+<li><strong>Other system</strong> — the other system with which the system must interact.</li>
+</ol>
+<h3>Use case</h3>
+<p><strong>A use case is a pattern of behaviour the system exhibits.</strong> Each use case is <strong>a sequence of related transactions performed by an actor and the system in dialogue.</strong> The slide's compressed definition: <strong>a USE CASE is a dialogue between an actor and the system.</strong> Examples given: <em>Open new account</em>, <em>Withdrawal of cash from ATM</em>.</p>
+<h3>System boundary</h3>
+<ul>
+<li>Shown as a <strong>rectangle</strong>.</li>
+<li>Helps identify <strong>what is external versus internal</strong>, and what the <strong>responsibilities of the system</strong> are.</li>
+<li><strong>The external environment is represented only by actors.</strong></li>
+</ul>
+<h3>Relationships between use cases</h3>
+<p><strong>«includes»</strong> — the arrow is towards the <strong>secondary</strong> use case. Used when <strong>multiple use cases share a piece of the same functionality</strong>; that functionality is placed in a separate use case <strong>rather than documenting it in every use case that needs it.</strong> So «includes» shows <strong>behaviour that is common to one or more use cases</strong>. The behaviour is <strong>always</strong> performed.</p>
+<p><strong>«extends»</strong> — the arrow is towards the <strong>primary</strong> use case. Used to show <strong>optional behaviour, which is required only under certain conditions.</strong> The slide's example: <em>Order</em> and <em>Rush Order</em> — a Rush Order is a special/optional case of Order; a normal order is served within 30 minutes, and the user may instead select Rush Order, served within 10 minutes for Rs. 100 extra.</p>
+<p>The arrow-direction rule is the thing people get wrong, so hold on to it: <strong>include points away from the base use case towards the shared one; extend points from the optional one back towards the base.</strong></p>
+<h3>Generalisation</h3>
+<p><strong>Actors and use cases can be generalised, showing that one is simply a special case of the other.</strong> This is <strong>like inheritance in object-oriented design.</strong> The slide's example: <em>borrow book</em> and <em>borrow CD</em>, with a <em>Borrower: books only</em> actor generalised into <em>Borrower: books and CDs</em>, because borrowing a CD requires additional registration and payment per CD.</p>
+<h3>The worked ATM example</h3>
+<p>The slide shows the <em>Withdraw Cash</em> diagram: actors <strong>Customer</strong>, <strong>Clerk</strong>, <strong>Manager</strong> and <strong>ATM DB</strong>; use cases <em>Withdraw cash</em>, <em>Validation</em> («includes»), and <em>Balance status report</em> («extends»).</p>
+<h3>Flow of events and the use case template</h3>
+<p>The slides distinguish three flows, and the distinction is examinable:</p>
+<ul>
+<li><strong>Typical course of events / successful scenario / normal scenario</strong> — the main path where everything works. The ATM example numbers 17 steps, each tagged <strong>(AA)</strong> Actor Action, <strong>(SR)</strong> System Response or <strong>(SA)</strong> System Action.</li>
+<li><strong>Alternative flow of events</strong> — a valid but different path chosen by the user. The slide's example: at step 9 the ATM asks for the amount, and <em>the user has a change of mind and hits "cancel."</em> Nothing has gone wrong; the user simply chose differently.</li>
+<li><strong>Exceptional flow of events</strong> — something has gone wrong. The slide's examples: <em>suspicious pattern of usage on the card</em> at step 3, <em>the machine is out of cash</em> at step 10, <em>money gets stuck in the machine</em> at step 11.</li>
+</ul>
+<p>The one-line distinction: <strong>alternative = a different valid path; exceptional = an error or abnormal condition.</strong></p>
+<p><strong>Generic format for documenting a use case:</strong></p>
+<ul>
+<li><strong>Pre-condition</strong> (if any)</li>
+<li><strong>Use case</strong> — name of the case</li>
+<li><strong>Actors</strong> — list of actors (external agents), indicating who initiates the use case</li>
+<li><strong>Purpose</strong> — intention of the use case</li>
+<li><strong>Overview</strong> — description</li>
+<li><strong>Type</strong> — primary / secondary</li>
+<li><strong>Typical course of events</strong> — with numbered <strong>ACTOR ACTION (AA)</strong>, <strong>SYSTEM RESPONSE (SR)</strong> and <strong>SYSTEM ACTION (SA)</strong></li>
+<li><strong>Exceptional flow of events / extension points</strong></li>
+<li><strong>Alternate flow</strong></li>
+<li><strong>Post-condition</strong> (if any)</li>
+</ul>
+<h2 id="46-activity-diagrams-full-notation"><span class="sec-num">4.6</span>Activity diagrams — full notation</h2>
+<p>Activity diagrams are:</p>
+<ul>
+<li>a technique to describe <strong>procedural logic, business process and work flow</strong>;</li>
+<li><strong>similar to flowcharts, but the latter does not support parallel behaviour</strong> — this is the key difference and is asked directly;</li>
+<li>used to <strong>model a specific use case at a more detailed level</strong>.</li>
+</ul>
+<p><strong>States</strong> have transitions to other states and may be either <strong>action states</strong> (atomic action) or <strong>activity states</strong> (actions that can be broken down). They may have <strong>decisions</strong>, explained by conditions, and <strong>merges</strong>; and <strong>forks and joins</strong> for modelling simultaneous activities.</p>
+<p><strong>Notation:</strong></p>
+<ul>
+<li><strong>Action/Activity</strong> — long rounded rectangle</li>
+<li><strong>Start / initial state</strong> — <strong>unique</strong>, with <strong>only one transition line</strong></li>
+<li><strong>End state</strong> — <strong>not necessarily unique</strong> (a diagram may have several end states)</li>
+<li><strong>Transition</strong> — lines indicating sequential flow of actions; <strong>must be labelled after a decision</strong>; arrows indicate the direction of the next action</li>
+<li><strong>Condition</strong> — the guard on a transition</li>
+</ul>
+<p><strong>Decision points and guards:</strong></p>
+<ul>
+<li>A decision point is a <strong>diamond</strong>, with a <strong>single entry transition line</strong> and <strong>multiple exit transition lines</strong>, each with a <strong>guard (condition)</strong>.</li>
+<li><strong>The exit lines must cover all eventualities.</strong> The slide poses this as a question about a diagram with <code>[rainy]</code> and <code>[sunny]</code> guards — the problem is that the guards do <strong>not cover all eventualities</strong>; there is no path for weather that is neither. This is the intended answer.</li>
+</ul>
+<p><strong>Merge points:</strong></p>
+<ul>
+<li>A merge is also a <strong>diamond</strong>, used to indicate a merge <strong>after a decision</strong>.</li>
+<li><strong>Multiple entry, single exit.</strong></li>
+<li>In UML1, more than one transition line could enter an activity; <strong>in UML2 you must use merge diamonds.</strong></li>
+</ul>
+<p><strong>Synchronisation</strong> — sometimes certain action sequences can be done in parallel:</p>
+<ul>
+<li><strong>Fork</strong> — shows the <strong>start</strong> of concurrent actions; the thread within each exit can execute at the same time as the other; <strong>single entry, multiple exits.</strong></li>
+<li><strong>Join</strong> — shows the <strong>end</strong> of concurrent actions; <strong>the exit cannot occur until all entry threads have completed</strong>; <strong>multiple entry, single exit.</strong></li>
+</ul>
+<p>The slide's online-shopping example makes the meaning concrete: the <strong>fork</strong> shows the collection slip can be printed at the same time as the items are picked; the <strong>join</strong> shows you cannot collect the items until <em>both</em> the slip has been printed <em>and</em> the items have been picked and sent for collection.</p>
+<p><strong>Swimlanes / partitions:</strong></p>
+<ul>
+<li>Useful to <strong>model an activity's procedural flow of control between objects.</strong></li>
+<li>Use <strong>vertical columns</strong>.</li>
+<li>Place the <strong>object's name at the top of the column</strong>.</li>
+<li>Place <strong>each action associated with an object in that object's swimlane</strong>.</li>
+</ul>
+<p>The slides give two swimlane examples: online shopping with <em>Member / Warehouse staff / Till staff</em>, and a student admission procedure with <em>Academic Section / Accounts Section / Hostel Office / Hospital / Department</em>. Our own activity diagram follows this second pattern exactly, which is covered in Part 7.</p>
+<h1 id="part-5-process-modelling-and-data-flow-diagrams" class="part"><span class="part-num">Part 5</span><span>PROCESS MODELLING AND DATA FLOW DIAGRAMS</span></h1>
+<h2 id="51-process-modelling"><span class="sec-num">5.1</span>Process modelling</h2>
+<p>Process modelling means <strong>modelling a system's processes</strong>, utilising information gathered during requirements determination. <strong>The structure of the data is also modelled in addition to the processes.</strong> It <strong>graphically represents the processes that capture, manipulate, store and distribute data between a system and its environment and among system components.</strong></p>
+<p><strong>Data flow diagrams (DFD)</strong> graphically illustrate the <strong>movement of data between external entities and the processes and data stores within a system.</strong></p>
+<p><strong>Deliverables and outcomes:</strong></p>
+<ul>
+<li>A set of <strong>coherent, interrelated data flow diagrams</strong></li>
+<li>A <strong>context DFD</strong> — the <strong>scope</strong> of the system</li>
+<li><strong>DFDs of the current system</strong> — enabling analysts to understand the current system</li>
+<li><strong>DFDs of the new logical system</strong> — <strong>technology independent</strong>, showing data flows, structure and functional requirements of the new system</li>
+<li>A <strong>project dictionary and CASE repository</strong></li>
+</ul>
+<p>"Technology independent" is the important qualifier: a logical DFD says <em>store the version</em>, never <em>write a row to PostgreSQL</em>.</p>
+<h2 id="52-the-four-symbols"><span class="sec-num">5.2</span>The four symbols</h2>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>Symbol</th>
+<th>Drawn as</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Data flow</strong></td>
+<td>An <strong>arrow</strong></td>
+<td>Data <strong>in motion</strong>, moving as a unit from one place to another in the system. Select a meaningful name to represent the data.</td>
+</tr>
+<tr>
+<td><strong>Data store</strong></td>
+<td><strong>Two horizontal parallel lines</strong></td>
+<td>Data <strong>at rest</strong>. May represent data in a file folder, a computer-based file, or a notebook. The <strong>name and the number</strong> are recorded between the lines.</td>
+</tr>
+<tr>
+<td><strong>Process</strong></td>
+<td>A <strong>circle</strong></td>
+<td><strong>Work or action performed on data</strong> so that they are transformed, stored or distributed. The <strong>number and the name</strong> are recorded.</td>
+</tr>
+<tr>
+<td><strong>Source / sink</strong></td>
+<td>A <strong>square</strong></td>
+<td>The <strong>origin and/or destination</strong> of the data. Sometimes called an <strong>external entity</strong>. Because they are external, many of their characteristics are not of interest to us.</td>
+</tr>
+</tbody>
+</table></div>
+<p>The cleanest way to hold the first two apart: <strong>data flow = data in motion; data store = data at rest.</strong></p>
+<h2 id="53-context-level-1-and-level-n-diagrams"><span class="sec-num">5.3</span>Context, level-1 and level-N diagrams</h2>
+<p>A <strong>context diagram</strong> is a DFD <strong>of the scope of an organizational system</strong> that shows the <strong>system boundaries</strong>, the <strong>external entities that interact with the system</strong>, and the <strong>major information flows between the entities and the system</strong>. It contains exactly one process — the whole system.</p>
+<p>A <strong>level-1 diagram</strong> represents the <strong>system's major processes, data flows and data stores at a higher level</strong> of detail.</p>
+<p><strong>Decomposition of DFDs:</strong></p>
+<ul>
+<li><strong>Functional decomposition</strong> is the <strong>act of going from one single system to many component processes.</strong> It is a <strong>repetitive procedure</strong>.</li>
+<li>The <strong>lowest level is called a primitive DFD</strong>.</li>
+<li>A <strong>level-N diagram</strong> is a DFD that is the result of <strong>n nested decompositions</strong> of a series of subprocesses from a process on a level-0 diagram.</li>
+</ul>
+<h2 id="54-balancing"><span class="sec-num">5.4</span>Balancing</h2>
+<p><strong>When decomposing a DFD, you must conserve inputs to and outputs from a process at the next level of decomposition. This is called balancing.</strong></p>
+<p>The slide's example is King's Burgers: one input to the system (<strong>customer order</strong>) and three outputs (<strong>customer receipt, food order, management reports</strong>). If the level-1 diagram has the same inputs and outputs — no new ones introduced — then the context diagram and the level-1 DFD are <strong>balanced</strong>.</p>
+<p>The <strong>unbalanced example</strong>: the context diagram has one input <strong>A</strong> and one output <strong>B</strong>, but the level-1 diagram has <strong>one additional data flow C</strong>. That extra flow is the imbalance.</p>
+<p>Balancing is essentially a conservation law: <strong>data cannot appear or disappear when you zoom in.</strong></p>
+<h2 id="55-the-dfd-rules"><span class="sec-num">5.5</span>The DFD rules</h2>
+<p>The slides name these A to T. Group them by the symbol they constrain, which makes them far easier to recall.</p>
+<p><strong>General</strong></p>
+<ul>
+<li>Inputs to a process are <strong>always different</strong> from outputs (a process must transform the data).</li>
+<li>Objects always have a <strong>unique name</strong>. To keep the diagram uncluttered, you may <strong>repeat data stores and data flows</strong> on a diagram.</li>
+</ul>
+<p><strong>Process rules</strong></p>
+<ul>
+<li><strong>A.</strong> No process can have <strong>only outputs</strong> — this is called a <strong>miracle</strong>.</li>
+<li><strong>B.</strong> No process can have <strong>only inputs</strong> — this is called a <strong>black hole</strong>.</li>
+<li><strong>C.</strong> A process has a <strong>verb phrase label</strong> (except for the context diagram).</li>
+</ul>
+<p><strong>Data store rules</strong></p>
+<ul>
+<li><strong>D.</strong> Data <strong>cannot be moved directly from one store to another</strong>.</li>
+<li><strong>E.</strong> Data <strong>cannot move from an outside source directly to a data store</strong>.</li>
+<li><strong>F.</strong> Data <strong>cannot move directly from a data store to a data sink</strong>.</li>
+<li><strong>G.</strong> A data store has a <strong>noun phrase label</strong>.</li>
+</ul>
+<p>The reason behind D, E and F is the same in each case: data stores are passive. Something must <em>do</em> the moving, and that something is a process.</p>
+<p><strong>Source/sink rules</strong></p>
+<ul>
+<li><strong>H.</strong> Data <strong>cannot move directly from a source to a sink</strong> (if it did, it would not involve the system at all).</li>
+<li><strong>I.</strong> A source/sink has a <strong>noun phrase label</strong>.</li>
+</ul>
+<p><strong>Data flow rules</strong></p>
+<ul>
+<li><strong>J.</strong> A data flow has <strong>only one direction of flow</strong> between symbols.</li>
+<li><strong>K.</strong> A <strong>fork</strong> means that <strong>exactly the same data</strong> go from a common location to two or more processes, data stores or sources/sinks.</li>
+<li><strong>L.</strong> A <strong>join</strong> means that <strong>exactly the same data</strong> come from two or more different processes, data stores or sources/sinks to a common location.</li>
+<li><strong>M.</strong> A data flow <strong>cannot go directly back to the same process it leaves</strong>.</li>
+<li><strong>N.</strong> A data flow <strong>to</strong> a data store means <strong>update</strong> (delete or change).</li>
+<li><strong>O.</strong> A data flow <strong>from</strong> a data store means <strong>retrieve or use</strong>.</li>
+<li><strong>P.</strong> A data flow has a <strong>noun phrase label</strong>.</li>
+</ul>
+<p><strong>Advanced rules</strong></p>
+<ul>
+<li><strong>Q.</strong> A <strong>composite data flow on one level can be split into component data flows at the next level</strong>, BUT <strong>no new data can be added</strong> and <strong>all data in the composite must be accounted for</strong> in one or more sub-flows.</li>
+<li><strong>R.</strong> The <strong>inputs to a process must be sufficient to produce the outputs</strong> from the process.</li>
+<li><strong>S.</strong> At the <strong>lowest level</strong> of DFDs, <strong>new data flows may be added to represent data transmitted under exceptional conditions</strong> (e.g. error messages).</li>
+<li><strong>T.</strong> To <strong>avoid having data flow lines cross each other, you may repeat data stores or sources/sinks</strong> on a DFD.</li>
+</ul>
+<p><strong>A common DFD error</strong> the slides call out explicitly: <strong>representing a process as a sink/source.</strong></p>
+<p>Two memorisable pairs: <strong>miracle (outputs only) / black hole (inputs only)</strong>, and <strong>processes take verb phrases / stores and sources take noun phrases.</strong></p>
+<h1 id="part-6-uml-class-diagrams-dr-ashima-singhs-set" class="part"><span class="part-num">Part 6</span><span>UML CLASS DIAGRAMS (Dr. Ashima Singh&#x27;s set)</span></h1>
+<h2 id="61-complexity-and-abstraction"><span class="sec-num">6.1</span>Complexity and abstraction</h2>
+<p><strong>Modeling is a well-accepted engineering technique for dealing with complexity.</strong> Models let us <strong>focus on one view of the system while ignoring irrelevant details</strong> — a simplification of reality. The slide's analogy: plumbers only care about plumbing, so we give them plumbing diagrams; electricians only care about electrical work, so we give them electrical diagrams.</p>
+<p><strong>Models can be created at different levels of abstraction</strong> — a 10,000-foot view versus a 10-foot view. High-level: a sketch of the building's exterior for the customer. Low-level: a detailed electrical plan for the electrician.</p>
+<h2 id="62-class-diagram-contents"><span class="sec-num">6.2</span>Class diagram contents</h2>
+<p><strong>Class diagrams show the kinds of objects in a system and the static relationships between them.</strong> The word <strong>static</strong> matters: a class diagram shows what is <em>always</em> true about the structure, not what happens at a particular moment.</p>
+<p>Contents:</p>
+<ul>
+<li><strong>Classes</strong> — with <strong>attributes</strong> and <strong>operations</strong></li>
+<li><strong>Relationships</strong> — <strong>association</strong> (with <strong>aggregation</strong> and <strong>composition</strong> as special kinds), <strong>generalization</strong>, and <strong>dependency</strong></li>
+</ul>
+<h2 id="63-class-notation-and-visibility"><span class="sec-num">6.3</span>Class notation and visibility</h2>
+<p>A class is drawn as a rectangle with three compartments: <strong>name, attributes, operations.</strong></p>
+<pre><code>ClassName
+- attrName1 : type1 [n] = default
++ attrName2 : type2 [*] = default
+# attrName3 : type3 [n..m] = default
+- opName1(in param1 : type1, out param2 : type2) : returntype
++ opName2(inout param3 : type3) : returntype
+# opName3() : returntype
+</code></pre>
+<p><strong>Visibility markers:</strong></p>
+<ul>
+<li><strong><code>-</code> private</strong></li>
+<li><strong><code>+</code> public</strong></li>
+<li><strong><code>#</code> protected</strong></li>
+</ul>
+<p><strong>Parameter direction types:</strong> <strong>in, out, inout.</strong></p>
+<p>The slide's SafeHome example shows a <code>Component</code> class with <code>+ componentID</code>, <code>- telephoneNumber</code>, <code>- componentStatus</code>, <code>- delayTime</code>, <code>- masterPassword</code>, <code>- numberOfTries</code> and operations <code>+ program()</code>, <code>+ display()</code>, <code>+ reset()</code>, <code>+ query()</code>, <code>- modify()</code>, <code>+ call()</code>.</p>
+<h2 id="64-the-relationships-in-detail"><span class="sec-num">6.4</span>The relationships in detail</h2>
+<h3>Association</h3>
+<p><strong>Association is a structural relationship specifying that objects of one class are connected to objects of another class.</strong> If there is an association between class A and class B, <strong>you can navigate from an object of type A to an object of type B, and vice versa.</strong> From an Order you can get to its Customer; from a Customer you can get to its Orders.</p>
+<p>Four refinements:</p>
+<ul>
+<li><strong>Navigation</strong> — an <strong>arrowhead</strong> may be used to <strong>limit navigation to only one direction</strong>.</li>
+<li><strong>Association name and direction arrow</strong> — an association may be given a name and a direction arrow indicating how to read the name, e.g. <code>Person —works for→ Company</code>.</li>
+<li><strong>Role names</strong> — each end may be given a <strong>role name</strong>, indicating the role played by that class in the association. This is <strong>different from naming the association itself</strong>. Example: <code>Person [employee] ———— [employer] Company</code>.</li>
+<li><strong>Multiplicity</strong> — each end may be given a multiplicity. <strong>The multiplicity at one end indicates how many objects of that type are connected to each individual object at the other end.</strong> Example: a Company has one or more employees (<code>1..*</code>), a Person works for zero or more companies (<code>*</code>).</li>
+</ul>
+<p><strong>Ways to specify multiplicity:</strong> a <strong>constant number</strong> (e.g. 3); an <strong>asterisk <code>*</code></strong> meaning any number (zero or more); <strong>N..M</strong> specifying a range (e.g. <code>1..*</code>).</p>
+<p>The multiplicity-reading rule catches people out: you read the number at the <strong>far</strong> end to learn how many partners <strong>one</strong> object at the near end has.</p>
+<h3>Aggregation</h3>
+<p><strong>Aggregation is a special kind of association representing a "whole/part" relationship.</strong> The end with the <strong>diamond is the whole</strong>; the end <strong>without the diamond is the part</strong>.</p>
+<h3>Composition</h3>
+<p>Like aggregation, composition represents a <strong>"whole/part" relationship</strong>, but <strong>composition is used when the part does not exist independently from the whole.</strong> The slide's example: a <strong>Department does not exist independently of its Company, but an Employee does.</strong> And the rule: <strong>the multiplicity on the "whole" end of a composition should always be 1, because a part can belong to only one whole.</strong></p>
+<p>The test to apply: <em>if I destroy the whole, does the part still make sense?</em> If no, it is composition; if yes, aggregation.</p>
+<h3>Generalization</h3>
+<p>Used to represent an <strong>"is-a" relationship</strong> between two classes — a Dog "is-a" Animal, a Truck "is-a" Vehicle. Used to show <strong>inheritance</strong> relationships in software models. The <strong>subclass inherits attributes and operations from the superclass.</strong></p>
+<h3>Dependency</h3>
+<p><strong>Class A depends on class B if A "uses" B.</strong> Common "uses" relationships:</p>
+<ul>
+<li>an operation on A has a <strong>parameter</strong> of type B;</li>
+<li>an operation on A has a <strong>return value</strong> of type B;</li>
+<li>an operation on A has a <strong>local variable</strong> of type B;</li>
+<li>an operation on A accesses <strong>static members</strong> of B;</li>
+<li>an operation on A accesses a <strong>global variable</strong> of type B.</li>
+</ul>
+<p><strong>If B is changed, A might also have to change.</strong> That consequence is the whole reason dependency is worth drawing.</p>
+<h3>The elevator example</h3>
+<p>The slide's worked example is worth knowing because it shows constraints in braces: a <code>Building</code> composed of <code>1..*</code> <code>Floor</code>s and <code>1..*</code> <code>Elevator</code>s; <code>Elevator Button</code> and <code>Floor Button</code> generalising <code>Button</code>; and the constraints <em>{An Elevator has a button for each Floor}</em>, <em>{A Floor has one Down button and one Up button}</em>, and <em>{A Person is always associated with a Floor or an Elevator, but never both at the same time}</em>.</p>
+<h1 id="part-7-our-project-diagrams-explained" class="part"><span class="part-num">Part 7</span><span>OUR PROJECT DIAGRAMS, EXPLAINED</span></h1>
+<p>This part takes each diagram we produced, states the theory it comes from, walks through what it actually shows, and lists the questions likely to be asked about it.</p>
+<h2 id="71-use-case-diagram"><span class="sec-num">7.1</span>Use Case Diagram</h2>
+<section class="call call-theory"><h3>The theory behind it</h3>
+<p>From Slide Set 7: a use case diagram <strong>establishes the capability of the system as a whole</strong>, and its components are <strong>actor, use case, system boundary, relationship and actor relationship.</strong> From Slide Set 6, it is a <strong>scenario-based modelling</strong> element. From Slide Set 5, drawing the use case diagram is the <strong>final step of elicitation</strong>, after defining actors, writing the scenario and completing the template.</p>
+</section>
+<section class="call call-shows"><h3>What our diagram shows</h3>
+<p><strong>Actors (all external to the system, all roles rather than people):</strong></p>
+<ul>
+<li><strong>Developer</strong> — the person who writes or AI-generates the application and submits it. <strong>Primary actor</strong>, because they use the main system functions.</li>
+<li><strong>Collaborator</strong> — an editor on a shared draft who changes the app without writing code. <strong>Primary actor</strong> for the workbench functions.</li>
+<li><strong>Approver</strong> — a non-technical reviewer who decides whether a deployment may proceed. <strong>Primary actor</strong> for the review functions.</li>
+<li><strong>Owner / Admin</strong> — manages sharing, roles, audit and revocation. <strong>Secondary actor</strong> in the slide's sense, because this role takes care of administration and maintenance.</li>
+<li><strong>External Data Source</strong> — <strong>"other system"</strong> in the slide's four-category classification: an outside system our platform must interact with through the capability broker.</li>
+</ul>
+<p><strong>System boundary:</strong> the rectangle labelled <strong>Silo Platform</strong>. Everything inside is our responsibility; everything outside is an actor. This is exactly the slide's statement that the boundary "helps identify what is external versus internal, and what the responsibilities of the system are."</p>
+<p><strong>Use cases inside the boundary,</strong> grouped by the area they belong to: <em>Submit App for Deployment</em>, <em>View Deployment Status</em>; <em>Run Capability Analysis</em>, <em>Generate Nutrition Label</em>, <em>Deploy to Sandbox</em>; <em>View Nutrition Label</em>, <em>Approve or Reject Deployment</em>; <em>Open Shared Workbench</em>, <em>Request Change via AI</em>, <em>Review and Comment on Draft</em>, <em>Apply Change to Draft</em>, <em>Publish Draft as New Version</em>; <em>Share App via Link</em>, <em>Set Access Roles</em>, <em>View Audit Log</em>, <em>Revoke Access</em>; <em>Enforce Runtime Egress Allowlist</em>, <em>Access External Data via Capability Broker</em>.</p>
+<p><strong>Relationships, and why each one is the kind it is:</strong></p>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>Relationship</th>
+<th>Type</th>
+<th>Justification from the slide's rule</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Submit App → Run Capability Analysis</td>
+<td><strong>«include»</strong></td>
+<td>Analysis is <strong>always</strong> performed on submission. It is behaviour common to more than one use case (submission and republishing), so it is factored out rather than repeated.</td>
+</tr>
+<tr>
+<td>Run Capability Analysis → Generate Nutrition Label</td>
+<td><strong>«include»</strong></td>
+<td>The label is always produced from the analysis; it is not optional.</td>
+</tr>
+<tr>
+<td>Deploy to Sandbox → Enforce Egress Allowlist</td>
+<td><strong>«include»</strong></td>
+<td>Every sandboxed deployment enforces the allowlist. Always performed.</td>
+</tr>
+<tr>
+<td>Deploy to Sandbox → Access External Data via Capability Broker</td>
+<td><strong>«include»</strong></td>
+<td>Whenever external access is part of the deployment, it always goes through the broker.</td>
+</tr>
+<tr>
+<td>Approve or Reject → Deploy to Sandbox</td>
+<td><strong>«extend»</strong></td>
+<td>Deployment happens <strong>only under a certain condition</strong> — that the approver approved. This is the slide's "optional behaviour required only under certain conditions."</td>
+</tr>
+<tr>
+<td>Request Change via AI → Apply Change to Draft</td>
+<td><strong>«include»</strong></td>
+<td>Applying the change is an inseparable part of requesting it.</td>
+</tr>
+<tr>
+<td>Publish Draft → Approve</td>
+<td><strong>«extend»</strong></td>
+<td>Publishing triggers an approval only when an approval policy is in force.</td>
+</tr>
+</tbody>
+</table></div>
+<p>The <strong>«include» versus «extend»</strong> distinction is the single most likely question on this diagram, so the answer must be crisp: <strong>include = always happens, factored out to avoid repeating shared behaviour, arrow points to the shared (secondary) use case. Extend = happens only under a condition, arrow points back to the primary use case.</strong></p>
+</section>
+<section class="call call-viva"><h3>Likely viva questions</h3>
+<p><strong>"Why is Approver a separate actor from Developer?"</strong> Because an actor is a <strong>role</strong>, not a person. The same human being might both write an app and approve it, but the two roles have different goals, different permissions and different use cases. Separating them is what makes the approval control meaningful.</p>
+<p><strong>"Is External Data Source really an actor?"</strong> Yes — the slide's fourth category of actor is <strong>"other system: the other system with which the system must interact."</strong> It is external to Silo, and Silo exchanges information with it, which satisfies the definition.</p>
+<p><strong>"Which are primary and which are secondary actors?"</strong> Developer, Collaborator and Approver are primary — they use the main system functions. Owner/Admin is secondary — administration and maintenance. External Data Source is "other system."</p>
+<p><strong>"Show me an «extend» and explain it."</strong> <em>Approve or Reject Deployment</em> extends <em>Deploy to Sandbox</em>. Deployment is the base behaviour; it is conditional on the guard "approval granted." Exactly parallel to the slide's Order / Rush Order example, where Rush Order is the special, optional case.</p>
+</section>
+<h2 id="72-use-case-specifications-the-templates"><span class="sec-num">7.2</span>Use Case Specifications (the templates)</h2>
+<section class="call call-theory"><h3>The theory behind it</h3>
+<p>Slide Set 7 gives the <strong>generic format for documenting a use case</strong>: pre-condition, use case name, actors, purpose, overview, type, typical course of events (with AA / SR / SA numbering), exceptional flow, alternate flow, post-condition. Slide Set 5 gives the <strong>ten questions</strong> each scenario must answer. Slide Set 6 adds the note that it is effective to write the description in the <strong>first person</strong>.</p>
+</section>
+<section class="call call-shows"><h3>What ours contains</h3>
+<p>We produced <strong>six</strong> full specifications: <strong>UC-01 Submit App for Deployment, UC-02 Run Capability Analysis and Generate Nutrition Label, UC-03 Approve or Reject Deployment, UC-04 Deploy to Sandbox, UC-05 Request Change via AI in Shared Workbench, UC-06 Share App and Manage Access.</strong></p>
+<p>Each carries: Use Case ID; Use Case Name; Primary Actor; Secondary Actors; Stakeholders and Interests; Description; Trigger; Preconditions; Postconditions on success; Postconditions on failure; a numbered Main Success Scenario; Alternate Flows; Exceptions; Frequency of Use; Special Requirements; Assumptions.</p>
+<p><strong>Worked example — UC-01.</strong> Primary actor: Developer. Trigger: the developer selects "Deploy" and chooses a file. Precondition: authenticated through Google OAuth, and the file is a <code>.py</code> or <code>.zip</code> within the size limit. Main success scenario, in seven numbered steps: create or select the app → select and submit the file → system validates type and size → system stores and extracts, rejecting any entry whose path escapes the extraction directory → system creates a version with status <code>analysing</code> → system spawns a detached build worker and returns 201 → the dashboard begins polling.</p>
+<p><strong>And crucially, the three flows are separated exactly as the slide requires:</strong></p>
+<ul>
+<li><strong>Alternate flow</strong> (a different valid path, nothing has gone wrong): <em>"5a. Application slug already exists for this owner: the system appends a numeric suffix and continues at step 6."</em></li>
+<li><strong>Exceptional flow</strong> (something has gone wrong): <em>"4a. Archive contains an unsafe path: the system aborts extraction, discards the bundle and records a validation error."</em> And <em>"E1. Storage unavailable: the system returns 503 and no version is created."</em></li>
+</ul>
+</section>
+<section class="call call-viva"><h3>Likely viva questions</h3>
+<p><strong>"What is the difference between an alternate flow and an exception?"</strong> An alternate flow is a <strong>valid but different path</strong> — the ATM slide's example is the user changing their mind and pressing cancel. An exception is an <strong>error or abnormal condition</strong> — the machine being out of cash, or money getting stuck. Ours follow the same split: a duplicate slug is an alternate flow because it is normal and handled; an unsafe archive path is an exception because something is wrong.</p>
+<p><strong>"What is a precondition versus a postcondition?"</strong> A precondition is what must be true <strong>before</strong> the use case can start; a postcondition is what is guaranteed to be true <strong>after</strong> it finishes. We specify postconditions for both success and failure, because "what is true after it fails" is just as important — for UC-01 on failure, no version record exists and the uploaded bytes are discarded.</p>
+</section>
+<h2 id="73-activity-diagram-swimlane"><span class="sec-num">7.3</span>Activity Diagram (swimlane)</h2>
+<section class="call call-theory"><h3>The theory behind it</h3>
+<p>Slide Set 6: an activity diagram <strong>supplements the use case by providing a graphical representation of the flow of interaction within a specific scenario</strong>, using rounded rectangles for actions, arrows for control flow, diamonds for decisions and solid bars for fork and join. Slide Set 7 adds that activity diagrams describe <strong>procedural logic, business process and work flow</strong>, that they are <strong>similar to flowcharts but flowcharts do not support parallel behaviour</strong>, and that <strong>swimlanes</strong> model the flow of control <strong>between objects</strong>, using <strong>vertical columns with the object's name at the top</strong> and each action placed in its object's lane.</p>
+</section>
+<section class="call call-shows"><h3>What our diagram shows</h3>
+<p>We used the <strong>swimlane form</strong>, following the pattern of the slide's student-admission example (<em>Academic Section / Accounts Section / Hostel Office / Hospital / Department</em>). Our five lanes are the five participants in a deployment:</p>
+<p><strong>DEVELOPER · PLATFORM API · ANALYSIS ENGINE · APPROVER · SANDBOX RUNTIME</strong></p>
+<p>The flow, read top to bottom:</p>
+<ol>
+<li><strong>Developer lane</strong> — a <strong>solid filled circle</strong> (the initial state, unique and with only one outgoing transition) → <em>Sign in with Google</em> → <em>Create app and upload .py or .zip</em>.</li>
+<li>Control crosses into the <strong>Platform API lane</strong> — <em>Store bundle, version = analysing</em>.</li>
+<li>Control crosses into the <strong>Analysis Engine lane</strong> — <em>Run Semgrep rules and AST scan</em>.</li>
+<li>A <strong>solid bar (fork)</strong> splits the flow into two concurrent threads: <em>Infer build plan: entry, deps, port</em> and <em>Generate nutrition label</em>. These are genuinely independent — neither needs the other's result — so they can run at the same time. A second <strong>solid bar (join)</strong> merges them, and the join cannot be crossed until <strong>both</strong> threads have completed.</li>
+<li><strong>Approver lane</strong> — <em>Review nutrition label</em> → a <strong>decision diamond</strong> <em>Approve or reject?</em> with two guarded exits, <strong>[approve]</strong> and <strong>[reject]</strong>.</li>
+<li>On <strong>[reject]</strong> — <em>Record rejection and reason</em> → back to the Developer lane, <em>Read rejection reason</em> → a <strong>bullseye (final state)</strong>.</li>
+<li>On <strong>[approve]</strong> — into the <strong>Sandbox Runtime lane</strong>: <em>Build image from plan</em> → <em>Run in gVisor sandbox, CPU and memory caps</em> → <em>Apply egress allowlist, route via capability broker</em> → a <strong>decision diamond</strong> <em>Port responds?</em> with guards <strong>[yes]</strong> and <strong>[no]</strong> → <em>Mark version live</em> (green) or <em>Mark version failed, attach output</em> (red).</li>
+<li>The failure path returns to the Developer lane — <em>Read build logs</em> → a <strong>final state</strong>. The success path goes through the API lane — <em>Serve app via /proxy/id</em> → back to the Developer lane for the collaboration sequence: <em>opens shared workbench</em> → <em>Request change via AI or comment on draft</em> → API lane <em>Apply change to draft</em> → <em>Publish draft as new version</em> → API lane <em>Log event in audit trail</em> → <strong>final state</strong>. A note records that a published version re-enters the analysis lane as a new version.</li>
+</ol>
+</section>
+<section class="call call-maps"><h3>How it maps to the theory, point by point</h3>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>Slide requirement</th>
+<th>How our diagram satisfies it</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Rounded rectangle = action</td>
+<td>Every action box is a rounded rectangle</td>
+</tr>
+<tr>
+<td>Diamond = branching decision</td>
+<td><em>Approve or reject?</em> and <em>Port responds?</em></td>
+</tr>
+<tr>
+<td>Solid bar = fork and join of parallel activities</td>
+<td>The two black bars in the Analysis Engine lane</td>
+</tr>
+<tr>
+<td>Initial state is unique, one transition line</td>
+<td>One filled circle, one outgoing arrow</td>
+</tr>
+<tr>
+<td>End state not necessarily unique</td>
+<td>We have <strong>three</strong> final states — reject, build-failure, and normal completion — which the slide explicitly permits</td>
+</tr>
+<tr>
+<td>Transitions must be labelled after a decision</td>
+<td>All four post-decision arrows carry guards: <code>[approve] [reject] [yes] [no]</code></td>
+</tr>
+<tr>
+<td>Exit lines must cover all eventualities</td>
+<td>Both decisions are two-way and exhaustive — approve/reject and yes/no leave no uncovered case</td>
+</tr>
+<tr>
+<td>Swimlanes use vertical columns with the object name at the top</td>
+<td>Five vertical columns, names in the header band</td>
+</tr>
+<tr>
+<td>Each action goes in its object's lane</td>
+<td>Every box sits in the lane of the participant that performs it</td>
+</tr>
+</tbody>
+</table></div>
+<p>The <strong>fork/join</strong> is the answer to "why is this an activity diagram and not a flowchart" — a flowchart cannot express that the build plan and the nutrition label are computed concurrently.</p>
+</section>
+<section class="call call-viva"><h3>Likely viva questions</h3>
+<p><strong>"Why did you use swimlanes?"</strong> Because the slide says swimlanes model the <strong>procedural flow of control between objects</strong>. Our deployment involves five different participants, and the interesting fact about the process is <em>where responsibility hands over</em>. A plain activity diagram would show the steps but hide the handoffs.</p>
+<p><strong>"What is the difference between a fork and a decision?"</strong> A fork splits into threads that <strong>all execute, concurrently</strong>; a decision selects <strong>exactly one</strong> of several paths based on a guard. Our fork runs the build-plan inference and the label generation at the same time; our decision picks approve <strong>or</strong> reject, never both.</p>
+<p><strong>"What does the join guarantee?"</strong> That the exit cannot occur until <strong>all</strong> entry threads have completed. We cannot present the version for approval until both the build plan and the nutrition label exist.</p>
+<p><strong>"Can you have more than one end state?"</strong> Yes — the slide says the end state is <strong>not necessarily unique</strong>, and ours has three.</p>
+<p><strong>"Is this the implemented system?"</strong> No, and this is worth saying without being asked. This diagram shows the <strong>proposed</strong> system. The Semgrep analysis, nutrition label, approval gate, gVisor sandbox, egress allowlist and collaborative workbench are designed but not yet implemented. What is implemented is the upload, the AST-based inference, the Dockerfile generation, the container run, the TCP readiness probe and the proxy.</p>
+</section>
+<h2 id="74-class-diagram"><span class="sec-num">7.4</span>Class Diagram</h2>
+<section class="call call-theory"><h3>The theory behind it</h3>
+<p>From the class-diagram slide set: class diagrams show <strong>the kinds of objects in a system and the static relationships between them</strong>, comprising classes (with attributes and operations) and relationships (association, aggregation, composition, generalization, dependency). From Slide Set 6: classes are found by <strong>underlining nouns</strong>, must <strong>not have imperative procedural names</strong>, and their operations fall into <strong>four categories</strong>.</p>
+</section>
+<section class="call call-shows"><h3>What our diagram shows</h3>
+<p><strong>Twelve classes in three groups.</strong></p>
+<p><strong>Domain classes</strong> (found by the noun-underlining technique, and all "things" or "roles" in the slide's seven-category classification):</p>
+<ul>
+<li><code>User</code> — <code>+str id</code>, <code>+str email</code>, <code>+str google_sub</code></li>
+<li><code>App</code> — <code>+str id</code>, <code>+str slug</code>, <code>+str name</code>, <code>+str owner_id</code></li>
+<li><code>Version</code> — <code>+str id</code>, <code>+int version_no</code>, <code>+str status</code>, <code>+int internal_port</code></li>
+<li><code>BuildLog</code> — <code>+str phase</code>, <code>+str level</code>, <code>+str message</code></li>
+</ul>
+<p><strong>Router classes</strong> (stereotyped <code>«router»</code>): <code>AuthRouter</code> with <code>+login() +callback() +me()</code>; <code>AppsRouter</code> with <code>+create_app() +list_apps() +delete_app()</code>; <code>VersionsRouter</code> with <code>+upload_version() +list_versions() +get_version_logs()</code>; <code>ProxyRouter</code> with <code>+proxy()</code>.</p>
+<p><strong>Service classes</strong> (stereotyped <code>«service»</code>): <code>Builder</code> with <code>+run_build() +wait_for_port()</code>; <code>Packaging</code> with <code>+make_plan() +render_dockerfile()</code>; <code>Compose</code> with <code>+find_compose_file() +up()</code>; plus the plain data class <code>BuildPlan</code> with <code>+str mode</code>, <code>+str entry_file</code>, <code>+int port</code>, <code>+list packages</code>, <code>+start_command()</code>.</p>
+<p><strong>Relationships:</strong></p>
+<ul>
+<li><code>User "1" ⋄—— "0..*" App : owns</code> — <strong>composition</strong> (filled diamond). Justified by the slide's own test: a part in a composition <strong>does not exist independently of the whole</strong>. An App with no owner is meaningless in our system, and deleting a user deletes their apps. The multiplicity on the whole end is <strong>1</strong>, as the slide requires.</li>
+<li><code>App "1" ⋄—— "0..*" Version : has</code> — <strong>composition</strong>, same reasoning. A Version cannot exist without its App.</li>
+<li><code>Version "1" ⋄—— "0..*" BuildLog : emits</code> — <strong>composition</strong>. Build logs belong to exactly one version and die with it.</li>
+<li><code>AuthRouter ⋯&gt; User</code>, <code>AppsRouter ⋯&gt; App</code>, <code>VersionsRouter ⋯&gt; Version</code>, <code>ProxyRouter ⋯&gt; Version : routes to</code> — <strong>dependencies</strong> (dashed arrows). Each router <em>uses</em> the model class: it takes it as a parameter, returns it, or holds it as a local variable. This is precisely the slide's list of "uses" relationships. And the slide's consequence applies: <strong>if the model changes, the router may have to change too.</strong></li>
+<li><code>VersionsRouter ⋯&gt; Builder : spawns worker</code>, <code>Builder ⋯&gt; Packaging : plans</code>, <code>Builder ⋯&gt; Compose : multi-container</code>, <code>Builder ⋯&gt; BuildLog : writes</code>, <code>Packaging ⋯&gt; BuildPlan : creates</code> — all <strong>dependencies</strong>, for the same reason.</li>
+</ul>
+<p><strong>Multiplicity reading, in the slide's terms:</strong> on <code>User "1" —— "0..*" App</code>, one User is connected to zero or more Apps, and each App is connected to exactly one User.</p>
+</section>
+<section class="call call-maps"><h3>How it maps to the theory</h3>
+<ul>
+<li><strong>Noun-derived class names</strong> — <code>User</code>, <code>App</code>, <code>Version</code>, <code>BuildLog</code> all came from underlining nouns in our requirements text.</li>
+<li><strong>No imperative procedural names</strong> — we deliberately named the service class <code>Packaging</code>, not <code>Package</code> or <code>Build</code>. Naming it with a verb would have violated the rule.</li>
+<li><strong>All four operation categories are present</strong> — <code>create_app()</code> changes state; <code>make_plan()</code> performs a computation; <code>list_versions()</code> inquires about state; <code>wait_for_port()</code> monitors for a controlling event.</li>
+<li><strong>Visibility</strong> — every member is marked <code>+</code> public, because our API surface is intentionally public; we would use <code>-</code> for internals such as <code>_launch_build()</code>.</li>
+<li><strong>Stereotypes</strong> — <code>«router»</code> and <code>«service»</code> group classes by architectural role.</li>
+</ul>
+</section>
+<section class="call call-viva"><h3>Likely viva questions</h3>
+<p><strong>"Why composition and not aggregation between App and Version?"</strong> Because of the independence test in the slide: a part in a <strong>composition does not exist independently of the whole</strong>. The slide's own example is that a Department does not exist independently of its Company, but an Employee does. A Version of a deleted App is meaningless, so it is composition. If Versions could be moved between Apps and survive on their own, it would be aggregation.</p>
+<p><strong>"Why are the router-to-model relationships dependencies rather than associations?"</strong> Because an association is a <strong>structural</strong> relationship — the object holds a persistent link and can navigate to the other object. A router does not <em>hold</em> a <code>Version</code>; it <em>uses</em> one transiently as a parameter or return value. That is the slide's definition of dependency, and the slide's consequence applies: change <code>Version</code> and the router may need changing.</p>
+<p><strong>"Where is generalization in your diagram?"</strong> There is none, and that is an honest and correct answer. Generalization represents an <strong>"is-a"</strong> relationship, and no class in our design is a specialisation of another. Our four routers look similar but none is a kind of another; they are siblings, not parent and child. Inventing a <code>BaseRouter</code> superclass purely to have a triangle on the diagram would be modelling for the sake of the diagram rather than the system.</p>
+<p><strong>"Why is BuildPlan a class rather than just attributes on Packaging?"</strong> Because a build plan is a <strong>thing</strong> in its own right — it has identity, it is produced once and consumed by several later steps, and it can be logged, compared between versions and tested independently. In code it is a dataclass with a computed property <code>start_command()</code>, which is an operation in the "performs a computation" category.</p>
+</section>
+<h2 id="75-sequence-diagram"><span class="sec-num">7.5</span>Sequence Diagram</h2>
+<section class="call call-theory"><h3>The theory behind it</h3>
+<p>From the UML slide set: the <strong>Sequence diagram</strong> is a <strong>behavioral diagram</strong> showing <strong>dynamic message passing between objects</strong>. From Slide Set 6, sequence diagrams are listed under <strong>behavioural modelling</strong> alongside state diagrams. The distinguishing feature of a sequence diagram is that <strong>time runs downwards</strong>, so the vertical order of the arrows <em>is</em> the order of execution.</p>
+</section>
+<section class="call call-shows"><h3>What our diagram shows</h3>
+<p><strong>Participants across the top</strong>, each with a vertical <strong>lifeline</strong>: the actors <strong>Owner</strong> and <strong>Collaborator</strong> (drawn as stickmen, because they are actors in the use-case sense), and the objects <strong>Silo Web App</strong>, <strong>Control Plane</strong>, <strong>Build &amp; Analysis</strong> and <strong>App Runtime</strong>.</p>
+<p>The diagram is divided into <strong>three labelled blocks</strong>, corresponding to three scenarios:</p>
+<p><strong>Block 1 — Publish Application (messages 1–9).</strong> Owner → Web App: <em>Upload application</em>. Web App → Control Plane: <em>Create version</em>. Control Plane → Build &amp; Analysis: <em>Build and analyse source</em>. Build &amp; Analysis sends a <strong>self-message</strong> to itself: <em>Infer runtime and capabilities</em> — an important notational point, because a self-call is drawn as an arrow that leaves a lifeline and returns to it, showing that an object is doing internal work rather than talking to anyone. Build &amp; Analysis → App Runtime: <em>Deploy isolated container</em>. App Runtime returns <em>Container ready</em> as a <strong>dashed</strong> arrow (a return message). Build &amp; Analysis returns <em>Live URL and capability manifest</em>; Control Plane returns <em>Deployment result and nutrition label</em>; Web App shows the live application to the Owner.</p>
+<p><strong>Block 2 — Share and Collaborate (messages 10–21).</strong> Owner shares with a collaborator; Control Plane creates role-based access and returns a share link; the Collaborator is given access; the Collaborator submits an improved version; a proposed version is created, built, compared for capability changes and deployed as a <strong>preview</strong>; the <strong>capability diff</strong> is returned and shown to the Owner.</p>
+<p><strong>Block 3 — Review and Promote (messages 22–31).</strong> The Owner approves; the version is promoted; the stable URL is switched to the new version; approval is confirmed back down the chain to the Collaborator. Then an <strong>alternative fragment</strong>, drawn as a dashed box labelled <strong>[Owner rejects]</strong>, shows the other path: reject proposal → record rejection → rejection saved → proposal rejected.</p>
+<p><strong>Activation bars</strong> (the narrow rectangles on each lifeline) show when each object is actively doing something, and <strong>solid arrows are calls while dashed arrows are returns.</strong></p>
+</section>
+<section class="call call-maps"><h3>How it maps to the theory</h3>
+<ul>
+<li>It is a <strong>behavioural</strong> model showing <strong>dynamic message passing between objects</strong> — the slide's exact definition.</li>
+<li><strong>Time is the vertical axis.</strong> Message 5 happens after message 4 because it is lower, not because of any other marking.</li>
+<li>The <strong>self-message</strong> <em>Infer runtime and capabilities</em> shows internal computation.</li>
+<li>The <strong>[Owner rejects] fragment</strong> is the sequence-diagram way of expressing what the activity diagram expresses with a decision diamond — it is the same branch, drawn in a different formalism.</li>
+<li>The numbering 1–31 gives us a <strong>trace</strong> that can be walked step by step in a demonstration.</li>
+</ul>
+</section>
+<section class="call call-viva"><h3>Likely viva questions</h3>
+<p><strong>"What does a sequence diagram show that a class diagram cannot?"</strong> <strong>Time.</strong> A class diagram is <strong>static</strong> — it says a <code>Builder</code> depends on <code>Packaging</code>, always. A sequence diagram is <strong>dynamic</strong> — it says that in <em>this</em> scenario, at <em>this</em> point, the Control Plane calls Build &amp; Analysis, and only after that does the App Runtime get involved. Structure versus behaviour.</p>
+<p><strong>"What is the difference between the solid and dashed arrows?"</strong> Solid = a <strong>call</strong> (a message being sent); dashed = a <strong>return</strong> (a reply coming back).</p>
+<p><strong>"Why is there a box around the last section?"</strong> It is an <strong>alternative fragment</strong>, guarded by <code>[Owner rejects]</code>. It shows a conditional path — the sequence-diagram equivalent of a decision diamond.</p>
+<p><strong>"Which use case does this diagram realise?"</strong> Block 1 realises UC-01 and UC-04, block 2 realises UC-05 and UC-06, and block 3 realises UC-03. This is worth saying because it demonstrates that the diagrams are one connected model rather than seven unrelated pictures.</p>
+</section>
+<h2 id="76-collaboration-communication-diagram"><span class="sec-num">7.6</span>Collaboration (Communication) Diagram</h2>
+<section class="call call-theory"><h3>The theory behind it</h3>
+<p>From Slide Set 6, the <strong>collaboration diagram</strong> is listed under <strong>class-based modelling</strong>. From the UML slide set, the <strong>Communication diagram</strong> is a <strong>behavioral diagram</strong> showing <strong>dynamic message passing between objects</strong> — <em>the same definition given for the sequence diagram.</em></p>
+<p>That identical definition is exactly why the comparison question gets asked, so the difference must be crisp: <strong>a sequence diagram orders messages by position on a vertical time axis; a collaboration diagram orders them by numbering them, and lays the objects out by their structural links instead.</strong> Same information, different emphasis — sequence emphasises <strong>when</strong>, collaboration emphasises <strong>who is connected to whom</strong>.</p>
+</section>
+<section class="call call-shows"><h3>What our diagram shows</h3>
+<p><strong>Objects,</strong> written in the <code>name : Class</code> form that distinguishes an object from a class: <code>owner : User</code>, <code>collaborator : User</code>, <code>ui : Web Interface</code>, <code>api : Control Plane</code>, <code>engine : Build and Analysis Pipeline</code>, <code>db : Silo Database</code>, <code>runtime : App Container</code>.</p>
+<p><strong>Links between them,</strong> and along each link the <strong>numbered messages</strong>. The numbering uses <strong>decimal (nested) notation</strong>, which is the feature of this diagram worth explaining:</p>
+<ul>
+<li><code>1: uploadApp()</code> — owner → ui</li>
+<li><code>1.1: createVersion()</code> — ui → api <em>(a consequence of message 1)</em></li>
+<li><code>1.2: storeVersion()</code> — api → db</li>
+<li><code>1.3: buildAndAnalyse()</code> — api → engine</li>
+<li><code>1.4: deploy()</code> — engine → runtime</li>
+<li><code>1.5: saveManifest()</code> — engine → db</li>
+<li><code>1.6: returnURLAndLabel()</code> — api → ui</li>
+<li><code>2: shareApp()</code> → <code>2.1: createAccessGrant()</code> → <code>2.2: savePermission()</code></li>
+<li><code>3: submitImprovement()</code> → <code>3.1: uploadNewVersion()</code> → <code>3.2: compareCapabilities()</code> → <code>3.3: saveCapabilityDiff()</code></li>
+<li><code>4: approveVersion()</code> → <code>4.1: promoteVersion()</code> → <code>4.2: updateApprovedVersion()</code> → <code>4.3: switchLiveVersion()</code></li>
+</ul>
+<p>The top-level numbers 1, 2, 3, 4 are the four things an actor does. Every <code>N.M</code> message is a consequence of message <code>N</code>. So the numbering itself encodes the call hierarchy — <code>1.3</code> happens because <code>1</code> happened.</p>
+</section>
+<section class="call call-maps"><h3>How it maps to the theory</h3>
+<ul>
+<li>It is the <strong>class-based modelling</strong> counterpart to the sequence diagram: the same interactions, arranged around the <strong>object structure</strong> instead of a timeline.</li>
+<li>Objects are named in <code>instance : Class</code> form, distinguishing runtime objects from the classes on our class diagram.</li>
+<li><strong>Sequence is expressed by numbering</strong> rather than by vertical position — the defining notational difference.</li>
+</ul>
+</section>
+<section class="call call-viva"><h3>Likely viva questions</h3>
+<p><strong>"What is the difference between a sequence diagram and a collaboration diagram?"</strong> They convey <strong>the same information</strong> — both show dynamic message passing between objects — but they emphasise different things. In a sequence diagram <strong>time is the vertical axis</strong>, so it is best for understanding <strong>the order of events</strong> and is easy to read for a long scenario. In a collaboration diagram <strong>objects are placed by their structural links</strong> and ordering is carried by <strong>message numbers</strong>, so it is best for seeing <strong>which objects are connected to which</strong> and how the interaction is distributed over the structure. They are convertible into one another.</p>
+<p><strong>"What does the decimal numbering mean?"</strong> Nesting. <code>1.3</code> is the third message sent as a direct consequence of message <code>1</code>. The numbering encodes the call tree that the sequence diagram encodes with activation bars.</p>
+<p><strong>"Why do you have two User objects?"</strong> Because <code>owner : User</code> and <code>collaborator : User</code> are two <strong>instances</strong> of the same class playing different roles in the same interaction. That is the difference between a class diagram (one <code>User</code> box) and an object-level diagram (as many instances as the scenario needs).</p>
+</section>
+<h2 id="77-data-flow-diagram"><span class="sec-num">7.7</span>Data Flow Diagram</h2>
+<section class="call call-theory"><h3>The theory behind it</h3>
+<p>From the process-modelling slide set: a DFD <strong>graphically illustrates the movement of data between external entities and the processes and data stores within a system</strong>, using four symbols — <strong>process (circle), data store (two parallel lines), source/sink (square), data flow (arrow)</strong> — and must obey the rules A to T, including <strong>balancing</strong> across levels of decomposition. From Slide Set 6, this is the <strong>flow-oriented modelling</strong> element, and it belongs to <strong>structured analysis</strong>, which treats <strong>data and the processes that transform it as separate entities</strong>.</p>
+</section>
+<section class="call call-shows"><h3>What our diagram shows</h3>
+<p><strong>Processes (circles, numbered, with verb-phrase labels as rule C requires):</strong></p>
+<ol>
+<li><strong>Publish Application</strong></li>
+<li><strong>Analyse Capabilities</strong></li>
+<li><strong>Share and Collaborate</strong></li>
+<li><strong>Review and Promote</strong></li>
+<li><strong>Run Application</strong></li>
+</ol>
+<p><strong>Data stores (noun-phrase labels, as rule G requires):</strong> <em>Apps and Versions</em>, <em>Capability Manifests</em>, <em>Capability Manifests and Audit Log</em>, <em>Users and Permissions</em>.</p>
+<p><strong>Sources/sinks (squares, noun phrases, as rule I requires):</strong> <em>Owner</em>, <em>Collaborator</em>, <em>Organisation Admin</em>, <em>User</em>, <em>Owner Decision</em>, <em>Owner Review</em>.</p>
+<p><strong>Data flows (arrows with noun-phrase labels, as rule P requires):</strong> <em>Upload code</em>, <em>Application source</em>, <em>Save version</em>, <em>Save manifest</em>, <em>Capability label</em>, <em>Current version</em>, <em>Current capabilities</em>, <em>Approve or reject</em>, <em>Submit improved version</em>, <em>Record review event</em>, <em>Capability diff</em>, <em>Save approved version</em>, <em>Audit information</em>, <em>Sharing settings</em>, <em>View or revoke access</em>, <em>Save permissions</em>, <em>Provide application access</em>, <em>Access permission</em>, <em>Approved version</em>, <em>Open stable URL</em>, <em>Live application</em>.</p>
+</section>
+<section class="call call-maps"><h3>Checking our diagram against the rules</h3>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>Rule</th>
+<th>Check</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>A — no process with only outputs (miracle)</strong></td>
+<td>Every process has at least one input. <em>Publish Application</em> takes <em>Upload code</em>.</td>
+</tr>
+<tr>
+<td><strong>B — no process with only inputs (black hole)</strong></td>
+<td>Every process has at least one output. <em>Run Application</em> outputs <em>Live application</em>.</td>
+</tr>
+<tr>
+<td><strong>C — process has a verb phrase label</strong></td>
+<td><em>Publish Application</em>, <em>Analyse Capabilities</em>, <em>Share and Collaborate</em>, <em>Review and Promote</em>, <em>Run Application</em> — all verb phrases.</td>
+</tr>
+<tr>
+<td><strong>D — no store-to-store movement</strong></td>
+<td>No arrow runs directly between two data stores; every store-to-store movement passes through a process.</td>
+</tr>
+<tr>
+<td><strong>E — no source directly to a data store</strong></td>
+<td><em>Owner</em> does not write to <em>Apps and Versions</em> directly; it goes through <em>Publish Application</em>.</td>
+</tr>
+<tr>
+<td><strong>F — no data store directly to a sink</strong></td>
+<td><em>Capability Manifests and Audit Log</em> reaches <em>Organisation Admin</em> only via <em>Audit information</em> produced in the flow, never as a direct store-to-sink arrow.</td>
+</tr>
+<tr>
+<td><strong>G — data store has a noun phrase label</strong></td>
+<td><em>Apps and Versions</em>, <em>Users and Permissions</em>, <em>Capability Manifests</em> — all noun phrases.</td>
+</tr>
+<tr>
+<td><strong>H — no source directly to a sink</strong></td>
+<td>No arrow bypasses the system.</td>
+</tr>
+<tr>
+<td><strong>I — source/sink has a noun phrase label</strong></td>
+<td><em>Owner</em>, <em>Collaborator</em>, <em>Organisation Admin</em>, <em>User</em>.</td>
+</tr>
+<tr>
+<td><strong>J — one direction per flow</strong></td>
+<td>Every arrow is single-headed.</td>
+</tr>
+<tr>
+<td><strong>M — no flow directly back to the same process</strong></td>
+<td>No self-loops.</td>
+</tr>
+<tr>
+<td><strong>N — flow to a data store means update</strong></td>
+<td><em>Save version</em>, <em>Save manifest</em>, <em>Save permissions</em>, <em>Save approved version</em> — all updates.</td>
+</tr>
+<tr>
+<td><strong>O — flow from a data store means retrieve or use</strong></td>
+<td><em>Current version</em>, <em>Current capabilities</em>, <em>Approved version</em>, <em>Access permission</em> — all retrievals.</td>
+</tr>
+<tr>
+<td><strong>P — data flow has a noun phrase label</strong></td>
+<td>All flow labels are noun phrases.</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Balancing.</strong> Our diagram is a <strong>level-1</strong> DFD. The <strong>context diagram</strong> above it would be a single process, <em>Silo Platform</em>, with the external entities Owner, Collaborator, Organisation Admin and User around it. Balancing requires that the inputs and outputs be conserved: the context diagram's inputs (<em>upload code</em>, <em>sharing settings</em>, <em>approve or reject</em>, <em>open stable URL</em>) and outputs (<em>capability label</em>, <em>live application</em>, <em>audit information</em>, <em>application access</em>) must all appear on the level-1 diagram, and <strong>no new ones may be introduced.</strong> That is rule Q — a composite flow may be split into components, but no new data may be added and all data in the composite must be accounted for.</p>
+</section>
+<section class="call call-viva"><h3>Likely viva questions</h3>
+<p><strong>"Is this logical or physical?"</strong> <strong>Logical</strong>, and therefore <strong>technology independent</strong>, which is what the slide asks of a DFD of the new system. Notice that nothing on the diagram says PostgreSQL, Docker or FastAPI. The store is called <em>Apps and Versions</em>, not <em>the apps table</em>. That is deliberate: the logical DFD survives a change of database.</p>
+<p><strong>"What level is it and what would be above and below?"</strong> It is level-1. Above it is the context diagram — one process, the four external entities, the major flows. Below it, each process can be decomposed further: <em>Analyse Capabilities</em> would decompose into 2.1 <em>Parse source into AST</em>, 2.2 <em>Run Semgrep rules</em>, 2.3 <em>Resolve dependencies</em>, 2.4 <em>Render nutrition label</em>. Continue until each process is primitive enough to describe in a <strong>process specification</strong>, which the slide defines as the description of data-flow processing at the lowest level of refinement.</p>
+<p><strong>"What is a black hole and does your diagram have one?"</strong> A black hole is a process with <strong>only inputs</strong> and no outputs — data goes in and never comes out, which is always a modelling error. Our diagram has none; every process produces at least one output flow.</p>
+<p><strong>"Why do some of your data stores appear more than once?"</strong> <em>Apps and Versions</em> appears twice. Rule <strong>T</strong> explicitly permits repeating data stores or sources/sinks <strong>to avoid having data flow lines cross each other</strong>, and rule <em>Objects always have a unique name</em> is paired with the note that stores and flows may be repeated to keep the diagram uncluttered. It is the same store, drawn twice.</p>
+</section>
+<h2 id="78-project-schedule-gantt-chart"><span class="sec-num">7.8</span>Project Schedule (Gantt chart)</h2>
+<section class="call call-theory"><h3>The theory behind it</h3>
+<p>The Gantt chart is not from these four slide sets — it belongs to project planning rather than requirements analysis — but it is part of our documentation, so it is worth being able to explain. It supports the <strong>negotiation</strong> task from Slide Set 5, where <strong>rough guesses of development effort are made and used to assess the impact of each requirement on project cost and delivery time.</strong> A Gantt chart is where those effort estimates become a visible schedule.</p>
+</section>
+<section class="call call-shows"><h3>What ours shows</h3>
+<p><strong>Seven weeks, three people, four tracks.</strong></p>
+<ul>
+<li><strong>Person A — Database &amp; Config:</strong> W1 <em>DB models, config and migrations</em> (SQLAlchemy, Pydantic, Alembic, .env); W2–W3 <em>Inference engine and Dockerfile generation</em> (language, deps, entrypoint, port, Jinja2); W4–W5 <em>Sandbox, CI/CD and eval suite</em> (gVisor, GitHub Actions, pytest, 5 test apps).</li>
+<li><strong>Person B — Backend API &amp; Docker:</strong> W1 <em>Auth, CRUD and Docker pipeline</em> (OAuth, app routes, build, run containers); W2–W4 <em>Reverse proxy and nutrition label API</em> (subdomain routing, TLS, LLM scoring); W5 <em>Approval workflow</em> (approve, reject, rollback, lifecycle).</li>
+<li><strong>Person C — Frontend:</strong> W1 <em>Auth UI, dashboard and upload flow</em> (Next.js, Google sign-in, app cards, upload); W2–W3 <em>Build log viewer and sharing</em> (logs, share links, ACLs, collaboration); W4–W5 <em>Nutrition label viewer and polish</em>.</li>
+<li><strong>Convergence — all three:</strong> W6 <em>End-to-end integration</em> (all tracks joined: proxy, inference, UI); W7 <em>Demo, docs and writeup</em> (live demo, malicious app blocked, report).</li>
+</ul>
+<p>Week 1 is marked <strong>DONE</strong>.</p>
+</section>
+<section class="call call-maps"><h3>How it maps to the methodology</h3>
+<p>The three tracks are <strong>parallel</strong> — which is the same idea the activity diagram's fork expresses, applied to people instead of processes. Each person works independently for five weeks, and the <strong>convergence band in W6 is a join</strong>: integration cannot begin until all three tracks have completed. The dependencies are real: Person B cannot build the deployment pipeline until Person A's database models exist in W1, which is why both start in week 1 with the foundational work.</p>
+</section>
+<section class="call call-viva"><h3>Likely viva questions</h3>
+<p><strong>"How did you divide the work?"</strong> By <strong>subsystem</strong>, not by task type, so that each person owns a vertical slice and can work without blocking the others. The couplings are deliberately pushed to week 1 (models and config) and week 6 (integration).</p>
+<p><strong>"What slipped?"</strong> Honest answer: the security track. gVisor, Semgrep and the egress allowlist were scheduled for W4–W5 and were deprioritised during negotiation in favour of making the core deployment pipeline genuinely robust — because a platform that cannot reliably deploy a real multi-file project has no value regardless of how well sandboxed it is. That is a negotiation outcome, exactly as Slide Set 5 describes it: requirements were <strong>eliminated, combined or modified</strong> so that the project as a whole remained deliverable.</p>
+</section>
+<h1 id="part-8-rapid-fire-revision" class="part"><span class="part-num">Part 8</span><span>RAPID-FIRE REVISION</span></h1>
+<h2 id="81-definitions-you-should-be-able-to-give-instantly"><span class="sec-num">8.1</span>Definitions you should be able to give instantly</h2>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>Term</th>
+<th>One-line definition</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Requirements engineering</td>
+<td>The process of establishing the services a customer requires from a system and the constraints under which it operates and is developed</td>
+</tr>
+<tr>
+<td>User requirement</td>
+<td>Natural-language statements plus diagrams of the services the system provides and its operational constraints — written for customers</td>
+</tr>
+<tr>
+<td>System requirement</td>
+<td>A structured document of detailed system services — written as a contract between client and contractor</td>
+</tr>
+<tr>
+<td>Software specification</td>
+<td>A detailed software description serving as a basis for design or implementation — written for developers</td>
+</tr>
+<tr>
+<td>Functional requirement</td>
+<td>A statement of a service the system should provide, how it reacts to particular inputs, and how it behaves in particular situations</td>
+</tr>
+<tr>
+<td>Non-functional requirement</td>
+<td>A constraint on the services or functions offered by the system</td>
+</tr>
+<tr>
+<td>Domain requirement</td>
+<td>A requirement derived from the application domain, reflecting characteristics of that domain; if unsatisfied, the system may be unworkable</td>
+</tr>
+<tr>
+<td>Goal</td>
+<td>A general intention of the user, such as ease of use — not verifiable</td>
+</tr>
+<tr>
+<td>Verifiable NFR</td>
+<td>A statement using a measure that can be objectively tested</td>
+</tr>
+<tr>
+<td>Complete</td>
+<td>The requirements include descriptions of all facilities required</td>
+</tr>
+<tr>
+<td>Consistent</td>
+<td>There are no conflicts or contradictions in the descriptions of the system facilities</td>
+</tr>
+<tr>
+<td>QFD</td>
+<td>A quality management technique that translates the needs of the customer into technical requirements for software</td>
+</tr>
+<tr>
+<td>Use case</td>
+<td>A dialogue between an actor and the system; a sequence of related transactions performed by an actor and the system</td>
+</tr>
+<tr>
+<td>Actor</td>
+<td>Someone or something external that must interact with the system; a role a user plays with respect to the system</td>
+</tr>
+<tr>
+<td>System boundary</td>
+<td>A rectangle separating what is internal from what is external; the external environment is represented only by actors</td>
+</tr>
+<tr>
+<td>«include»</td>
+<td>Common behaviour factored into a separate use case; always performed; arrow towards the secondary use case</td>
+</tr>
+<tr>
+<td>«extend»</td>
+<td>Optional behaviour required only under certain conditions; arrow towards the primary use case</td>
+</tr>
+<tr>
+<td>Activity diagram</td>
+<td>A graphical representation of the flow of interaction within a specific scenario; like a flowchart but supports parallel behaviour</td>
+</tr>
+<tr>
+<td>Fork</td>
+<td>Start of concurrent actions; single entry, multiple exits</td>
+</tr>
+<tr>
+<td>Join</td>
+<td>End of concurrent actions; multiple entry, single exit; exit waits for all threads</td>
+</tr>
+<tr>
+<td>Swimlane</td>
+<td>A vertical column named for an object, containing every action performed by that object</td>
+</tr>
+<tr>
+<td>Class diagram</td>
+<td>A diagram of the kinds of objects in a system and the static relationships between them</td>
+</tr>
+<tr>
+<td>Association</td>
+<td>A structural relationship connecting objects of one class to objects of another, navigable in both directions unless restricted</td>
+</tr>
+<tr>
+<td>Aggregation</td>
+<td>A whole/part association; diamond on the whole end</td>
+</tr>
+<tr>
+<td>Composition</td>
+<td>A whole/part association where the part does not exist independently of the whole; multiplicity on the whole end is always 1</td>
+</tr>
+<tr>
+<td>Generalization</td>
+<td>An "is-a" inheritance relationship; line with a triangle at the target end</td>
+</tr>
+<tr>
+<td>Dependency</td>
+<td>A uses-relationship; if the supplier changes, the client might have to change</td>
+</tr>
+<tr>
+<td>DFD</td>
+<td>A diagram showing how input is transformed into output as data objects move through a system</td>
+</tr>
+<tr>
+<td>Data flow / data store</td>
+<td>Data in motion / data at rest</td>
+</tr>
+<tr>
+<td>Balancing</td>
+<td>Conserving inputs to and outputs from a process at the next level of decomposition</td>
+</tr>
+<tr>
+<td>Black hole / miracle</td>
+<td>A process with only inputs / a process with only outputs — both errors</td>
+</tr>
+<tr>
+<td>Sequence diagram</td>
+<td>A behavioural diagram of dynamic message passing between objects, ordered by a vertical time axis</td>
+</tr>
+<tr>
+<td>Collaboration diagram</td>
+<td>The same information, laid out by object links, with ordering carried by message numbers</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="82-lists-you-may-be-asked-to-reproduce"><span class="sec-num">8.2</span>Lists you may be asked to reproduce</h2>
+<ul>
+<li><strong>7-step requirements gathering:</strong> Inception, Elicitation, Elaboration, Negotiation, Specification, Validation, Requirements Management.</li>
+<li><strong>QFD's three requirement types:</strong> Normal, Expected, Exciting.</li>
+<li><strong>QFD's four deployments:</strong> Function deployment, information deployment, task deployment, value analysis.</li>
+<li><strong>Three NFR classifications:</strong> Product, organisational, external.</li>
+<li><strong>Four analysis-modelling approaches:</strong> Flow-oriented, scenario-based, class-based, behavioural.</li>
+<li><strong>Four operation categories:</strong> Change state, perform computation, inquire about state, monitor for a controlling event.</li>
+<li><strong>Seven class classifications:</strong> External entity, thing, occurrence/event, role, organizational unit, place, structure.</li>
+<li><strong>Four actor categories:</strong> Primary, secondary, external hardware, other system.</li>
+<li><strong>Three UML relationship kinds (Fowler slide):</strong> Association, generalization, dependency.</li>
+<li><strong>Three flows in a use case:</strong> Typical/normal, alternative, exceptional.</li>
+<li><strong>Three visibility markers:</strong> <code>+</code> public, <code>-</code> private, <code>#</code> protected.</li>
+<li><strong>Four DFD symbols:</strong> Process (circle), data store (parallel lines), source/sink (square), data flow (arrow).</li>
+<li><strong>Seven points on the art of negotiation:</strong> not a competition; map out a strategy; listen actively; focus on the other party's interests; don't let it get personal; be creative; be ready to commit.</li>
+</ul>
+<h2 id="83-the-how-did-you-do-it-in-your-project-answers-in-one-place"><span class="sec-num">8.3</span>The &quot;how did you do it in your project&quot; answers, in one place</h2>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>If asked about…</th>
+<th>Say this</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Functional requirements</td>
+<td>Upload a <code>.py</code> or <code>.zip</code>, infer the entry point / dependencies / start command / port, build an image, run a container, probe the port, serve through <code>/proxy/{id}</code>, expose build logs</td>
+</tr>
+<tr>
+<td>Non-functional requirements</td>
+<td>Inference under 500 ms (measured under 2 ms); a version is <em>live</em> only after a successful TCP connection; per-container CPU and memory caps; Docker for interoperability; zero-configuration usability</td>
+</tr>
+<tr>
+<td>Domain requirements</td>
+<td>ASGI apps need a server, not <code>python file.py</code>; <code>127.0.0.1</code> is unreachable from outside a container; import name ≠ package name; standard-library modules must never be installed</td>
+</tr>
+<tr>
+<td>A goal turned into a verifiable requirement</td>
+<td>"Deployments should be trustworthy" → "a version is live only after a TCP connection to its port succeeds within the readiness timeout"</td>
+</tr>
+<tr>
+<td>An NFR conflict</td>
+<td>Reliability (install the compiler toolchain so every package builds) versus performance (200 MB added to every build). Resolved by making the compiler layer conditional on the resolved dependency list</td>
+</tr>
+<tr>
+<td>Incompleteness</td>
+<td>Our requirements assumed a flat archive and never covered monorepos; this produced a real build failure and was closed by adding recursive, scored application-root selection</td>
+</tr>
+<tr>
+<td>Ambiguity</td>
+<td>"Run the application" meant different things for Flask, FastAPI and Streamlit; resolved by specifying a <strong>start command</strong> rather than an entry file</td>
+</tr>
+<tr>
+<td>Inception</td>
+<td>Identified three stakeholder viewpoints — developer, collaborator, approver — and answered the four inception questions, including the competitor question that produced our differentiator</td>
+</tr>
+<tr>
+<td>Elicitation / QFD</td>
+<td>Normal = upload and get a URL; Expected = privacy, reliability, speed; Exciting = the nutrition label and the AI workbench</td>
+</tr>
+<tr>
+<td>Elaboration</td>
+<td>Six use cases, four domain classes with attributes and relationships, and the <code>Version</code> lifecycle as the object whose life we model</td>
+</tr>
+<tr>
+<td>Negotiation</td>
+<td>Ranked the pipeline P0; dropped gVisor and the egress allowlist; reduced the workbench to a prototype; kept the pipeline and the tests</td>
+</tr>
+<tr>
+<td>Specification</td>
+<td>An SRS with states and modes, requirements grouped by capability, external and internal interfaces, internal data, constraints, and the diagrams as its graphical part</td>
+</tr>
+<tr>
+<td>Validation</td>
+<td>A formal technical review applying the slide's question list; "is it testable?" rewrote the readiness requirement; "do any conflict?" caught the 256 MB / 512 MB contradiction</td>
+</tr>
+<tr>
+<td>Requirements management</td>
+<td>Unique IDs, two-way traceability from requirement to module to test, with Git as the change-control mechanism</td>
+</tr>
+<tr>
+<td>Analysis modelling</td>
+<td>Artefacts from all four categories: use cases and a swimlane activity diagram; class and collaboration diagrams; a DFD; a sequence diagram and the version state model</td>
+</tr>
+<tr>
+<td>Structured vs OO analysis</td>
+<td>We used both — the DFD is structured analysis (passive data, transforming processes); the class and collaboration diagrams are object-oriented (classes that own their operations)</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="84-three-things-to-volunteer-before-you-are-asked"><span class="sec-num">8.4</span>Three things to volunteer before you are asked</h2>
+<ol>
+<li>
+<p><strong>Separate what is implemented from what is proposed.</strong> Implemented: Google OAuth, app and version management, zip upload with a path-traversal guard, AST-based inference (application root, entry point, dependencies, port, localhost repair), Dockerfile generation, Docker Compose support, detached build workers, TCP readiness probing, build logs, reverse proxy. Proposed but not yet built: Semgrep capability analysis, the nutrition label, the approval workflow, gVisor, the egress allowlist, the capability broker, the real-time collaborative workbench, the audit log. Saying this yourself is far better than being caught.</p>
+</li>
+<li>
+<p><strong>Tell the readiness-probe story.</strong> It demonstrates requirements imprecision, a verifiable non-functional requirement, and validation all at once: Docker publishes a port as soon as a container starts, so a crashed application looked healthy; the vague requirement "the app should deploy successfully" was untestable; replacing it with "a TCP connection to the published port must succeed" made it testable and fixed the bug.</p>
+</li>
+<li>
+<p><strong>Own the scope reduction as a negotiation outcome, not a failure.</strong> Slide Set 5 says requirements are eliminated, combined or modified so that each party achieves some measure of satisfaction. We prioritised, assessed risk, estimated effort, and cut the security track in favour of a deployment pipeline that actually works on real multi-file projects. That is the process working as designed.</p>
+</li>
+</ol></div>
+  </main>
+</div>
+
+<script>
+const nav=document.querySelector('nav'), links=[...nav.querySelectorAll('a')];
+const heads=[...document.querySelectorAll('h1.part,h2')];
+const io=new IntersectionObserver(es=>{
+  es.forEach(e=>{ if(!e.isIntersecting) return;
+    links.forEach(a=>a.classList.remove('on'));
+    const a=nav.querySelector('a[href="#'+e.target.id+'"]');
+    if(a){a.classList.add('on');
+      const r=a.getBoundingClientRect(), s=document.querySelector('.side').getBoundingClientRect();
+      if(r.top<s.top+40||r.bottom>s.bottom-40) a.scrollIntoView({block:'center'});}
+  });
+},{rootMargin:'0px 0px -75% 0px'});
+heads.forEach(h=>io.observe(h));
+
+const q=document.getElementById('q');
+q.addEventListener('input',()=>{
+  const v=q.value.trim().toLowerCase();
+  links.forEach(a=>a.classList.toggle('hide', v && !a.textContent.toLowerCase().includes(v)));
+});
+
+const side=document.querySelector('.side'), scrim=document.querySelector('.scrim');
+function tog(o){side.classList.toggle('open',o); scrim.classList.toggle('on',o);}
+document.getElementById('menu').addEventListener('click',()=>tog(!side.classList.contains('open')));
+scrim.addEventListener('click',()=>tog(false));
+links.forEach(a=>a.addEventListener('click',()=>{ if(innerWidth<=980) tog(false); }));
+
+const tb=document.getElementById('theme');
+try{const t=localStorage.getItem('viva-theme'); if(t) document.documentElement.dataset.theme=t;}catch(e){}
+tb.addEventListener('click',()=>{
+  const cur=document.documentElement.dataset.theme
+    || (matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');
+  const next=cur==='dark'?'light':'dark';
+  document.documentElement.dataset.theme=next;
+  try{localStorage.setItem('viva-theme',next);}catch(e){}
+});
+</script>
+</body>
+</html>

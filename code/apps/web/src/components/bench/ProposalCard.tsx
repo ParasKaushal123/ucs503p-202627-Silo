@@ -154,12 +154,13 @@ export default function ProposalCard({
             {st === "applied" && (
               <>
                 <div>· {msg.files?.length ?? 0} files changed</div>
-                <div>· Build passed · preview ready</div>
+                <div>· Saved to the shared draft</div>
+                <div>· Check Build details for the actual preview status</div>
               </>
             )}
             {st === "failed" && (
               <>
-                <div>· Build failed</div>
+                <div>· Change request failed</div>
                 <div>· Live version is unaffected and still serving</div>
               </>
             )}

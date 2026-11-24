@@ -1,0 +1,36 @@
+name: Silo checks
+on: [push, pull_request]
+jobs:
+  api:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/api
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+      - run: uv sync --frozen
+      - run: uv run ruff check silo_api tests
+      - run: uv run pytest -q
+  web-and-collaboration:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11
+      - run: pnpm install --frozen-lockfile
+        working-directory: apps/collab
+      - run: pnpm test
+        working-directory: apps/collab
+      - run: pnpm install --frozen-lockfile
+        working-directory: apps/web
+      - run: pnpm exec tsc --noEmit
+        working-directory: apps/web
+      - run: pnpm lint
+        working-directory: apps/web
+      - run: pnpm build
+        working-directory: apps/web

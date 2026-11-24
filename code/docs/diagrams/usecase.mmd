@@ -1,0 +1,86 @@
+flowchart LR
+%% ===================== ACTORS =====================
+    DEV(["👤&nbsp;&nbsp;<b>Developer</b><br/><i>pastes AI-written app</i>"]):::actor
+    COL(["👤&nbsp;&nbsp;<b>Collaborator</b><br/><i>editor on a shared draft</i>"]):::actor
+    APR(["👤&nbsp;&nbsp;<b>Approver</b><br/><i>non-technical reviewer</i>"]):::actor
+    OWN(["👤&nbsp;&nbsp;<b>Owner / Admin</b>"]):::actor
+
+%% ===================== SYSTEM BOUNDARY =====================
+    subgraph SYS["<b>Silo Platform</b>"]
+        direction TB
+
+        %% ---- Developer-facing ----
+        UC1("Submit App for<br/>Deployment"):::dev
+        UC2("View Deployment<br/>Status"):::dev
+
+        %% ---- Core pipeline ----
+        UC3("Run Capability<br/>Analysis"):::core
+        UC4("Generate Nutrition<br/>Label"):::core
+        UC5("Deploy to<br/>Sandbox"):::core
+
+        %% ---- Approver-facing ----
+        UC6("View Nutrition<br/>Label"):::apr
+        UC7("Approve / Reject<br/>Deployment"):::apr
+
+        %% ---- Collaboration ----
+        UC8("Open Shared<br/>Workbench"):::collab
+        UC9("Request Change<br/>via AI"):::collab
+        UC10("Review &amp; Comment<br/>on Draft"):::collab
+        UC11("Apply Change<br/>to Draft"):::collab
+        UC12("Publish Draft as<br/>New Version"):::collab
+
+        %% ---- Governance ----
+        UC13("Share App via Link"):::own
+        UC14("Set Access Roles"):::own
+        UC15("View Audit Log"):::own
+        UC16("Revoke Access"):::own
+
+        %% ---- Runtime ----
+        UC17("Enforce Runtime<br/>Egress Allowlist"):::rt
+        UC18("Access External Data<br/>via Capability Broker"):::rt
+    end
+
+    EXT["&laquo;system&raquo;<br/><b>Deployed App</b><br/><i>at runtime</i>"]:::ext
+
+%% ===================== ASSOCIATIONS =====================
+    DEV --- UC1
+    DEV --- UC2
+    DEV --- UC8
+
+    COL --- UC8
+    COL --- UC9
+    COL --- UC10
+
+    UC6 --- APR
+    UC7 --- APR
+    UC10 --- APR
+
+    UC13 --- OWN
+    UC14 --- OWN
+    UC15 --- OWN
+    UC16 --- OWN
+
+    UC18 --- EXT
+
+%% ===================== INCLUDE / EXTEND =====================
+    UC1 -.->|"&laquo;include&raquo;"| UC3
+    UC3 -.->|"&laquo;include&raquo;"| UC4
+    UC5 -.->|"&laquo;include&raquo;"| UC17
+    UC5 -.->|"&laquo;include&raquo;"| UC18
+    UC7 -.->|"&laquo;extend&raquo;"| UC5
+
+    UC9 -.->|"&laquo;include&raquo;"| UC11
+    UC11 -.->|"&laquo;include&raquo;"| UC5
+    UC12 -.->|"&laquo;extend&raquo;"| UC7
+
+%% ===================== STYLES =====================
+    classDef actor  fill:#ffffff,stroke:#334155,stroke-width:1.5px,color:#0f172a
+    classDef dev    fill:#dbeafe,stroke:#60a5fa,stroke-width:1.2px,color:#0f172a
+    classDef apr    fill:#d1fae5,stroke:#34d399,stroke-width:1.2px,color:#0f172a
+    classDef own    fill:#fdebc8,stroke:#eab308,stroke-width:1.2px,color:#0f172a
+    classDef core   fill:#e5e7eb,stroke:#9ca3af,stroke-width:1.2px,color:#0f172a
+    classDef rt     fill:#ddd6fe,stroke:#a78bfa,stroke-width:1.2px,color:#0f172a
+    classDef collab fill:#fbcfe8,stroke:#f472b6,stroke-width:1.2px,color:#0f172a
+    classDef ext    fill:#f8fafc,stroke:#94a3b8,stroke-width:1.2px,stroke-dasharray:5 4,color:#334155
+
+    style SYS fill:#ffffff,stroke:#475569,stroke-width:1.6px,color:#0f172a

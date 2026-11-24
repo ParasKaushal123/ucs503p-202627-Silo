@@ -36,9 +36,7 @@ def test_returns_none_for_empty():
 
 def test_version_310_match_case():
     with tempfile.TemporaryDirectory() as d:
-        (Path(d) / "main.py").write_text(
-            'match command:\n    case "quit":\n        exit()\n'
-        )
+        (Path(d) / "main.py").write_text('match command:\n    case "quit":\n        exit()\n')
         assert detect_python_version(Path(d)) == "3.10"
 
 

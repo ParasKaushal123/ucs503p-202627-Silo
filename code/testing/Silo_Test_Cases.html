@@ -1,0 +1,114 @@
+<!doctype html><html lang='en'><head><meta charset='utf-8'><title>Silo Test Cases</title><style>
+@page { size: A4 landscape; margin: 14mm 18mm; }
+* { box-sizing: border-box; }
+body { font: 11pt/1.25 "Times New Roman", Times, serif; color: #000; background: #fff; margin: 0; }
+.sheet { page-break-after: always; }
+.sheet:last-child { page-break-after: auto; }
+.running { display: flex; justify-content: space-between; font-size: 11pt; margin-bottom: 6px; }
+h1 { text-align: center; font-size: 19pt; margin: 2px 0 10px; }
+h1 span { font-weight: normal; }
+.box { border: 1px solid #000; padding: 5px 10px; margin-bottom: 9px; }
+.head { display: grid; grid-template-columns: 44% 40% 16%; row-gap: 5px; padding: 8px 10px 9px; }
+.head .span2 { grid-column: span 2; }
+.head .span3 { grid-column: span 3; }
+.v { color: #1f3fe0; }
+.pre div { margin-left: 4px; }
+table { border-collapse: collapse; width: 100%; margin-bottom: 9px; }
+th { background: #e0e0e0; text-align: left; vertical-align: top; }
+th, td { border: 1px solid #000; padding: 2px 5px; vertical-align: top; }
+tr { page-break-inside: avoid; }
+.c { text-align: center; }
+.post ol { margin: 2px 0 6px; padding-left: 26px; }
+</style></head><body>
+<section class="sheet">
+  <div class="running"><span>Software Engineering – Silo Test Cases</span><span>Page 1 of 4</span></div>
+  <h1>Test Case 1 <span>(Simultaneous editing)</span></h1>
+  <div class="box head">
+    <div><b>Test Case #:</b> <span class="v">TC-01</span></div>
+    <div><b>Test Case Name:</b> <span class="v">Simultaneous editing</span></div>
+    <div><b>Page:</b> <span class="v">1 of 1</span></div>
+    <div><b>System:</b> <span class="v">Silo</span></div>
+    <div class="span2"><b>Subsystem:</b> <span class="v">Workbench (shared editor)</span></div>
+    <div><b>Designed by:</b> <span class="v">Deepank Agarwal</span></div>
+    <div class="span2"><b>Design Date:</b> <span class="v">08/11/2026</span></div>
+    <div><b>Executed by:</b> <span class="v">Paras Kaushal, Dev Kapla, Devanshu</span></div>
+    <div class="span2"><b>Execution Date:</b> <span class="v">17/11/2026</span></div>
+    <div class="span3"><b>Short Description:</b> <span class="v">Test that two users editing the same line at the same time both keep their changes</span></div>
+  </div>
+  <div class="box pre"><b>Pre-conditions</b><div>Two users, Alex (owner) and Morgan (editor), are logged in on separate computers</div><div>Both users have the app &quot;Counter&quot; open in the Workbench</div><div>The file index.html is open on both screens</div></div>
+  <table>
+    <colgroup><col style="width:5%"><col style="width:28%"><col style="width:41%"><col style="width:7%"><col style="width:19%"></colgroup>
+    <thead><tr><th>Step</th><th>Action</th><th>Expected System Response</th><th>Pass/<br>Fail</th><th>Comment</th></tr></thead>
+    <tbody><tr><td class='c'>1</td><td>Both users click at the end of the last line of index.html</td><td>The cursor is placed at the end of the line on both screens</td><td class='c'>Pass</td><td></td></tr><tr><td class='c'>2</td><td>At the same moment, Alex types &#x27;Alex edited&#x27; and Morgan types &#x27;Morgan edited&#x27;</td><td>Both lines appear on both screens<br>The status shows &#x27;Saving…&#x27; and then &#x27;Saved&#x27;</td><td class='c'>Pass</td><td>No error shown</td></tr><tr><td class='c'>3</td><td>Both users compare their screens</td><td>Both screens show the same text, with each line appearing once</td><td class='c'>Pass</td><td></td></tr><tr><td class='c'>4</td><td>Morgan refreshes the page and opens index.html again</td><td>Both lines are still there</td><td class='c'>Pass</td><td></td></tr><tr><td class='c'>5</td><td><b>Check post-condition 1</b></td><td></td><td class='c'>Pass</td><td></td></tr></tbody>
+  </table>
+  <div class="box post"><b>Post-conditions</b><ol><li>The saved file contains both lines, each exactly once</li></ol></div>
+</section>
+<section class="sheet">
+  <div class="running"><span>Software Engineering – Silo Test Cases</span><span>Page 2 of 4</span></div>
+  <h1>Test Case 2 <span>(Remove an editor during editing)</span></h1>
+  <div class="box head">
+    <div><b>Test Case #:</b> <span class="v">TC-02</span></div>
+    <div><b>Test Case Name:</b> <span class="v">Remove an editor during editing</span></div>
+    <div><b>Page:</b> <span class="v">1 of 1</span></div>
+    <div><b>System:</b> <span class="v">Silo</span></div>
+    <div class="span2"><b>Subsystem:</b> <span class="v">Sharing and access</span></div>
+    <div><b>Designed by:</b> <span class="v">Deepank Agarwal</span></div>
+    <div class="span2"><b>Design Date:</b> <span class="v">08/11/2026</span></div>
+    <div><b>Executed by:</b> <span class="v">Paras Kaushal, Dev Kapla, Devanshu</span></div>
+    <div class="span2"><b>Execution Date:</b> <span class="v">17/11/2026</span></div>
+    <div class="span3"><b>Short Description:</b> <span class="v">Test that a removed editor loses access immediately, even with the editor still open</span></div>
+  </div>
+  <div class="box pre"><b>Pre-conditions</b><div>Alex (owner) and Morgan (editor) are logged in on separate computers</div><div>Morgan joined the app through an invitation link and has the Workbench open</div><div>A third user, Sam, has an account but no access to the app</div></div>
+  <table>
+    <colgroup><col style="width:5%"><col style="width:28%"><col style="width:41%"><col style="width:7%"><col style="width:19%"></colgroup>
+    <thead><tr><th>Step</th><th>Action</th><th>Expected System Response</th><th>Pass/<br>Fail</th><th>Comment</th></tr></thead>
+    <tbody><tr><td class='c'>1</td><td>Alex clicks &#x27;Share&#x27; and removes Morgan</td><td>Within 5 seconds, Morgan&#x27;s screen shows &#x27;Access changed – reload&#x27;</td><td class='c'>Pass</td><td>Shown after about 1 second</td></tr><tr><td class='c'>2</td><td>Morgan tries to type in the open file</td><td>The editor does not accept typing and nothing Morgan types is saved</td><td class='c'>Pass</td><td></td></tr><tr><td class='c'>3</td><td>Morgan refreshes the page</td><td>The system shows &#x27;App not found&#x27; and Morgan can no longer see the code</td><td class='c'>Pass</td><td></td></tr><tr><td class='c'>4</td><td>Alex clicks &#x27;Revoke invitation links&#x27;</td><td>The system displays the message &#x27;Invitation links revoked&#x27;</td><td class='c'>Pass</td><td></td></tr><tr><td class='c'>5</td><td>Sam opens the old invitation link</td><td>The system displays &#x27;Invitation not found&#x27;</td><td class='c'>Pass</td><td></td></tr><tr><td class='c'>6</td><td><b>Check post-condition 1</b></td><td></td><td class='c'>Pass</td><td></td></tr></tbody>
+  </table>
+  <div class="box post"><b>Post-conditions</b><ol><li>Morgan is removed from the app&#x27;s member list; only Alex remains</li></ol></div>
+</section>
+<section class="sheet">
+  <div class="running"><span>Software Engineering – Silo Test Cases</span><span>Page 3 of 4</span></div>
+  <h1>Test Case 3 <span>(Security check of an update and its fix)</span></h1>
+  <div class="box head">
+    <div><b>Test Case #:</b> <span class="v">TC-03</span></div>
+    <div><b>Test Case Name:</b> <span class="v">Security check of an update and its fix</span></div>
+    <div><b>Page:</b> <span class="v">1 of 1</span></div>
+    <div><b>System:</b> <span class="v">Silo</span></div>
+    <div class="span2"><b>Subsystem:</b> <span class="v">Security Track</span></div>
+    <div><b>Designed by:</b> <span class="v">Pushti</span></div>
+    <div class="span2"><b>Design Date:</b> <span class="v">08/11/2026</span></div>
+    <div><b>Executed by:</b> <span class="v">Paras Kaushal, Dev Kapla, Devanshu</span></div>
+    <div class="span2"><b>Execution Date:</b> <span class="v">17/11/2026</span></div>
+    <div class="span3"><b>Short Description:</b> <span class="v">Test that the Security Track finds the problems a new version adds and recognises when they are fixed</span></div>
+  </div>
+  <div class="box pre"><b>Pre-conditions</b><div>Alex is logged in and has an empty app called &quot;Expense notes&quot;</div><div>Three versions of the app are ready to upload: v1 (safe), v2 (contains 10 known security problems) and v3 (v2 with all 10 problems fixed)</div></div>
+  <table>
+    <colgroup><col style="width:5%"><col style="width:28%"><col style="width:41%"><col style="width:7%"><col style="width:19%"></colgroup>
+    <thead><tr><th>Step</th><th>Action</th><th>Expected System Response</th><th>Pass/<br>Fail</th><th>Comment</th></tr></thead>
+    <tbody><tr><td class='c'>1</td><td>Upload v1, then v2, then v3</td><td>The system shows three versions of the app</td><td class='c'>Pass</td><td></td></tr><tr><td class='c'>2</td><td>Open the Security Track</td><td>The system shows the three versions in order<br>v1 → v2 is marked &#x27;Expanding&#x27; and v2 → v3 is marked &#x27;Reducing&#x27;</td><td class='c'>Pass</td><td></td></tr><tr><td class='c'>3</td><td>Click v1</td><td>The label shows the app serves a web page and uses a database<br>No problems are reported</td><td class='c'>Pass</td><td></td></tr><tr><td class='c'>4</td><td>Click v2</td><td>The system reports 10 problems (4 high, 5 medium, 1 low) and a high risk score</td><td class='c'>Pass</td><td>Risk score 76 of 100</td></tr><tr><td class='c'>5</td><td>Open the list of problems for v2</td><td>Each problem shows where it is and how to fix it<br>The secret key in the code is not displayed</td><td class='c'>Pass</td><td></td></tr><tr><td class='c'>6</td><td>Click v3</td><td>No problems are reported and the 10 problems are listed as fixed<br>The risk score drops</td><td class='c'>Pass</td><td>Risk score 13 of 100</td></tr><tr><td class='c'>7</td><td><b>Check post-condition 1</b></td><td></td><td class='c'>Pass</td><td></td></tr></tbody>
+  </table>
+  <div class="box post"><b>Post-conditions</b><ol><li>The risk chart shows one bar for each of the three versions</li></ol></div>
+</section>
+<section class="sheet">
+  <div class="running"><span>Software Engineering – Silo Test Cases</span><span>Page 4 of 4</span></div>
+  <h1>Test Case 4 <span>(Detect hidden system commands)</span></h1>
+  <div class="box head">
+    <div><b>Test Case #:</b> <span class="v">TC-04</span></div>
+    <div><b>Test Case Name:</b> <span class="v">Detect hidden system commands</span></div>
+    <div><b>Page:</b> <span class="v">1 of 1</span></div>
+    <div><b>System:</b> <span class="v">Silo</span></div>
+    <div class="span2"><b>Subsystem:</b> <span class="v">Security Track</span></div>
+    <div><b>Designed by:</b> <span class="v">Simar Verma</span></div>
+    <div class="span2"><b>Design Date:</b> <span class="v">08/11/2026</span></div>
+    <div><b>Executed by:</b> <span class="v">Paras Kaushal, Dev Kapla, Devanshu</span></div>
+    <div class="span2"><b>Execution Date:</b> <span class="v">17/11/2026</span></div>
+    <div class="span3"><b>Short Description:</b> <span class="v">Test that the Security Track detects an app that runs system commands even when the code hides it</span></div>
+  </div>
+  <div class="box pre"><b>Pre-conditions</b><div>Alex is logged in and has an empty app</div><div>Two versions are ready to upload: v1 (safe) and v2 (adds a hidden admin page that runs any command sent to it, with the commands disguised in the code)</div></div>
+  <table>
+    <colgroup><col style="width:5%"><col style="width:28%"><col style="width:41%"><col style="width:7%"><col style="width:19%"></colgroup>
+    <thead><tr><th>Step</th><th>Action</th><th>Expected System Response</th><th>Pass/<br>Fail</th><th>Comment</th></tr></thead>
+    <tbody><tr><td class='c'>1</td><td>Upload v1, then v2</td><td>The system shows two versions of the app</td><td class='c'>Pass</td><td></td></tr><tr><td class='c'>2</td><td>Open the Security Track and click v2</td><td>v1 → v2 is marked &#x27;Expanding&#x27;</td><td class='c'>Pass</td><td></td></tr><tr><td class='c'>3</td><td>Open the label for v2</td><td>The label lists &#x27;Runs system commands&#x27;</td><td class='c'>Pass</td><td></td></tr><tr><td class='c'>4</td><td>Open the list of problems for v2</td><td>A high-severity problem is reported for each hidden command</td><td class='c'>Pass</td><td>All 3 commands found</td></tr><tr><td class='c'>5</td><td>Look for a warning about the disguised code</td><td>The system warns that the code hides which part of the program it loads</td><td class='c'>Pass</td><td></td></tr><tr><td class='c'>6</td><td><b>Check post-condition 1</b></td><td></td><td class='c'>Pass</td><td></td></tr></tbody>
+  </table>
+  <div class="box post"><b>Post-conditions</b><ol><li>v2&#x27;s risk score is higher than v1&#x27;s</li></ol></div>
+</section></body></html>

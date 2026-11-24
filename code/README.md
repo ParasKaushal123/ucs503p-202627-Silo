@@ -1,173 +1,134 @@
 # Silo
 
-**Google Docs for small software.**
+Silo is a place for a small team to keep, run, edit and check its web apps.
+Upload a Python or static app as a `.zip`. Silo builds and runs it in Docker,
+lets teammates edit its code together live in the browser, and checks every
+version for security risks before anyone trusts it.
 
-Upload a Python app. Silo works out how to run it, containerises it, and gives
-you a live URL — no Dockerfile, no deployment config, no DevOps knowledge.
+UCS503P Software Engineering course project.
 
-Built for UCS503P (Software Engineering Project), Thapar Institute.
+## What it does
 
----
-
-## The problem
-
-Generative AI has made writing a small app nearly free. A marketer, analyst or
-researcher can prompt their way to a working Flask dashboard in minutes.
-
-*Running* it is still a DevOps job: pick a base image, pin a Python version,
-work out the dependencies, find the entry point, expose the right port, notice
-that `host="127.0.0.1"` will make the container refuse every connection, wire up
-a reverse proxy, add auth.
-
-Silo's bet is that all of that can be **inferred from the source code**, without
-asking a language model to guess.
-
-## How it works
-
-Uploading a `.zip` or a single `.py` triggers a deterministic pipeline:
-
-1. **Unwrap** the archive, descending through the wrapper folder that `zip -r`
-   creates.
-2. **Locate the app root** — in a monorepo, the deployable service may be several
-   directories down. Candidate directories are scored on project markers,
-   entry-point filenames, depth and naming.
-3. **Find the entry point** by ranked search: a `Procfile` directive, then
-   standard filenames, then a `__main__` guard, then a framework instance.
-4. **Decide how to start it.** This matters more than it sounds. A module that
-   does `app = FastAPI()` with no `if __name__ == "__main__"` block exits
-   instantly under `python main.py` — the container reports a clean start and
-   serves nothing. Such a project is launched with `uvicorn main:app`. Flask
-   without a server call gets `gunicorn`; Streamlit gets `streamlit run`.
-5. **Resolve dependencies** from `requirements.txt` merged with an AST scan of
-   every import, excluding the standard library and modules local to the project
-   (so `from app.config import …` never tries to `pip install app`).
-6. **Repair local-only bindings** — `host="127.0.0.1"` is rewritten to
-   `0.0.0.0` in the build copy, leaving the upload untouched.
-7. **Build and run.** If the project ships a `docker-compose.yml`, the whole
-   stack is brought up instead of a single container, with host ports remapped
-   to ephemeral ones so nothing collides.
-
-A version is only marked **live** once something actually accepts a TCP
-connection on the published port. Docker publishes a port the moment a container
-starts, whether or not a process is listening behind it, so "the container
-started" is not evidence that the app works.
-
-## Architecture
-
-```
-Browser ──► Next.js 14 (:3000)
-                │  fetch, credentials: include
-                ▼
-            FastAPI (:8000) ──► PostgreSQL          users · apps · versions · build_logs
-                │
-                ├─ /auth/*      Google OAuth → signed JWT in an HttpOnly cookie
-                ├─ /apps/*      application CRUD
-                ├─ /versions/*  upload, status, build logs
-                └─ /proxy/{id}  reverse proxy into the running container
-                                     │
-                                     ▼
-                          Docker ── silo-<slug> on an ephemeral host port
-```
-
-Builds run in a **detached child process** (`python -m silo_api.build_worker`),
-not as a FastAPI background task, so restarting or reloading the API cannot kill
-a build halfway through.
-
-## Screens
-
-| Route | Purpose |
+| Page | What you can do |
 |---|---|
-| `/` | Landing and Google sign-in |
-| `/dashboard` | All your apps, with a live preview of the featured one |
-| `/apps/[id]` | One app: live preview, version history, build logs |
-| `/apps/[id]/workbench` | Collaborative editing surface — **frontend prototype, mock data** |
+| **Dashboard** | See your apps, search them, and upload a new one. |
+| **App Room** | Open the running app, browse its version history and build logs, upload a new version, rename it. |
+| **Workbench** | Edit the app's code together in real time (like Google Docs for code), with comments, chat, checkpoints, a live preview, and publishing a new version. Invite people as editor, commenter or viewer, and revoke access instantly. |
+| **Security track** | A map of every version showing what it can do (a "nutrition label": files, network, system commands, databases…), which risks it adds or fixes compared with the previous version, a risk score, and **Fix with AI** for any finding. |
 
-## Running it locally
+The AI (Workbench **Ask AI** and **Fix with AI**) never edits code directly.
+It proposes a change, Silo shows the diff, and a person applies it.
 
-**Prerequisites:** Docker Desktop, Python 3.12+ with [uv](https://docs.astral.sh/uv/),
-Node 18+ with pnpm, and a Google OAuth client ID.
+## Run it
 
-```bash
-# 1. Configuration
-cp .env.example .env                       # fill in your Google credentials
-cp apps/web/.env.local.example apps/web/.env.local
+**Windows: double-click `start-silo.bat`.** Or, from this folder:
 
-# 2. Database
-docker compose -f infra/docker-compose.yml up -d
-
-# 3. API
-cd apps/api
-uv sync
-uv run alembic upgrade head
-uv run python run_dev.py                   # http://localhost:8000
-
-# 4. Frontend, in a second terminal
-cd apps/web
-pnpm install
-pnpm dev                                   # http://localhost:3000
+```
+python scripts/start.py --local
 ```
 
-Open http://localhost:3000, sign in with Google, and upload a `.zip` or `.py`.
+Then open http://localhost:3000/auth/local and create an account.
 
-> Use `run_dev.py` rather than `uvicorn --reload` directly. It scopes the file
-> watcher to `silo_api/` only. Uploaded projects are extracted to `.silo_data/`
-> outside the watched tree, so an upload is never mistaken for a source change.
+`start.py` installs anything missing, starts Docker Desktop if it is closed,
+builds the website once, starts every part, waits until each one answers, and
+prints a status table. Ctrl+C stops everything. Each part's output is in
+`.silo_data/logs/`.
+
+| Command | Use |
+|---|---|
+| `python scripts/start.py --local` | Separate SQLite test database with local accounts. Best for demos and evaluation. |
+| `python scripts/start.py` | The PostgreSQL database and Google sign-in configured in `.env`. Falls back to SQLite if PostgreSQL is not running. |
+| `python scripts/start.py --dev` | Hot reload while editing Silo's own code. |
+| `--no-ai`, `--no-docker`, `--web-port`, `--api-port`, `--collab-port` | Skip the local AI or Docker, or use other ports. |
+
+**Needs:** Python 3.11+ to run the launcher (the API runs on Python 3.12, which
+[uv](https://docs.astral.sh/uv/) installs for it), Node.js 22 with
+pnpm, and Docker Desktop (to build and run uploaded apps). Optional:
+[Semgrep](https://semgrep.dev) (`uv tool install semgrep`) for a second
+security scanner, and the local AI below. Copy `.env.example` to `.env` to
+change settings.
+
+## AI on your own computer
+
+Silo runs **Gemma 4 E4B** locally on the GPU through `apps/local-ai`, so the
+AI needs no key and no code leaves the machine. The runtime and the 5 GB model
+live on drive D (`D:\silo-ai`, `D:\models\silo`), not in the repository. If
+`GEMINI_API_KEY` is also set, Gemini is the backup when the local model is not
+running. Setup and details are in [apps/local-ai/README.md](apps/local-ai/README.md).
+
+## How it is built
+
+```
+ Browser ── HTTP ──────▶ API (FastAPI, Python) ──▶ PostgreSQL or SQLite
+    │                     │  ├─ builds and runs uploaded apps in Docker
+    │                     │  ├─ Security track: Silo's rules (Python ast) + Semgrep
+    │                     │  └─ AI proposals ──▶ local Gemma (apps/local-ai) or Gemini
+    └─ WebSocket ───────▶ Collaboration server (Node.js, Yjs)
+                            live editing, cursors, app previews
+```
+
+| Folder | Part | Technology |
+|---|---|---|
+| `apps/web` | Website | Next.js 14, React, TypeScript, Tailwind CSS, CodeMirror, React Flow |
+| `apps/api` | API | FastAPI, SQLAlchemy, Alembic, httpx, Docker SDK |
+| `apps/collab` | Live editing and previews | Node.js, `ws`, Yjs (CRDT) |
+| `apps/local-ai` | Local AI server | node-llama-cpp (llama.cpp, Vulkan), Gemma 4 E4B |
+| `scripts` | `start.py` launcher, `dev.py` (same with `--dev`) | Python standard library |
+| `testing` | Evaluation test cases, test apps, results, report generator | Playwright, Python |
+| `testapps` | Sample apps: the security demo and five runtime samples | |
+| `docs` | Study guides, UML diagrams, and `archive/` (earlier plans and drafts) | |
+| `infra` | `docker-compose.yml` for PostgreSQL | |
+
+### Security track
+
+Every version is read file by file:
+
+- Python is parsed into a syntax tree, so rules see real calls, including calls hidden behind renamed imports, `importlib`, `__import__` or `getattr`.
+- JavaScript and HTML are checked with patterns, and every file is searched for secret keys.
+- Semgrep 1.183.0 runs alongside when installed.
+
+Each finding has a file, line, CWE number and a fix. Comparing a version with
+the one before marks it **Expanding** (gained access or risks) or **Reducing**
+(lost them), with a 0–100 risk score.
+
+### Collaboration
+
+Edits are merged with Yjs, so two people typing on the same line both keep
+their text. A change is acknowledged only after the API has stored it. Access
+is re-checked every 5 seconds, so a removed editor is cut off within seconds,
+even with the page open.
 
 ## Tests
 
-```bash
-cd apps/api
-uv run pytest -v
+```
+cd apps/api && uv run ruff check silo_api tests && uv run pytest -q        # 117 tests
+cd apps/collab && pnpm test                                               # 2 tests
+cd apps/web && pnpm exec tsc --noEmit && pnpm lint
+cd apps/web && pnpm exec playwright test                                  # 9 browser tests
 ```
 
-39 tests across 7 modules — inference unit tests, route integration tests against
-an isolated SQLite database, and an end-to-end pipeline run for each of the five
-applications in `evaluation/`. No Docker daemon or network access required.
+The browser tests need the test copy running on other ports:
+`python scripts/start.py --dev --local --no-ai --web-port 3100 --api-port 8100 --collab-port 1334`.
 
-The suite covers **inference and routing**, not deployment: no image is built and
-no container is started, so a passing run does not by itself demonstrate a working
-end-to-end deploy.
+The four evaluation test cases (simultaneous editing, removing an editor,
+a risky update and its fix, hidden shell commands) are in `testing/`:
 
-## Layout
+- `testing/Silo_Test_Cases.pdf`: the filled-in course template
+- `testing/results/`: each step's result and screenshot, before and after the TC-04 fix
+- `apps/web/tests/e2e/evaluation.spec.ts`: the automated test cases
+- `testing/SILO_EVALUATION_GUIDE.html`: the plain-language guide
 
-```
-apps/api/            FastAPI backend
-  silo_api/
-    routes/          auth · apps · versions · proxy · health
-    services/
-      packaging.py   project detection and Dockerfile generation
-      builder.py     build strategies, readiness probe, build locks
-      compose.py     docker-compose support
-    build_worker.py  detached build process entry point
-  alembic/           database migrations
-  data/              import map and stdlib list for dependency resolution
-  tests/             39 tests
-apps/web/            Next.js frontend
-evaluation/          five applications used by the integration tests
-infra/               Postgres compose file
-```
+## Limits
 
-## Known limitations
+- One collaboration server per installation.
+- Workspaces of up to 150 text files and 3 MB.
+- Static HTML/CSS/JavaScript previews; no frontend bundling.
+- The Security track is static analysis: it narrows risk, it does not prove an app safe. Code that only reveals what it calls at run time is marked as possibly running commands.
+- The local model has a 16k-token window, so projects over about 24,000 characters go to Gemini.
 
-Stated plainly rather than left to be discovered:
+## Troubleshooting
 
-- **The Workbench is a prototype.** Its AI proposals, file tree, comments and
-  presence indicators are driven by `src/lib/mockData.ts`. No real collaboration
-  or code generation happens.
-- **Build logs in the App Room are simulated.** The backend records real logs and
-  serves them from `GET /versions/{id}/logs`, but the drawer currently renders a
-  scripted sequence. Wiring the drawer to that endpoint is outstanding.
-- **`services/build_orchestrator.py` and `services/inference/` are superseded**
-  by `services/packaging.py` and are no longer called by the running pipeline.
-  They are retained because the existing test suite covers them.
-- **Apps must be proxy-aware.** Apps are served under `/proxy/<app_id>`, which
-  the app itself never sees, so absolute URLs (`/static/style.css`, `href="/about"`)
-  will not resolve. Relative URLs and query-string navigation work.
-- **Capability analysis and the approval workflow** from the original proposal
-  are not implemented.
-- **Python only.** Node detection exists but no Node build path.
-
-## Team
-
-Three-person project for UCS503P. See `commit-split/` for the agreed division of
-work if that folder is present.
+- **"Port … is already in use":** Silo is already running, or another program has the port. Close it, or pick other ports.
+- **Docker Desktop shows "An unexpected error occurred" about `sailor-ingest.sock`:** a stale file from an earlier run. Quit Docker Desktop, rename `%LOCALAPPDATA%\Docker\run` to `run-old`, and start it again.
+- **The AI says it could not reach the local model:** start Silo with `scripts/start.py` (which loads it), or check `.silo_data/logs/local-ai.log`.
+- **A part did not start:** the launcher prints the last lines of that part's log. The full logs are in `.silo_data/logs/`: `api.log`, `web.log`, `collab.log` and `local-ai.log`. A copy running on another web port adds that port, for example `api-3100.log`.

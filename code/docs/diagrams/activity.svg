@@ -1,0 +1,122 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1580" height="1990" viewBox="0 0 1580 1990" font-family="Segoe UI, Arial, Helvetica, sans-serif">
+<defs><marker id="arw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#1a1a1a"/></marker></defs>
+<rect width="1580" height="1990" fill="#ffffff"/>
+<text x="140" y="36" text-anchor="middle" font-size="19" font-weight="700" fill="#1a1a1a">DEVELOPER</text>
+<text x="420" y="36" text-anchor="middle" font-size="19" font-weight="700" fill="#1a1a1a">PLATFORM API</text>
+<line x1="280" y1="56" x2="280" y2="1980" stroke="#666" stroke-width="1.5" stroke-dasharray="7 6"/>
+<text x="740" y="36" text-anchor="middle" font-size="19" font-weight="700" fill="#1a1a1a">ANALYSIS ENGINE</text>
+<line x1="560" y1="56" x2="560" y2="1980" stroke="#666" stroke-width="1.5" stroke-dasharray="7 6"/>
+<text x="1050" y="36" text-anchor="middle" font-size="19" font-weight="700" fill="#1a1a1a">APPROVER</text>
+<line x1="920" y1="56" x2="920" y2="1980" stroke="#666" stroke-width="1.5" stroke-dasharray="7 6"/>
+<text x="1380" y="36" text-anchor="middle" font-size="19" font-weight="700" fill="#1a1a1a">SANDBOX RUNTIME</text>
+<line x1="1180" y1="56" x2="1180" y2="1980" stroke="#666" stroke-width="1.5" stroke-dasharray="7 6"/>
+<line x1="0" y1="56" x2="1580" y2="56" stroke="#1a1a1a" stroke-width="2"/>
+<rect x="1" y="1" width="1578" height="1988" fill="none" stroke="#1a1a1a" stroke-width="2"/>
+<circle cx="140" cy="92" r="13" fill="#1a1a1a"/>
+<rect x="20.0" y="120" width="240" height="56" rx="10" ry="10" fill="#fff6b8" stroke="#8a7712" stroke-width="1.8"/>
+<text x="140" y="154" text-anchor="middle" font-size="15" fill="#1a1a1a">Sign in with Google</text>
+<rect x="20.0" y="208" width="240" height="56" rx="10" ry="10" fill="#fff6b8" stroke="#8a7712" stroke-width="1.8"/>
+<text x="140" y="233" text-anchor="middle" font-size="15" fill="#1a1a1a">Create app and upload</text>
+<text x="140" y="252" text-anchor="middle" font-size="15" fill="#1a1a1a">.py or .zip</text>
+<rect x="300.0" y="296" width="240" height="56" rx="10" ry="10" fill="#fff6b8" stroke="#8a7712" stroke-width="1.8"/>
+<text x="420" y="321" text-anchor="middle" font-size="15" fill="#1a1a1a">Store bundle,</text>
+<text x="420" y="340" text-anchor="middle" font-size="15" fill="#1a1a1a">version = analysing</text>
+<rect x="600.0" y="384" width="280" height="56" rx="10" ry="10" fill="#fff6b8" stroke="#8a7712" stroke-width="1.8"/>
+<text x="740" y="409" text-anchor="middle" font-size="15" fill="#1a1a1a">Run Semgrep rules</text>
+<text x="740" y="428" text-anchor="middle" font-size="15" fill="#1a1a1a">and AST scan</text>
+<rect x="600.0" y="476" width="280" height="13" fill="#1a1a1a"/>
+<rect x="562.0" y="516" width="176" height="56" rx="10" ry="10" fill="#fff6b8" stroke="#8a7712" stroke-width="1.8"/>
+<text x="650" y="541" text-anchor="middle" font-size="15" fill="#1a1a1a">Infer build plan:</text>
+<text x="650" y="560" text-anchor="middle" font-size="15" fill="#1a1a1a">entry, deps, port</text>
+<rect x="742.0" y="516" width="176" height="56" rx="10" ry="10" fill="#fff6b8" stroke="#8a7712" stroke-width="1.8"/>
+<text x="830" y="541" text-anchor="middle" font-size="15" fill="#1a1a1a">Generate nutrition</text>
+<text x="830" y="560" text-anchor="middle" font-size="15" fill="#1a1a1a">label</text>
+<rect x="600.0" y="608" width="280" height="13" fill="#1a1a1a"/>
+<rect x="940.0" y="648" width="220" height="56" rx="10" ry="10" fill="#fff6b8" stroke="#8a7712" stroke-width="1.8"/>
+<text x="1050" y="682" text-anchor="middle" font-size="15" fill="#1a1a1a">Review nutrition label</text>
+<polygon points="1050,736 1142,790 1050,844 958,790" fill="#fff6b8" stroke="#8a7712" stroke-width="1.8"/>
+<text x="1050" y="786" text-anchor="middle" font-size="15" fill="#1a1a1a">Approve or</text>
+<text x="1050" y="805" text-anchor="middle" font-size="15" fill="#1a1a1a">reject?</text>
+<rect x="940.0" y="880" width="220" height="56" rx="10" ry="10" fill="#fcdede" stroke="#c0392b" stroke-width="1.8"/>
+<text x="1050" y="905" text-anchor="middle" font-size="15" fill="#1a1a1a">Record rejection</text>
+<text x="1050" y="924" text-anchor="middle" font-size="15" fill="#1a1a1a">and reason</text>
+<rect x="25.0" y="880" width="230" height="56" rx="10" ry="10" fill="#fff6b8" stroke="#8a7712" stroke-width="1.8"/>
+<text x="140" y="914" text-anchor="middle" font-size="15" fill="#1a1a1a">Read rejection reason</text>
+<circle cx="140" cy="990" r="15" fill="#fff" stroke="#1a1a1a" stroke-width="3"/>
+<circle cx="140" cy="990" r="9" fill="#1a1a1a"/>
+<rect x="1250.0" y="880" width="260" height="56" rx="10" ry="10" fill="#fff6b8" stroke="#8a7712" stroke-width="1.8"/>
+<text x="1380" y="914" text-anchor="middle" font-size="15" fill="#1a1a1a">Build image from plan</text>
+<rect x="1235.0" y="968" width="290" height="56" rx="10" ry="10" fill="#fff6b8" stroke="#8a7712" stroke-width="1.8"/>
+<text x="1380" y="993" text-anchor="middle" font-size="15" fill="#1a1a1a">Run in gVisor sandbox,</text>
+<text x="1380" y="1012" text-anchor="middle" font-size="15" fill="#1a1a1a">CPU and memory caps</text>
+<rect x="1220.0" y="1056" width="320" height="56" rx="10" ry="10" fill="#fff6b8" stroke="#8a7712" stroke-width="1.8"/>
+<text x="1380" y="1081" text-anchor="middle" font-size="15" fill="#1a1a1a">Apply egress allowlist,</text>
+<text x="1380" y="1100" text-anchor="middle" font-size="15" fill="#1a1a1a">route via capability broker</text>
+<polygon points="1380,1144 1480,1196 1380,1248 1280,1196" fill="#fff6b8" stroke="#8a7712" stroke-width="1.8"/>
+<text x="1380" y="1201" text-anchor="middle" font-size="15" fill="#1a1a1a">Port responds?</text>
+<rect x="1190.0" y="1288" width="180" height="56" rx="10" ry="10" fill="#d6f5e3" stroke="#1a8a4f" stroke-width="1.8"/>
+<text x="1280" y="1322" text-anchor="middle" font-size="15" fill="#1a1a1a">Mark version live</text>
+<rect x="1383.0" y="1288" width="190" height="56" rx="10" ry="10" fill="#fcdede" stroke="#c0392b" stroke-width="1.8"/>
+<text x="1478" y="1313" text-anchor="middle" font-size="15" fill="#1a1a1a">Mark version failed,</text>
+<text x="1478" y="1332" text-anchor="middle" font-size="15" fill="#1a1a1a">attach output</text>
+<rect x="30.0" y="1392" width="220" height="56" rx="10" ry="10" fill="#fff6b8" stroke="#8a7712" stroke-width="1.8"/>
+<text x="140" y="1426" text-anchor="middle" font-size="15" fill="#1a1a1a">Read build logs</text>
+<circle cx="140" cy="1500" r="15" fill="#fff" stroke="#1a1a1a" stroke-width="3"/>
+<circle cx="140" cy="1500" r="9" fill="#1a1a1a"/>
+<rect x="300.0" y="1392" width="240" height="56" rx="10" ry="10" fill="#fff6b8" stroke="#8a7712" stroke-width="1.8"/>
+<text x="420" y="1426" text-anchor="middle" font-size="15" fill="#1a1a1a">Serve app via /proxy/id</text>
+<rect x="15.0" y="1580" width="250" height="56" rx="10" ry="10" fill="#fff6b8" stroke="#8a7712" stroke-width="1.8"/>
+<text x="140" y="1605" text-anchor="middle" font-size="15" fill="#1a1a1a">Developer or collaborator</text>
+<text x="140" y="1624" text-anchor="middle" font-size="15" fill="#1a1a1a">opens shared workbench</text>
+<rect x="20.0" y="1668" width="240" height="56" rx="10" ry="10" fill="#fff6b8" stroke="#8a7712" stroke-width="1.8"/>
+<text x="140" y="1693" text-anchor="middle" font-size="15" fill="#1a1a1a">Request change via AI</text>
+<text x="140" y="1712" text-anchor="middle" font-size="15" fill="#1a1a1a">or comment on draft</text>
+<rect x="300.0" y="1756" width="240" height="56" rx="10" ry="10" fill="#fff6b8" stroke="#8a7712" stroke-width="1.8"/>
+<text x="420" y="1790" text-anchor="middle" font-size="15" fill="#1a1a1a">Apply change to draft</text>
+<rect x="25.0" y="1844" width="230" height="56" rx="10" ry="10" fill="#fff6b8" stroke="#8a7712" stroke-width="1.8"/>
+<text x="140" y="1869" text-anchor="middle" font-size="15" fill="#1a1a1a">Publish draft as</text>
+<text x="140" y="1888" text-anchor="middle" font-size="15" fill="#1a1a1a">new version</text>
+<rect x="300.0" y="1900" width="240" height="56" rx="10" ry="10" fill="#fff6b8" stroke="#8a7712" stroke-width="1.8"/>
+<text x="420" y="1934" text-anchor="middle" font-size="15" fill="#1a1a1a">Log event in audit trail</text>
+<circle cx="420" cy="1968" r="15" fill="#fff" stroke="#1a1a1a" stroke-width="3"/>
+<circle cx="420" cy="1968" r="9" fill="#1a1a1a"/>
+<path d="M 140,105 L 140,120" fill="none" stroke="#1a1a1a" stroke-width="1.8" marker-end="url(#arw)"/>
+<path d="M 140,176 L 140,208" fill="none" stroke="#1a1a1a" stroke-width="1.8" marker-end="url(#arw)"/>
+<path d="M 140,264 L 140,280 L 420,280 L 420,296" fill="none" stroke="#1a1a1a" stroke-width="1.8" marker-end="url(#arw)"/>
+<path d="M 420,352 L 420,368 L 740,368 L 740,384" fill="none" stroke="#1a1a1a" stroke-width="1.8" marker-end="url(#arw)"/>
+<path d="M 740,440 L 740,476" fill="none" stroke="#1a1a1a" stroke-width="1.8" marker-end="url(#arw)"/>
+<path d="M 650,489 L 650,516" fill="none" stroke="#1a1a1a" stroke-width="1.8" marker-end="url(#arw)"/>
+<path d="M 830,489 L 830,516" fill="none" stroke="#1a1a1a" stroke-width="1.8" marker-end="url(#arw)"/>
+<path d="M 650,572 L 650,608" fill="none" stroke="#1a1a1a" stroke-width="1.8" marker-end="url(#arw)"/>
+<path d="M 830,572 L 830,608" fill="none" stroke="#1a1a1a" stroke-width="1.8" marker-end="url(#arw)"/>
+<path d="M 740,621 L 740,634 L 1050,634 L 1050,648" fill="none" stroke="#1a1a1a" stroke-width="1.8" marker-end="url(#arw)"/>
+<path d="M 1050,704 L 1050,736" fill="none" stroke="#1a1a1a" stroke-width="1.8" marker-end="url(#arw)"/>
+<path d="M 1050,844 L 1050,880" fill="none" stroke="#1a1a1a" stroke-width="1.8" marker-end="url(#arw)"/>
+<rect x="1064" y="848" width="64" height="20" fill="#fff" opacity="0.95"/>
+<text x="1096" y="862" text-anchor="middle" font-size="14" fill="#1a1a1a">[reject]</text>
+<path d="M 940,908 L 255,908" fill="none" stroke="#1a1a1a" stroke-width="1.8" marker-end="url(#arw)"/>
+<path d="M 140,936 L 140,975" fill="none" stroke="#1a1a1a" stroke-width="1.8" marker-end="url(#arw)"/>
+<path d="M 1142,790 L 1380,790 L 1380,880" fill="none" stroke="#1a1a1a" stroke-width="1.8" marker-end="url(#arw)"/>
+<rect x="1166" y="766" width="64" height="20" fill="#fff" opacity="0.95"/>
+<text x="1198" y="780" text-anchor="middle" font-size="14" fill="#1a1a1a">[approve]</text>
+<path d="M 1380,936 L 1380,968" fill="none" stroke="#1a1a1a" stroke-width="1.8" marker-end="url(#arw)"/>
+<path d="M 1380,1024 L 1380,1056" fill="none" stroke="#1a1a1a" stroke-width="1.8" marker-end="url(#arw)"/>
+<path d="M 1380,1112 L 1380,1144" fill="none" stroke="#1a1a1a" stroke-width="1.8" marker-end="url(#arw)"/>
+<path d="M 1380,1248 L 1380,1268 L 1280,1268 L 1280,1288" fill="none" stroke="#1a1a1a" stroke-width="1.8" marker-end="url(#arw)"/>
+<rect x="1204" y="1248" width="64" height="20" fill="#fff" opacity="0.95"/>
+<text x="1236" y="1262" text-anchor="middle" font-size="14" fill="#1a1a1a">[yes]</text>
+<path d="M 1380,1248 L 1380,1268 L 1478,1268 L 1478,1288" fill="none" stroke="#1a1a1a" stroke-width="1.8" marker-end="url(#arw)"/>
+<rect x="1492" y="1248" width="64" height="20" fill="#fff" opacity="0.95"/>
+<text x="1524" y="1262" text-anchor="middle" font-size="14" fill="#1a1a1a">[no]</text>
+<path d="M 1478,1344 L 1478,1366 L 140,1366 L 140,1392" fill="none" stroke="#1a1a1a" stroke-width="1.8" marker-end="url(#arw)"/>
+<path d="M 140,1448 L 140,1485" fill="none" stroke="#1a1a1a" stroke-width="1.8" marker-end="url(#arw)"/>
+<path d="M 1280,1344 L 1280,1366 L 420,1366 L 420,1392" fill="none" stroke="#1a1a1a" stroke-width="1.8" marker-end="url(#arw)"/>
+<path d="M 420,1448 L 420,1558 L 140,1558 L 140,1580" fill="none" stroke="#1a1a1a" stroke-width="1.8" marker-end="url(#arw)"/>
+<path d="M 140,1636 L 140,1668" fill="none" stroke="#1a1a1a" stroke-width="1.8" marker-end="url(#arw)"/>
+<path d="M 140,1724 L 140,1740 L 420,1740 L 420,1756" fill="none" stroke="#1a1a1a" stroke-width="1.8" marker-end="url(#arw)"/>
+<path d="M 420,1812 L 420,1828 L 140,1828 L 140,1844" fill="none" stroke="#1a1a1a" stroke-width="1.8" marker-end="url(#arw)"/>
+<path d="M 255,1872 L 420,1872 L 420,1900" fill="none" stroke="#1a1a1a" stroke-width="1.8" marker-end="url(#arw)"/>
+<path d="M 420,1956 L 420,1953" fill="none" stroke="#1a1a1a" stroke-width="1.8" marker-end="url(#arw)"/>
+<text x="140" y="1958" text-anchor="middle" font-size="14" font-style="italic" fill="#444">a published version re-enters the</text>
+<text x="140" y="1976" text-anchor="middle" font-size="14" font-style="italic" fill="#444">analysis lane as a new version</text>
+</svg>

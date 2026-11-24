@@ -1,15 +1,16 @@
 "use client";
 
-import { ACTIVITY } from "@/lib/mockData";
+import Label from "@/components/ui/Label";
 
-export default function ActivityFeed() {
+interface Activity { id: string; text: string; when: string; color: string; glyph: string; }
+
+export default function ActivityFeed({ items = [] }: { items?: Activity[] }) {
   return (
     <div>
-      <h3 className="text-[11px] font-bold uppercase tracking-wide text-neutral-500 mb-3">
-        Recent activity
-      </h3>
+      <h3 className="mb-3"><Label>Recent activity</Label></h3>
       <div className="space-y-0">
-        {ACTIVITY.map((a, i) => (
+        {!items.length && <p className="text-xs text-neutral-400">Your app activity will appear here.</p>}
+        {items.map((a, i) => (
           <div
             key={i}
             className="flex items-start gap-3 py-2.5 border-b border-neutral-100 last:border-0"

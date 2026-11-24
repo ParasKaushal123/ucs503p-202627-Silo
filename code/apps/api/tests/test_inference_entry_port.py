@@ -26,9 +26,7 @@ def test_finds_main_py():
 
 def test_finds_main_guard():
     with tempfile.TemporaryDirectory() as d:
-        (Path(d) / "dashboard.py").write_text(
-            'if __name__ == "__main__":\n    print("hi")'
-        )
+        (Path(d) / "dashboard.py").write_text('if __name__ == "__main__":\n    print("hi")')
         result = detect_entrypoint(Path(d))
         assert result is not None
         assert result.file == "dashboard.py"

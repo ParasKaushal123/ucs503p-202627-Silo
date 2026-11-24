@@ -9,13 +9,13 @@ def test_full_pipeline_flask_app():
     with tempfile.TemporaryDirectory() as d:
         p = Path(d)
         (p / "app.py").write_text(
-            'from flask import Flask\n'
-            'app = Flask(__name__)\n'
-            '\n'
+            "from flask import Flask\n"
+            "app = Flask(__name__)\n"
+            "\n"
             '@app.route("/")\n'
-            'def hello():\n'
+            "def hello():\n"
             '    return "Hello from Silo!"\n'
-            '\n'
+            "\n"
             'if __name__ == "__main__":\n'
             '    app.run(host="127.0.0.1", port=5000)\n'
         )

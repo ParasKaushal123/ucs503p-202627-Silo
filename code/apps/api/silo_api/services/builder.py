@@ -25,17 +25,17 @@ port, and the proxy then returns 502 with nothing explaining why.
 from __future__ import annotations
 
 import os
-import socket
 import sys
 import time
 from pathlib import Path
 
+import httpx
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from ..config import settings
 from ..db import SessionLocal
-from ..models import BuildLog, Version
+from ..models import App, BuildLog, Release, Version
 from . import compose, packaging
 
 # How long to wait for the app to start accepting connections. Migrations,
@@ -53,6 +53,7 @@ PROBE_INTERVAL = 2.0
 # done; startup recovery checks whether that PID is still alive.
 # ---------------------------------------------------------------------------
 
+
 def locks_dir() -> Path:
     d = Path(settings.bundle_storage_path).resolve().parent / "locks"
     d.mkdir(parents=True, exist_ok=True)
@@ -69,6 +70,7 @@ def pid_is_alive(pid: int) -> bool:
         return False
     if sys.platform == "win32":
         import ctypes
+
         PROCESS_QUERY_LIMITED_INFORMATION = 0x1000
         STILL_ACTIVE = 259
         kernel32 = ctypes.windll.kernel32
@@ -103,15 +105,18 @@ def build_is_running(version_id: str) -> bool:
 # Helpers
 # ---------------------------------------------------------------------------
 
+
 def wait_for_port(port: int, timeout: int = READY_TIMEOUT, host: str = "127.0.0.1") -> bool:
-    """Block until something accepts a TCP connection on `port`."""
-    deadline = time.time() + timeout
-    while time.time() < deadline:
+    """Require an actual HTTP response, not just Docker's published TCP listener."""
+    deadline = time.monotonic() + timeout
+    while time.monotonic() < deadline:
         try:
-            with socket.create_connection((host, port), timeout=3):
+            response = httpx.get(f"http://{host}:{port}/", timeout=3)
+            if response.status_code < 500:
                 return True
-        except OSError:
-            time.sleep(PROBE_INTERVAL)
+        except httpx.HTTPError:
+            pass
+        time.sleep(PROBE_INTERVAL)
     return False
 
 
@@ -145,6 +150,7 @@ def normalise_line_endings(root: Path, log) -> None:
 # Entry point
 # ---------------------------------------------------------------------------
 
+
 def run_build(version_id: str, app_slug: str, bundle_path: str) -> bool:
     """Plan, build and deploy one version. Returns True on success."""
     db = SessionLocal()
@@ -156,7 +162,11 @@ def run_build(version_id: str, app_slug: str, bundle_path: str) -> bool:
         pass
 
     def log(phase: str, message: str, level: str = "info") -> None:
-        logs.append({"phase": phase, "message": str(message)[:4000], "level": level})
+        entry = {"phase": phase, "message": str(message)[:4000], "level": level}
+        db.add(BuildLog(version_id=version_id, **entry))
+        db.commit()
+        entry["persisted"] = True
+        logs.append(entry)
 
     try:
         version = db.get(Version, version_id)
@@ -169,8 +179,7 @@ def run_build(version_id: str, app_slug: str, bundle_path: str) -> bool:
 
         compose_file = compose.find_compose_file(project_root)
         if compose_file is not None:
-            return _deploy_compose(db, version, app_slug, project_root,
-                                   compose_file, logs, log)
+            return _deploy_compose(db, version, app_slug, project_root, compose_file, logs, log)
         return _deploy_single(db, version, app_slug, bundle_dir, logs, log)
 
     except Exception as e:
@@ -191,12 +200,13 @@ def run_build(version_id: str, app_slug: str, bundle_path: str) -> bool:
 # Strategy 1 — docker compose
 # ---------------------------------------------------------------------------
 
+
 def _deploy_compose(db, version, app_slug, project_root, compose_file, logs, log) -> bool:
     rel = compose_file.relative_to(project_root)
     log("detect", f"Compose project detected at {rel}")
 
     try:
-        plan = compose.prepare(compose_file)
+        plan = compose.prepare(compose_file, project_root)
     except RuntimeError as e:
         log("detect", str(e), "error")
         _finish(db, version, logs, success=False)
@@ -221,9 +231,12 @@ def _deploy_compose(db, version, app_slug, project_root, compose_file, logs, log
 
     host_port = compose.published_port(project, plan.service, plan.container_port)
     if not host_port:
-        log("deploy",
+        log(
+            "deploy",
             f"The stack started but no host port was published for "
-            f"{plan.service}:{plan.container_port}.", "error")
+            f"{plan.service}:{plan.container_port}.",
+            "error",
+        )
         for line in compose.service_logs(project, plan.service):
             log("runtime", line, "error")
         _finish(db, version, logs, success=False)
@@ -232,9 +245,12 @@ def _deploy_compose(db, version, app_slug, project_root, compose_file, logs, log
     log("deploy", f"{plan.service} published on host port {host_port} — waiting for it to respond")
 
     if not wait_for_port(host_port):
-        log("deploy",
+        log(
+            "deploy",
             f"Nothing accepted a connection on port {host_port} within "
-            f"{READY_TIMEOUT}s. The service logs follow.", "error")
+            f"{READY_TIMEOUT}s. The service logs follow.",
+            "error",
+        )
         for line in compose.service_logs(project, plan.service):
             log("runtime", line, "error")
         for svc in compose.status(project):
@@ -257,6 +273,7 @@ def _deploy_compose(db, version, app_slug, project_root, compose_file, logs, log
 # Strategies 2 and 3 — single container
 # ---------------------------------------------------------------------------
 
+
 def _deploy_single(db, version, app_slug, bundle_dir, logs, log) -> bool:
     try:
         plan = packaging.make_plan(bundle_dir)
@@ -278,9 +295,9 @@ def _deploy_single(db, version, app_slug, bundle_dir, logs, log) -> bool:
             log("deps", "No third-party dependencies detected")
 
         (plan.app_root / "Dockerfile").write_text(
-            packaging.render_dockerfile(plan), encoding="utf-8")
-        (plan.app_root / ".dockerignore").write_text(
-            packaging.DOCKERIGNORE, encoding="utf-8")
+            packaging.render_dockerfile(plan), encoding="utf-8"
+        )
+        (plan.app_root / ".dockerignore").write_text(packaging.DOCKERIGNORE, encoding="utf-8")
         log("dockerfile", "Generated Dockerfile")
         log("dockerfile", "Start command: " + " ".join(plan.start_command))
 
@@ -306,7 +323,11 @@ def _deploy_single(db, version, app_slug, bundle_dir, logs, log) -> bool:
     log("build", f"Building image from {plan.app_root.name}/ (this can take a few minutes)")
     try:
         _image, build_output = client.images.build(
-            path=str(plan.app_root), tag=image_tag, rm=True, forcerm=True, pull=False,
+            path=str(plan.app_root),
+            tag=image_tag,
+            rm=True,
+            forcerm=True,
+            pull=False,
         )
         for chunk in build_output:
             line = (chunk.get("stream") or "").strip()
@@ -340,7 +361,7 @@ def _deploy_single(db, version, app_slug, bundle_dir, logs, log) -> bool:
             image_tag,
             detach=True,
             name=container_name,
-            ports={f"{plan.port}/tcp": None},
+            ports={f"{plan.port}/tcp": ("127.0.0.1", None)},
             mem_limit="512m",
             nano_cpus=1_000_000_000,
             environment={"PORT": str(plan.port), "PYTHONUNBUFFERED": "1"},
@@ -372,9 +393,12 @@ def _deploy_single(db, version, app_slug, bundle_dir, logs, log) -> bool:
             break
 
     if not host_port:
-        log("deploy",
+        log(
+            "deploy",
             f"Docker published no host port for {plan.port}. The app is "
-            f"probably listening on a different port than Silo detected.", "error")
+            f"probably listening on a different port than Silo detected.",
+            "error",
+        )
         for line in _tail(container, 25):
             log("runtime", line, "error")
         _finish(db, version, logs, success=False)
@@ -389,10 +413,12 @@ def _deploy_single(db, version, app_slug, bundle_dir, logs, log) -> bool:
             state = container.status
         except Exception:
             state = "unknown"
-        log("deploy",
+        log(
+            "deploy",
             f"Nothing accepted a connection on port {host_port} within "
             f"{READY_TIMEOUT}s (container state: {state}). Its output follows.",
-            "error")
+            "error",
+        )
         for line in _tail(container, 40):
             log("runtime", line, "error")
         _finish(db, version, logs, success=False)
@@ -402,8 +428,7 @@ def _deploy_single(db, version, app_slug, bundle_dir, logs, log) -> bool:
         log("runtime", line)
 
     log("deploy", f"Live on host port {host_port}")
-    _finish(db, version, logs, success=True,
-            container_id=container.id, port=host_port)
+    _finish(db, version, logs, success=True, container_id=container.id, port=host_port)
     return True
 
 
@@ -417,6 +442,7 @@ def _tail(container, n: int) -> list[str]:
 
 # ---------------------------------------------------------------------------
 
+
 def _finish(
     db: Session,
     version: Version,
@@ -427,24 +453,51 @@ def _finish(
 ) -> None:
     """Persist build logs and set the final version status."""
     for entry in logs:
-        db.add(BuildLog(
-            version_id=version.id,
-            phase=entry["phase"],
-            level=entry.get("level", "info"),
-            message=entry["message"],
-        ))
+        if entry.get("persisted"):
+            continue
+        db.add(
+            BuildLog(
+                version_id=version.id,
+                phase=entry["phase"],
+                level=entry.get("level", "info"),
+                message=entry["message"],
+            )
+        )
 
     if success:
         version.status = "live"
         version.container_id = container_id
         version.internal_port = port
-        for other in db.scalars(select(Version).where(
-            Version.app_id == version.app_id,
-            Version.id != version.id,
-            Version.status == "live",
-        )):
-            other.status = "superseded"
+        # Ready previews do not replace live routing. Owner publishing chooses a release.
     else:
         version.status = "failed"
 
+    _settle_upload_release(db, version, success)
     db.commit()
+
+
+def _settle_upload_release(db: Session, version: Version, success: bool) -> None:
+    """Publish an App Room upload once it is healthy, or mark it failed.
+
+    Workbench previews have status "preview" and are left for the owner to
+    publish. A late build never replaces a newer upload that is already live.
+    """
+    release = db.scalar(
+        select(Release).where(Release.version_id == version.id, Release.status == "deploying")
+    )
+    if release is None:
+        return
+    if not success:
+        release.status = "failed"
+        return
+    app = db.scalar(select(App).where(App.id == version.app_id).with_for_update())
+    current = db.get(Release, app.approved_version_id) if app.approved_version_id else None
+    if current and current.status == "published" and (current.version_no or 0) > version.version_no:
+        release.status = "superseded"
+        return
+    for previous in db.scalars(
+        select(Release).where(Release.app_id == app.id, Release.status == "published")
+    ):
+        previous.status = "superseded"
+    release.status = "published"
+    app.approved_version_id = release.id

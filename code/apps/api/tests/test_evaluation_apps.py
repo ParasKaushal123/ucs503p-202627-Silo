@@ -10,7 +10,7 @@ from pathlib import Path
 
 from silo_api.services.build_orchestrator import build_and_deploy
 
-EVAL_DIR = Path(__file__).resolve().parent.parent.parent.parent / "evaluation"
+EVAL_DIR = Path(__file__).resolve().parent.parent.parent.parent / "testapps" / "runtime-samples"
 
 
 def _copy_eval_app(name: str) -> Path:

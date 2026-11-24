@@ -4,12 +4,15 @@ import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
 import { api } from "@/lib/api";
+import { request } from "@/lib/workspace";
 import type { App, Version } from "@/lib/types";
 import Marquee from "@/components/home/Marquee";
 import HeroCard from "@/components/home/HeroCard";
 import AppGridCard from "@/components/home/AppGridCard";
 import ActivityFeed from "@/components/home/ActivityFeed";
 import PillButton from "@/components/ui/PillButton";
+import Label from "@/components/ui/Label";
+import SiloMark from "@/components/ui/SiloMark";
 import Modal from "@/components/ui/Modal";
 import Toast from "@/components/ui/Toast";
 
@@ -19,6 +22,7 @@ export default function Dashboard() {
 
   const [apps, setApps] = useState<App[]>([]);
   const [versionMap, setVersionMap] = useState<Record<string, Version[]>>({});
+  const [activity, setActivity] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState("All");
@@ -29,8 +33,8 @@ export default function Dashboard() {
   const [hasFile, setHasFile] = useState(false);
   const [uploadFile, setUploadFile] = useState<File | null>(null);
 
-  const fetchApps = useCallback(async () => {
-    setLoading(true);
+  const fetchApps = useCallback(async (background = false) => {
+    if (!background) setLoading(true);
     try {
       const appList = await api.listApps();
       setApps(appList);
@@ -46,6 +50,17 @@ export default function Dashboard() {
         })
       );
       setVersionMap(Object.fromEntries(entries));
+      const events = (await Promise.all(appList.map(async a => {
+        try { return (await request(`/apps/${a.id}/activity`)).map((e: any) => ({ ...e, appName: a.name })); }
+        catch { return []; }
+      }))).flat();
+      const versions = entries.flatMap(([id, vs]) => vs.map(v => ({ id: v.id, created_at: v.created_at,
+        text: `${appList.find(a => a.id === id)?.name} · v${v.version_no} · ${v.status}`, color: "#dceeff", glyph: "↗" })));
+      setActivity([...events.map((e: any) => ({ id: e.id, created_at: e.created_at,
+        text: `${e.actor.name} · ${e.appName} · ${e.action.replaceAll(".", " ")}`, color: "#e9ccff", glyph: "✦" })), ...versions]
+        .sort((a, b) => b.created_at.localeCompare(a.created_at)).slice(0, 8)
+        .map(e => ({ ...e, when: new Date(e.created_at.endsWith("Z") || e.created_at.includes("+") ? e.created_at : e.created_at + "Z").toLocaleString() })));
+
     } catch {
       setApps([]);
     } finally {
@@ -67,9 +82,24 @@ export default function Dashboard() {
       vs.some((v) => v.status === "building" || v.status === "pending")
     );
     if (!hasBuilding) return;
-    const interval = setInterval(fetchApps, 5000);
+    const interval = setInterval(() => fetchApps(true), 5000);
     return () => clearInterval(interval);
   }, [versionMap, fetchApps]);
+
+  // Collaborators can publish from a shared Workbench; refresh when a live version changes.
+  const liveIds = apps.map((a) => `${a.id}:${a.approved_version_id}`).join(",");
+  useEffect(() => {
+    if (!isAuthenticated) return;
+    const interval = setInterval(async () => {
+      try {
+        const latest = await api.listApps();
+        if (latest.map((a) => `${a.id}:${a.approved_version_id}`).join(",") !== liveIds) {
+          await fetchApps(true);
+        }
+      } catch { /* The next poll retries. */ }
+    }, 10000);
+    return () => clearInterval(interval);
+  }, [isAuthenticated, liveIds, fetchApps]);
 
   const latestVersion = (appId: string): Version | undefined => {
     const vs = versionMap[appId] ?? [];
@@ -135,17 +165,20 @@ export default function Dashboard() {
   }
 
   const email = user?.authenticated ? user.email : "";
+  const userId = user?.authenticated ? user.id : "";
+  const liveCount = apps.filter((a) => latestStatus(a.id) === "live").length;
+  const sharedCount = apps.filter((a) => userId && a.owner_id !== userId).length;
   const initials = email ? email.charAt(0).toUpperCase() : "?";
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-canvas">
       {/* Marquee */}
       <Marquee />
 
       {/* Sticky header */}
-      <header className="sticky top-0 z-40 bg-white border-b border-black">
-        <div className="mx-auto max-w-6xl flex items-center justify-between px-5 h-14">
-          <span className="font-display text-2xl">SILO</span>
+      <header className="sticky top-0 z-40 bg-canvas/90 backdrop-blur border-b border-neutral-300">
+        <div className="mx-auto max-w-6xl flex items-center justify-between px-5 h-16">
+          <SiloMark />
           <div className="flex-1 max-w-sm mx-6">
             <input
               value={query}
@@ -182,6 +215,8 @@ export default function Dashboard() {
               </p>
               <div
                 className="border-2 border-dashed border-black rounded-[20px] bg-silo-cream p-8 mb-4 hover:bg-silo-yellow transition-colors cursor-pointer"
+                onDragOver={e => e.preventDefault()}
+                onDrop={e => { e.preventDefault(); const file = e.dataTransfer.files[0]; if (file) { setUploadFile(file); setHasFile(true); setNewName(file.name.replace(/\.(zip|py)$/i, "")); setShowCreate(true); } }}
                 onClick={() => setShowCreate(true)}
               >
                 <div className="font-display text-2xl mb-2">DROP YOUR CODE</div>
@@ -196,12 +231,34 @@ export default function Dashboard() {
           </div>
         ) : (
           <>
+            {/* Greeting and real workspace numbers */}
+            <section className="grid gap-6 lg:grid-cols-[1fr_auto] items-end pt-6 pb-8">
+              <div>
+                <Label>Workspace{email ? ` · ${email}` : ""}</Label>
+                <h1 className="font-display font-bold leading-[0.92] mt-4 text-[clamp(38px,5vw,63px)]">
+                  Your apps,
+                  <br />
+                  ready to share.
+                </h1>
+              </div>
+              <div className="grid grid-cols-3 gap-3 min-w-0 lg:w-[460px]">
+                {[
+                  { label: "Apps", value: apps.length, tone: "bg-silo-green" },
+                  { label: "Live now", value: liveCount, tone: "bg-silo-yellow" },
+                  { label: "Shared with you", value: sharedCount, tone: "bg-silo-lilac" },
+                ].map((stat) => (
+                  <div key={stat.label} className={`${stat.tone} text-onaccent rounded-panel border-[1.5px] border-black px-4 py-3.5`}>
+                    <div className="font-mono text-[10px] uppercase">{stat.label}</div>
+                    <div className="font-display font-bold text-[34px] leading-none mt-2">{stat.value}</div>
+                  </div>
+                ))}
+              </div>
+            </section>
+
             {/* Hero card for first app */}
             {featuredApp && (
-              <div className="mb-6">
-                <div className="text-[11px] font-bold uppercase tracking-wide text-neutral-500 mb-2">
-                  Continue working
-                </div>
+              <div className="mb-8">
+                <Label className="mb-3">Continue working</Label>
                 <HeroCard
                   app={featuredApp}
                   versions={versionMap[featuredApp.id] ?? []}
@@ -248,7 +305,7 @@ export default function Dashboard() {
 
             {/* Activity feed */}
             <div className="max-w-md">
-              <ActivityFeed />
+              <ActivityFeed items={activity} />
             </div>
           </>
         )}
@@ -284,6 +341,8 @@ export default function Dashboard() {
 
           <div
             className="border-2 border-dashed border-black rounded-[20px] bg-silo-cream p-6 text-center hover:bg-silo-yellow transition-colors cursor-pointer"
+            onDragOver={e => e.preventDefault()}
+            onDrop={e => { e.preventDefault(); const file = e.dataTransfer.files[0]; if (file) { setUploadFile(file); setHasFile(true); if (!newName.trim()) setNewName(file.name.replace(/\.(zip|py)$/i, "")); } }}
             onClick={() => document.getElementById("file-input-create")?.click()}
           >
             <div className="font-display text-xl mb-2">DROP YOUR CODE</div>

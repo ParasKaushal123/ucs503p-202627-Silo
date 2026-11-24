@@ -1,0 +1,72 @@
+{
+  "id": "TC-01",
+  "name": "Two users type on the same line at once",
+  "run": "after-fix",
+  "started": "2026-11-16T12:00:36.257Z",
+  "finished": "2026-11-16T12:00:45.644Z",
+  "result": "PASS",
+  "steps": [
+    {
+      "step": 1,
+      "action": "Owner opens the app's Workbench",
+      "expected": "Workbench loads and the status pill shows Saved",
+      "actual": "Workbench loaded, pill shows Saved",
+      "pass": true,
+      "comment": "",
+      "screenshot": "step-01.png"
+    },
+    {
+      "step": 2,
+      "action": "Editor opens the invite link and signs in",
+      "expected": "Editor lands in the same Workbench with Saved showing",
+      "actual": "Joined as editor; URL /apps/af159a05-61c7-454f-93e5-21ad61f57878/workbench",
+      "pass": true,
+      "comment": "",
+      "screenshot": "step-02.png"
+    },
+    {
+      "step": 3,
+      "action": "Both open Files and select index.html",
+      "expected": "The code editor shows index.html for both users",
+      "actual": "Both editors open (1 lines each)",
+      "pass": true,
+      "comment": "",
+      "screenshot": "step-03.png"
+    },
+    {
+      "step": 4,
+      "action": "Both put the cursor at the end of the same line and type at the same moment (Owner: <!-- Alex edited -->, Editor: <!-- Morgan edited -->)",
+      "expected": "Both see Saving, then Saved, with no error",
+      "actual": "Both returned to Saved; 0 error banners",
+      "pass": true,
+      "comment": "",
+      "screenshot": "step-04.png"
+    },
+    {
+      "step": 5,
+      "action": "Compare the text in both editors",
+      "expected": "Both texts appear exactly once, in the same order, for both users",
+      "actual": "Identical in both editors; each line once; Alex's line first",
+      "pass": true,
+      "comment": "",
+      "screenshot": "step-05.png"
+    },
+    {
+      "step": 6,
+      "action": "Editor reloads the page and opens index.html again",
+      "expected": "Both texts are still there after the reload",
+      "actual": "After reload: Alex line ×1, Morgan line ×1",
+      "pass": true,
+      "comment": "",
+      "screenshot": "step-06.png"
+    },
+    {
+      "step": 7,
+      "action": "Check post-condition 1 (read the draft from the server)",
+      "expected": "The stored draft contains both lines exactly once",
+      "actual": "Server draft revision 3: Alex ×1, Morgan ×1",
+      "pass": true,
+      "comment": ""
+    }
+  ]
+}

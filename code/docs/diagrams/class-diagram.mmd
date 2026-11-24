@@ -1,0 +1,225 @@
+---
+config:
+  theme: base
+  themeVariables:
+    primaryColor: '#e8eefc'
+    primaryBorderColor: '#4c6ef5'
+    primaryTextColor: '#10203f'
+    lineColor: '#495b78'
+---
+classDiagram
+direction LR
+
+%% ===================== PERSISTENCE =====================
+namespace Persistence {
+  class User {
+    +str id
+    +str email
+    +str name
+    +str google_sub
+    +datetime created_at
+  }
+
+  class App {
+    +str id
+    +str slug
+    +str owner_id
+    +str name
+    +str description
+    +str approved_version_id
+    +datetime created_at
+  }
+
+  class Version {
+    +str id
+    +str app_id
+    +int version_no
+    +str bundle_path
+    +str status
+    +str container_id
+    +int internal_port
+    +datetime created_at
+  }
+
+  class BuildLog {
+    +str id
+    +str version_id
+    +str phase
+    +str level
+    +str message
+    +datetime created_at
+  }
+
+  class VersionStatus {
+    <<enumeration>>
+    building
+    live
+    failed
+    superseded
+  }
+}
+
+%% ===================== CONTROL PLANE =====================
+namespace ControlPlane {
+  class AuthRouter {
+    <<router>>
+    +login() RedirectResponse
+    +callback(request, db) RedirectResponse
+    +me(request) dict
+    +logout() RedirectResponse
+  }
+
+  class AppsRouter {
+    <<router>>
+    +create_app(body, user_id, db) AppOut
+    +list_apps(user_id, db) list~AppOut~
+    +get_app(app_id, user_id, db) AppOut
+    +delete_app(app_id, user_id, db) None
+    +delete_all_apps(user_id, db) None
+    -get_current_user_id(request) str
+    -slugify(name) str
+    -_teardown(slug) None
+  }
+
+  class VersionsRouter {
+    <<router>>
+    +upload_version(app_id, file, user_id, db) VersionOut
+    +list_versions(app_id, user_id, db) list~VersionOut~
+    +get_version(version_id, user_id, db) VersionOut
+    +get_version_logs(version_id, user_id, db) list~BuildLogOut~
+    -_launch_build(version_id, slug, path) None
+    -_safe_extract(zipfile, dest) None
+  }
+
+  class ProxyRouter {
+    <<router>>
+    -AsyncClient _http
+    +proxy_root(request, app_id, db) StreamingResponse
+    +proxy_path(request, app_id, path, db) StreamingResponse
+    -_proxy(request, app_id, path, db) StreamingResponse
+  }
+}
+
+%% ===================== BUILD PIPELINE =====================
+namespace BuildPipeline {
+  class BuildWorker {
+    <<entry point>>
+    +main() int
+  }
+
+  class Builder {
+    <<service>>
+    +int READY_TIMEOUT
+    +run_build(version_id, slug, path) bool
+    +wait_for_port(port, timeout) bool
+    +build_is_running(version_id) bool
+    +normalise_line_endings(root, log) None
+    -_deploy_compose(...) bool
+    -_deploy_single(...) bool
+    -_finish(db, version, logs, success) None
+  }
+
+  class Packaging {
+    <<service>>
+    +dict IMPORT_TO_PACKAGE
+    +set STDLIB
+    +make_plan(bundle_dir) BuildPlan
+    +find_project_root(bundle_dir) Path
+    +pick_app_root(project_root) Path
+    +detect_entry(app_root) tuple
+    +choose_mode(entry, info, root) str
+    +resolve_packages(root, mode, has_req) list~str~
+    +detect_port(root, entry, info) int
+    +repair_host_binding(root) list~str~
+    +render_dockerfile(plan) str
+  }
+
+  class BuildPlan {
+    <<dataclass>>
+    +Path app_root
+    +str mode
+    +str entry_file
+    +str module_path
+    +str app_var
+    +int port
+    +str python_version
+    +list~str~ packages
+    +str requirements
+    +list~str~ notes
+    +start_command() list~str~
+  }
+
+  class Compose {
+    <<service>>
+    +find_compose_file(root) Path
+    +prepare(original) ComposePlan
+    +up(plan, project, log) bool
+    +published_port(project, service, port) int
+    +service_logs(project, service) list~str~
+    +down(project, compose_file) None
+    +project_name(slug) str
+  }
+
+  class ComposePlan {
+    <<dataclass>>
+    +Path compose_file
+    +Path original_file
+    +str service
+    +int container_port
+    +list~str~ notes
+  }
+}
+
+%% ===================== INFRASTRUCTURE =====================
+namespace Infrastructure {
+  class Settings {
+    <<singleton>>
+    +str database_url
+    +str session_secret
+    +str google_client_id
+    +str google_client_secret
+    +str oauth_redirect_uri
+    +str web_origin
+    +str bundle_storage_path
+  }
+
+  class Database {
+    +Engine engine
+    +sessionmaker SessionLocal
+    +get_db() Session
+  }
+
+  class DockerClient {
+    <<external>>
+    +images.build(path, tag) Image
+    +containers.run(image, ports, limits) Container
+    +containers.get(name) Container
+  }
+}
+
+%% ===================== RELATIONSHIPS =====================
+User "1" *-- "0..*" App : owns
+App "1" *-- "0..*" Version : has
+Version "1" *-- "0..*" BuildLog : emits
+Version ..> VersionStatus : status
+
+AppsRouter ..> App : manages
+AppsRouter ..> Compose : teardown
+VersionsRouter ..> Version : creates
+VersionsRouter ..> BuildLog : reads
+VersionsRouter ..> BuildWorker : spawns process
+AuthRouter ..> User : upserts
+ProxyRouter ..> Version : resolves port
+
+BuildWorker --> Builder : run_build()
+Builder --> Packaging : make_plan()
+Builder --> Compose : detect and up()
+Builder ..> Version : updates status
+Builder ..> BuildLog : writes
+Builder ..> DockerClient : build and run
+
+Packaging ..> BuildPlan : creates
+Compose ..> ComposePlan : creates
+
+Database ..> Settings : database_url
+Builder ..> Settings : bundle_storage_path

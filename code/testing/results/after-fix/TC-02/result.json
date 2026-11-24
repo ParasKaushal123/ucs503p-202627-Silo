@@ -1,0 +1,72 @@
+{
+  "id": "TC-02",
+  "name": "Editor removed while still connected",
+  "run": "after-fix",
+  "started": "2026-11-16T12:00:45.860Z",
+  "finished": "2026-11-16T12:00:58.485Z",
+  "result": "PASS",
+  "steps": [
+    {
+      "step": 1,
+      "action": "Editor joins through an invite link and opens the Workbench",
+      "expected": "Editor sees Saved and an editable code editor",
+      "actual": "Joined; editor contenteditable=true",
+      "pass": true,
+      "comment": "",
+      "screenshot": "step-01.png"
+    },
+    {
+      "step": 2,
+      "action": "Owner opens Share and removes the Editor (×)",
+      "expected": "Within about 5 seconds the Editor's header shows \"Access changed\"",
+      "actual": "\"Access changed — reload\" after 1.6 s",
+      "pass": true,
+      "comment": "Target 5 s (the server rechecks every 5 s); limit 15 s",
+      "screenshot": "step-02.png"
+    },
+    {
+      "step": 3,
+      "action": "Editor tries to type \"<!-- typed after removal -->\" in the open file",
+      "expected": "The editor is read-only and nothing new reaches the server",
+      "actual": "contenteditable=false; typed text on server: no",
+      "pass": true,
+      "comment": "",
+      "screenshot": "step-03.png"
+    },
+    {
+      "step": 4,
+      "action": "Editor reloads the Workbench",
+      "expected": "The Editor is refused: no workspace, and the API answers 404 for the draft",
+      "actual": "API GET draft → 404; page: \"App not found Back to Home\"",
+      "pass": true,
+      "comment": "",
+      "screenshot": "step-04.png"
+    },
+    {
+      "step": 5,
+      "action": "Owner clicks \"Revoke invitation links\"",
+      "expected": "A confirmation toast appears",
+      "actual": "Toast: Invitation links revoked",
+      "pass": true,
+      "comment": "",
+      "screenshot": "step-05.png"
+    },
+    {
+      "step": 6,
+      "action": "A new account opens the old invite link",
+      "expected": "The page says \"Invitation not found\"",
+      "actual": "Shown: Invitation not found",
+      "pass": true,
+      "comment": "",
+      "screenshot": "step-06.png"
+    },
+    {
+      "step": 7,
+      "action": "Check post-condition 1 (members list on the server)",
+      "expected": "Only the Owner is a member; the Editor's grant is gone",
+      "actual": "Members: Alex (owner)",
+      "pass": true,
+      "comment": ""
+    }
+  ]
+}

@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="880" height="414" viewBox="0 0 880 414">
+  <rect width="100%" height="100%" fill="#ffffff"/>
+  <foreignObject x="10" y="10" width="860" height="394">
+    <div xmlns="http://www.w3.org/1999/xhtml" style="background:#ffffff; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif; color:#212529; font-size:13.5px; line-height:1.45;">
+      <table style="width:100%; border-collapse:collapse; border:1.5px solid #333333; background:#ffffff;">
+        <thead>
+          <tr>
+            <th colspan="2" style="background:#f1f3f5; border-bottom:1.5px solid #333333; padding:10px 14px; font-size:15px; font-weight:700; color:#111827; text-align:left;">USE CASE SPECIFICATION: UC-01</th>
+          </tr>
+        </thead>
+        <tbody>
+          
+        <tr>
+            <td style="width:220px; background:#f8f9fa; font-weight:600; color:#1f2937; padding:9px 12px; border-right:1px solid #dee2e6; border-bottom:1px solid #dee2e6; vertical-align:top;">Use Case ID & Name</td>
+            <td style="padding:9px 14px; border-bottom:1px solid #dee2e6; vertical-align:top; color:#212529;"><b>UC-01: Submit Application for Automated Deployment</b></td>
+        </tr>
+        
+        <tr>
+            <td style="width:220px; background:#f8f9fa; font-weight:600; color:#1f2937; padding:9px 12px; border-right:1px solid #dee2e6; border-bottom:1px solid #dee2e6; vertical-align:top;">Primary Actor</td>
+            <td style="padding:9px 14px; border-bottom:1px solid #dee2e6; vertical-align:top; color:#212529;">Developer <i>(Secondary: Platform Build Engine)</i></td>
+        </tr>
+        
+        <tr>
+            <td style="width:220px; background:#f8f9fa; font-weight:600; color:#1f2937; padding:9px 12px; border-right:1px solid #dee2e6; border-bottom:1px solid #dee2e6; vertical-align:top;">Preconditions</td>
+            <td style="padding:9px 14px; border-bottom:1px solid #dee2e6; vertical-align:top; color:#212529;">1. Developer is authenticated via Google OAuth.<br/>2. Valid Python source file (<code>.py</code>) or ZIP archive (<code>.zip</code>) within allowed size limit.</td>
+        </tr>
+        
+        <tr>
+            <td style="width:220px; background:#f8f9fa; font-weight:600; color:#1f2937; padding:9px 12px; border-right:1px solid #dee2e6; border-bottom:1px solid #dee2e6; vertical-align:top;">Main Success Flow</td>
+            <td style="padding:9px 14px; border-bottom:1px solid #dee2e6; vertical-align:top; color:#212529;">1. Developer opens dashboard, selects application, and submits source bundle.<br/>2. Platform validates payload, extracts files safely, and isolates source directory.<br/>3. System creates a new version record with status <code>analysing</code> and increments version number.<br/>4. System spawns detached build worker; dashboard transitions to polling status and logs.</td>
+        </tr>
+        
+        <tr>
+            <td style="width:220px; background:#f8f9fa; font-weight:600; color:#1f2937; padding:9px 12px; border-right:1px solid #dee2e6; border-bottom:1px solid #dee2e6; vertical-align:top;">Postconditions</td>
+            <td style="padding:9px 14px; border-bottom:1px solid #dee2e6; vertical-align:top; color:#212529;"><b>Success:</b> Version record registered, bundle isolated, and asynchronous analysis initiated.<br/><b>Failure:</b> Bundle discarded, error message displayed, and no version created.</td>
+        </tr>
+        
+        <tr>
+            <td style="width:220px; background:#f8f9fa; font-weight:600; color:#1f2937; padding:9px 12px; border-right:1px solid #dee2e6; border-bottom:1px solid #dee2e6; vertical-align:top;">Alternative / Exceptions</td>
+            <td style="padding:9px 14px; border-bottom:1px solid #dee2e6; vertical-align:top; color:#212529;"><b>3a. Unsupported archive / unsafe path:</b> Upload rejected with validation error.<br/><b>4a. Database or storage failure:</b> System returns 503 error; developer prompted to retry.</td>
+        </tr>
+        
+        </tbody>
+      </table>
+    </div>
+  </foreignObject>
+</svg>
