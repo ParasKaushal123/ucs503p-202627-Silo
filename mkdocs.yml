@@ -28,7 +28,6 @@ plugins:
 
 theme:
   name: material
-  custom_dir: docs/assets/theme-overrides
   features:
     - navigation.footer
     - header.autohide
@@ -43,8 +42,6 @@ theme:
   palette:
     primary: amber
     accent: orange
-  logo: assets/tiet-logo.svg
-  favicon: assets/favicon.png
 
 repo_url: https://github.com/ParasKaushal123/ucs503p-202627-Silo
 repo_name: ucs503p-202627-Silo
@@ -55,13 +52,7 @@ extra:
     link: https://github.com/tiet-ucs503/ucs503p-202627odd-template
     name: Git Repo for UCS503P Project Template
 
-extra_css:
-  - assets/stylesheets/extra.css
-  - https://unpkg.com/katex@0/dist/katex.min.css
 
-extra_javascript:
-- https://unpkg.com/katex@0/dist/katex.min.js
-- javascript/arithmatex.js
 
 markdown_extensions:
   - abbr
